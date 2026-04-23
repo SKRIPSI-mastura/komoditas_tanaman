@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hasil Rekomendasi - Editorial Agronomy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fafaee",
+                    "surface-dim": "#dadbcf",
+                    "on-surface": "#1a1c15",
+                    "on-secondary-fixed": "#001b3f",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#f1f2e6",
+                    "on-primary-fixed": "#002114",
+                    "on-tertiary-fixed-variant": "#334f06",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#8df7c6",
+                    "secondary-fixed-dim": "#abc7ff",
+                    "error": "#ba1a1a",
+                    "secondary-container": "#83aefe",
+                    "surface": "#fafaee",
+                    "surface-container-low": "#f4f4e9",
+                    "inverse-surface": "#2f312a",
+                    "outline": "#6f7a74",
+                    "inverse-primary": "#71daab",
+                    "background": "#fafaee",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#006c4b",
+                    "on-secondary-container": "#004086",
+                    "tertiary-fixed-dim": "#afd27c",
+                    "on-primary-container": "#83ecbb",
+                    "surface-variant": "#e3e3d8",
+                    "on-surface-variant": "#3e4944",
+                    "surface-container-high": "#e8e9dd",
+                    "on-tertiary-container": "#c0e48c",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-container": "#49671e",
+                    "on-primary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#eeefe3",
+                    "surface-container-highest": "#e3e3d8",
+                    "on-secondary-fixed-variant": "#07458e",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#111f00",
+                    "primary": "#005137",
+                    "tertiary": "#334e06",
+                    "outline-variant": "#bec9c3",
+                    "on-primary-fixed-variant": "#005137",
+                    "primary-fixed-dim": "#71daab",
+                    "secondary-fixed": "#d7e2ff",
+                    "secondary": "#2d5da7",
+                    "primary-container": "#006c4a",
+                    "tertiary-fixed": "#caef96",
+                    "on-background": "#1a1c15"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fafaee; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#f4f4e9] flex flex-col py-6">
+<div class="px-6 mb-10">
+<h1 class="text-xl font-bold tracking-tight text-[#006B54]">Editorial Agronomy</h1>
+<p class="text-xs font-medium text-on-surface-variant/70 uppercase tracking-widest">Crop Intelligence</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 text-[#3e4944] font-medium hover:bg-[#eeefe3] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center px-6 py-3 text-[#3e4944] font-medium hover:bg-[#eeefe3] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="database">database</span>
+                Kelola Data
+            </a>
+<a class="flex items-center px-6 py-3 text-[#3e4944] font-medium hover:bg-[#eeefe3] transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="psychology">psychology</span>
+                Proses Rekomendasi
+            </a>
+<a class="flex items-center px-6 py-3 text-[#006B54] font-bold border-r-4 border-[#006B54] bg-[#eeefe3]" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="assessment">assessment</span>
+                Hasil Rekomendasi
+            </a>
+</nav>
+<div class="px-6 mt-auto pt-6 space-y-1">
+<a class="flex items-center py-2 text-[#3e4944] font-medium hover:text-[#006B54] transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+                Settings
+            </a>
+<a class="flex items-center py-2 text-[#3e4944] font-medium hover:text-[#ba1a1a] transition-colors" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-64 h-16 z-40 bg-[#fafaee]/80 backdrop-blur-md flex justify-between items-center px-8" style="box-shadow: 0 12px 32px rgba(26, 28, 21, 0.06);">
+<div class="flex items-center bg-surface-container-highest px-4 py-2 rounded-xl w-96">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full" placeholder="Search insights..." type="text"/>
+</div>
+<div class="flex items-center space-x-6">
+<button class="relative text-on-surface-variant hover:text-primary transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="flex items-center space-x-3 pl-4 border-l border-outline-variant/20">
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface leading-none">Admin Profile</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Chief Agronomist</p>
+</div>
+<img class="w-10 h-10 rounded-full object-cover border-2 border-surface-container-highest" data-alt="close-up portrait of a professional agronomist in a clean field setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYehe5BiuR6MJQzAn3EwPkfNltJVGesOxsFC7v0-a0p0pI_RYMVzk27Y7l5HDwSalfQpVqpmSbsRXBPSXqyq8DzzNovW8b4wHEK9SST031TX1w5J2rHXDOJc5P5Z-_QSbIDxBDaWDBdWzxI_4LjGVuN8eH3tHw7gwXd2A0vJMqaWVn_2IfWRb7EdZ9zTK7t5h3688dsR7-BXjlvaZMlx78ySdf9JO33CxHtm_i-xPhGIUsxDBJxoFefg3teIGp_iBUUPSDQb3wb_dT"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 pb-12 px-8 min-h-screen">
+<!-- Header Section -->
+<div class="mb-10 flex justify-between items-end">
+<div>
+<nav class="flex text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">
+<span>Analysis</span>
+<span class="mx-2">/</span>
+<span class="text-primary font-bold">Recommendation Results</span>
+</nav>
+<h2 class="text-4xl font-extrabold tracking-tight text-on-surface">Intelligence Summary</h2>
+</div>
+<div class="flex space-x-3">
+<button class="px-6 py-2.5 rounded-xl border border-outline-variant/20 text-primary font-semibold text-sm hover:bg-surface-container transition-colors flex items-center">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="download">download</span>
+                    Export PDF
+                </button>
+<button class="px-6 py-2.5 rounded-xl bg-gradient-to-br from-primary to-primary-container text-white font-bold text-sm flex items-center">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="share">share</span>
+                    Share Insight
+                </button>
+</div>
+</div>
+<!-- Bento Grid Section 1: Main Recommendation -->
+<div class="grid grid-cols-12 gap-6 mb-6">
+<!-- Recommendation Hero Card -->
+<div class="col-span-8 bg-surface-container-lowest rounded-xl p-8 relative overflow-hidden flex flex-col justify-between min-h-[320px]">
+<div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full pointer-events-none"></div>
+<div>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-xs font-bold uppercase tracking-wider mb-6">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="verified" data-weight="fill">verified</span>
+                        Optimal Choice
+                    </span>
+<h3 class="text-5xl font-black text-primary leading-tight mb-2">Padi Inpari 32</h3>
+<p class="text-on-surface-variant max-w-md">Varietas ini menunjukkan ketahanan tertinggi terhadap hawar daun bakteri dan memiliki potensi hasil yang konsisten di ekosistem lahan sawah irigasi.</p>
+</div>
+<div class="flex items-center mt-8 space-x-12">
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-xs font-medium uppercase tracking-widest mb-1">Predicted Yield</span>
+<div class="flex items-baseline">
+<span class="text-5xl font-extrabold text-on-surface">15.4</span>
+<span class="text-xl font-semibold text-on-surface-variant ml-2">Ton/Ha</span>
+</div>
+</div>
+<div class="h-12 w-px bg-outline-variant/20"></div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-xs font-medium uppercase tracking-widest mb-1">Growth Confidence</span>
+<div class="flex items-center">
+<span class="text-3xl font-bold text-tertiary">98.2%</span>
+<span class="material-symbols-outlined text-tertiary ml-2" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Model Evaluation Metrics -->
+<div class="col-span-4 bg-surface-container-low rounded-xl p-8 flex flex-col">
+<h4 class="text-lg font-bold text-on-surface mb-6 flex items-center">
+<span class="material-symbols-outlined mr-2 text-secondary" data-icon="analytics">analytics</span>
+                    Model Metrics
+                </h4>
+<div class="space-y-6 flex-1">
+<div class="p-4 bg-surface-container-lowest rounded-xl">
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-bold text-on-surface-variant uppercase">MSE (Mean Squared Error)</span>
+<span class="material-symbols-outlined text-primary text-sm" data-icon="info">info</span>
+</div>
+<p class="text-3xl font-black text-on-surface">0.023</p>
+<div class="mt-2 w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 92%"></div>
+</div>
+</div>
+<div class="p-4 bg-surface-container-lowest rounded-xl">
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-bold text-on-surface-variant uppercase">R-Squared Score</span>
+</div>
+<p class="text-3xl font-black text-on-surface">0.967</p>
+<p class="text-[10px] text-tertiary font-bold mt-1 flex items-center">
+<span class="material-symbols-outlined text-xs mr-1" data-icon="check_circle">check_circle</span>
+                            High Accuracy Range
+                        </p>
+</div>
+<div class="p-4 bg-surface-container-highest rounded-xl border border-outline-variant/10">
+<p class="text-xs font-medium text-on-surface-variant leading-relaxed italic">
+                            "The LSTM model has converged with minimal loss, indicating high reliability for current seasonal data."
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3: Data Comparison Chart -->
+<div class="grid grid-cols-12 gap-6">
+<div class="col-span-12 bg-surface-container-lowest rounded-xl p-8">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h4 class="text-xl font-bold text-on-surface">Production Trend Comparison</h4>
+<p class="text-sm text-on-surface-variant">Comparative analysis between actual historical data and model predictions.</p>
+</div>
+<div class="flex space-x-6 items-center">
+<div class="flex items-center">
+<span class="w-3 h-3 rounded-full bg-secondary mr-2"></span>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Actual Data</span>
+</div>
+<div class="flex items-center">
+<span class="w-3 h-3 rounded-full bg-primary mr-2"></span>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Predicted Yield</span>
+</div>
+</div>
+</div>
+<!-- Chart Visual Mockup -->
+<div class="relative h-80 w-full bg-surface-container-low rounded-xl overflow-hidden p-4">
+<div class="absolute inset-0 flex items-end justify-between px-10 pb-8">
+<!-- Grid Lines -->
+<div class="absolute inset-0 grid grid-rows-4 px-10 py-8 opacity-10">
+<div class="border-t border-on-surface"></div>
+<div class="border-t border-on-surface"></div>
+<div class="border-t border-on-surface"></div>
+<div class="border-t border-on-surface"></div>
+</div>
+<!-- Mock Chart Paths -->
+<svg class="absolute inset-0 w-full h-full px-10 py-8" preserveaspectratio="none">
+<!-- Actual Path -->
+<path class="opacity-40" d="M0,80 L50,120 L100,100 L150,140 L200,110 L250,90 L300,105 L350,75 L400,95 L450,60 L500,85 L550,55 L600,70 L650,40 L700,50 L750,20 L800,45" fill="none" stroke="#2d5da7" stroke-linecap="round" stroke-width="3"></path>
+<!-- Predicted Path -->
+<path d="M0,85 L50,115 L100,105 L150,135 L200,115 L250,85 L300,110 L350,70 L400,100 L450,55 L500,90 L550,50 L600,75 L650,35 L700,55 L750,15 L800,40" fill="none" stroke="#005137" stroke-linecap="round" stroke-width="4"></path>
+</svg>
+<!-- X-Axis Labels -->
+<div class="flex justify-between w-full mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">
+<span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 4: Recommendation Details & Tips -->
+<div class="grid grid-cols-12 gap-6 mt-6">
+<div class="col-span-4">
+<div class="bg-primary p-6 rounded-xl text-on-primary h-full">
+<h5 class="text-lg font-bold mb-4 flex items-center">
+<span class="material-symbols-outlined mr-2" data-icon="lightbulb">lightbulb</span>
+                        Actionable Tip
+                    </h5>
+<p class="text-sm leading-relaxed opacity-90 mb-6">
+                        Berdasarkan prediksi curah hujan bulan depan, disarankan untuk mengoptimalkan pemupukan dasar pada minggu ke-2 setelah tanam untuk memaksimalkan potensi varietas Inpari 32.
+                    </p>
+<div class="flex items-center space-x-2">
+<img class="w-12 h-12 rounded-lg object-cover" data-alt="vibrant green rice field macro detail with water droplets and morning dew under soft sunrise light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvN2BUuJnzzHjCmEWvfsUdsloEXXlK2tDiq_lEOov4DSPyJWRqiPZ8M7mKIZ9wkEeff92GFO7hx67VQXipGCx_lN3LaYwNfS7z2RjC0X7QeZrgNuVmb3Pa7VbvAM-3R0FO1XXioSfMgexU-_i7DOeWEC32ENYShPSBpzpMLIVmpJao33pH2tIqYRo-K8gZQB8pgpJ78x9lcxm4NzFISe1a_9sD9LlN9lzlS0bh3q54F-tSobNi7oWhn_y2L7NzQjbcnZGzxUTbdfj0"/>
+<div class="text-[10px] uppercase font-bold tracking-widest">
+                            Contextual Focus: Irrigation
+                        </div>
+</div>
+</div>
+</div>
+<div class="col-span-8">
+<div class="bg-surface-container rounded-xl p-6 h-full flex flex-col justify-center">
+<div class="flex items-center justify-between mb-4">
+<h5 class="text-sm font-bold text-on-surface uppercase tracking-widest">Recommended Support Varietals</h5>
+<a class="text-xs font-bold text-secondary flex items-center hover:underline" href="#">
+                            View All Data <span class="material-symbols-outlined text-xs ml-1" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div class="bg-surface-container-lowest p-4 rounded-xl">
+<p class="text-xs font-bold text-on-surface-variant mb-1">Sub-Option 1</p>
+<p class="text-lg font-bold text-on-surface">Ciherang</p>
+<p class="text-[10px] text-primary font-bold">89% Match</p>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl">
+<p class="text-xs font-bold text-on-surface-variant mb-1">Sub-Option 2</p>
+<p class="text-lg font-bold text-on-surface">Mekongga</p>
+<p class="text-[10px] text-primary font-bold">84% Match</p>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl">
+<p class="text-xs font-bold text-on-surface-variant mb-1">Sub-Option 3</p>
+<p class="text-lg font-bold text-on-surface">Inpari 42</p>
+<p class="text-[10px] text-primary font-bold">81% Match</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

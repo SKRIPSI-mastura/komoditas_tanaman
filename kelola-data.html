@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fafaee",
+                    "surface-dim": "#dadbcf",
+                    "on-surface": "#1a1c15",
+                    "on-secondary-fixed": "#001b3f",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#f1f2e6",
+                    "on-primary-fixed": "#002114",
+                    "on-tertiary-fixed-variant": "#334f06",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#8df7c6",
+                    "secondary-fixed-dim": "#abc7ff",
+                    "error": "#ba1a1a",
+                    "secondary-container": "#83aefe",
+                    "surface": "#fafaee",
+                    "surface-container-low": "#f4f4e9",
+                    "inverse-surface": "#2f312a",
+                    "outline": "#6f7a74",
+                    "inverse-primary": "#71daab",
+                    "background": "#fafaee",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#006c4b",
+                    "on-secondary-container": "#004086",
+                    "tertiary-fixed-dim": "#afd27c",
+                    "on-primary-container": "#83ecbb",
+                    "surface-variant": "#e3e3d8",
+                    "on-surface-variant": "#3e4944",
+                    "surface-container-high": "#e8e9dd",
+                    "on-tertiary-container": "#c0e48c",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-container": "#49671e",
+                    "on-primary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#eeefe3",
+                    "surface-container-highest": "#e3e3d8",
+                    "on-secondary-fixed-variant": "#07458e",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#111f00",
+                    "primary": "#005137",
+                    "tertiary": "#334e06",
+                    "outline-variant": "#bec9c3",
+                    "on-primary-fixed-variant": "#005137",
+                    "primary-fixed-dim": "#71daab",
+                    "secondary-fixed": "#d7e2ff",
+                    "secondary": "#2d5da7",
+                    "primary-container": "#006c4a",
+                    "tertiary-fixed": "#caef96",
+                    "on-background": "#1a1c15"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #fafaee; color: #1a1c15; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-background text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-[#f4f4e9] dark:bg-stone-900 flex flex-col h-full py-6 z-50">
+<div class="px-6 mb-8">
+<h1 class="text-xl font-bold tracking-tight text-[#006B54] dark:text-[#00a884]">Editorial Agronomy</h1>
+<p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mt-1">Crop Intelligence</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center px-4 py-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200 rounded-xl group" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center px-4 py-3 text-[#006B54] dark:text-[#00a884] font-bold border-r-4 border-[#006B54] bg-[#eeefe3] dark:bg-stone-800 transition-all duration-150 rounded-l-xl" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="database" style="font-variation-settings: 'FILL' 1;">database</span>
+                Kelola Data
+            </a>
+<a class="flex items-center px-4 py-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="psychology">psychology</span>
+                Proses Rekomendasi
+            </a>
+<a class="flex items-center px-4 py-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="assessment">assessment</span>
+                Hasil Rekomendasi
+            </a>
+</nav>
+<div class="px-4 mt-auto pt-6 border-t border-outline-variant/10">
+<a class="flex items-center px-4 py-3 text-[#3e4944] font-medium hover:bg-[#eeefe3] transition-colors duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+                Settings
+            </a>
+<a class="flex items-center px-4 py-3 text-error font-medium hover:bg-error-container/20 transition-colors duration-200 rounded-xl mt-1" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Top AppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 z-40 bg-[#fafaee]/80 dark:bg-stone-950/80 backdrop-blur-md flex justify-between items-center px-8 w-full">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/50" placeholder="Cari data agronomi..." type="text"/>
+</div>
+<div class="flex items-center space-x-6">
+<button class="text-on-surface-variant hover:text-primary transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="flex items-center space-x-3 ml-2 pl-6 border-l border-outline-variant/20">
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface">Admin User</p>
+<p class="text-[10px] text-on-surface-variant">SUPERVISOR</p>
+</div>
+<img alt="Admin Profile" class="w-8 h-8 rounded-full border-2 border-primary-container" data-alt="professional portrait of a man in business attire for an administrative dashboard profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbB5Sz0C-czWMa-qKfLebtg9Iau2gehThL4IrYm5gtMqvSAaxzI8OTlw-2jHknzH4E-sCutCbSJweH-gZN9dHvAO-uWFTprM_jinypw8c0L-1SwNTjK4j5KXoZtU0ezZ7Cimr2JdPWaBSwYdS84fMNtLvL3sbjiRs2kguOp4baPde73npBgGm_vJAp4sCiJcsyWXIVkbTGKa59y1U8hCk_PstzHKzT0lVf1gC9iMCTnbZqL4LQolJISeXdmJHAdAmLaNbJQwHr7lm-"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 pb-12 px-8 min-h-screen">
+<!-- Page Header -->
+<div class="mb-8">
+<h2 class="text-3xl font-extrabold text-on-surface tracking-tight">Kelola Data Agronomi</h2>
+<p class="text-on-surface-variant mt-1">Manajemen input dan pemantauan variabel lingkungan tanaman</p>
+</div>
+<!-- Success Notification -->
+<div class="mb-6 flex items-center bg-tertiary-fixed text-on-tertiary-fixed px-6 py-4 rounded-xl shadow-sm border-l-4 border-tertiary">
+<span class="material-symbols-outlined mr-3" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-semibold tracking-wide">Data Berhasil Disimpan</span>
+<button class="ml-auto opacity-70 hover:opacity-100">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Form Section -->
+<section class="bg-surface-container-low rounded-3xl p-8 mb-8 relative overflow-hidden">
+<!-- Decorative Gradient Soul -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary/10 to-secondary-container/20 rounded-bl-full pointer-events-none"></div>
+<div class="flex items-center mb-6">
+<span class="material-symbols-outlined text-primary mr-2" data-icon="add_box">add_box</span>
+<h3 class="text-xl font-bold text-on-surface">Input Data Baru</h3>
+</div>
+<form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Periode</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" type="month"/>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Kecamatan</label>
+<select class="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4">
+<option>Pilih Kecamatan</option>
+<option>Sukomanunggal</option>
+<option>Wonokromo</option>
+<option>Gubeng</option>
+</select>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M (°C)</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="28.5" step="0.1" type="number"/>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M_MAX (°C)</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="32.0" step="0.1" type="number"/>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M_MIN (°C)</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="24.2" step="0.1" type="number"/>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">RH2M (%)</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="85" step="1" type="number"/>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">PRECTOT (mm)</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="12.5" step="0.1" type="number"/>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">WS2M (m/s)</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="2.4" step="0.1" type="number"/>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Luas Panen (Ha)</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="1250" step="1" type="number"/>
+</div>
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Produksi (Ton)</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="45000" step="1" type="number"/>
+</div>
+<div class="lg:col-span-5 flex justify-end mt-2">
+<button class="px-8 py-3 text-secondary font-semibold hover:bg-secondary/5 rounded-xl transition-colors mr-4" type="reset">Reset</button>
+<button class="px-10 py-3 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl active:scale-95 transition-transform" type="submit">Simpan Data</button>
+</div>
+</form>
+</section>
+<!-- Table Section -->
+<section class="bg-surface-container-lowest rounded-3xl overflow-hidden">
+<div class="p-8 border-b border-surface-container-low flex justify-between items-center">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-primary mr-2" data-icon="table_rows">table_rows</span>
+<h3 class="text-xl font-bold text-on-surface">Data Histori Agronomi</h3>
+</div>
+<div class="flex space-x-2">
+<button class="flex items-center px-4 py-2 bg-surface-container-high rounded-lg text-sm font-medium hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="filter_list">filter_list</span>
+                        Filter
+                    </button>
+<button class="flex items-center px-4 py-2 bg-surface-container-high rounded-lg text-sm font-medium hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="download">download</span>
+                        Export CSV
+                    </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low/30">
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Periode</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Kecamatan</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M_MAX</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M_MIN</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">RH2M</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">PRECTOT</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">WS2M</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider text-right">L. Panen</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider text-right">Produksi</th>
+<th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider text-center">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low">
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="px-6 py-5 font-semibold text-sm">Januari 2024</td>
+<td class="px-6 py-5 text-sm">Sukomanunggal</td>
+<td class="px-6 py-5 text-sm">28.2°</td>
+<td class="px-6 py-5 text-sm">31.5°</td>
+<td class="px-6 py-5 text-sm">25.0°</td>
+<td class="px-6 py-5 text-sm">82%</td>
+<td class="px-6 py-5 text-sm">11.2</td>
+<td class="px-6 py-5 text-sm">3.1</td>
+<td class="px-6 py-5 text-sm text-right">1,420 Ha</td>
+<td class="px-6 py-5 text-sm text-right">52,100 Ton</td>
+<td class="px-6 py-5">
+<div class="flex justify-center space-x-2">
+<button class="p-2 text-secondary hover:bg-secondary-container/20 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+<button class="p-2 text-error hover:bg-error-container/40 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-6 py-5 font-semibold text-sm">Februari 2024</td>
+<td class="px-6 py-5 text-sm">Wonokromo</td>
+<td class="px-6 py-5 text-sm">27.8°</td>
+<td class="px-6 py-5 text-sm">30.2°</td>
+<td class="px-6 py-5 text-sm">24.5°</td>
+<td class="px-6 py-5 text-sm">88%</td>
+<td class="px-6 py-5 text-sm">15.8</td>
+<td class="px-6 py-5 text-sm">2.8</td>
+<td class="px-6 py-5 text-sm text-right">850 Ha</td>
+<td class="px-6 py-5 text-sm text-right">31,400 Ton</td>
+<td class="px-6 py-5">
+<div class="flex justify-center space-x-2">
+<button class="p-2 text-secondary hover:bg-secondary-container/20 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+<button class="p-2 text-error hover:bg-error-container/40 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high transition-colors">
+<td class="px-6 py-5 font-semibold text-sm">Maret 2024</td>
+<td class="px-6 py-5 text-sm">Gubeng</td>
+<td class="px-6 py-5 text-sm">28.5°</td>
+<td class="px-6 py-5 text-sm">32.1°</td>
+<td class="px-6 py-5 text-sm">25.5°</td>
+<td class="px-6 py-5 text-sm">80%</td>
+<td class="px-6 py-5 text-sm">8.4</td>
+<td class="px-6 py-5 text-sm">3.5</td>
+<td class="px-6 py-5 text-sm text-right">2,100 Ha</td>
+<td class="px-6 py-5 text-sm text-right">76,800 Ton</td>
+<td class="px-6 py-5">
+<div class="flex justify-center space-x-2">
+<button class="p-2 text-secondary hover:bg-secondary-container/20 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+<button class="p-2 text-error hover:bg-error-container/40 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-8 py-6 flex items-center justify-between border-t border-surface-container-low">
+<p class="text-sm text-on-surface-variant font-medium">Menampilkan 3 dari 124 data</p>
+<div class="flex space-x-1">
+<button class="px-4 py-2 text-sm font-semibold text-on-surface-variant opacity-50 cursor-not-allowed">Sebelumnya</button>
+<button class="px-4 py-2 text-sm font-bold bg-primary text-white rounded-lg">1</button>
+<button class="px-4 py-2 text-sm font-semibold text-on-surface hover:bg-surface-container-high rounded-lg">2</button>
+<button class="px-4 py-2 text-sm font-semibold text-on-surface hover:bg-surface-container-high rounded-lg">3</button>
+<button class="px-4 py-2 text-sm font-semibold text-primary">Selanjutnya</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button (Contextual for New Record) -->
+<button class="fixed bottom-8 right-8 bg-gradient-to-br from-primary to-primary-container text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform z-50">
+<span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
+</button>
+</body></html>
