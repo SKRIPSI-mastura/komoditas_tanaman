@@ -1,63 +1,24 @@
+import { Sidebar } from "@/components/Sidebar";
+
 export default function Page() {
   return (
     <div className="text-on-surface">
       
-{/* SideNavBar */}
-<aside className="h-screen w-64 fixed left-0 top-0 bg-[#f4f4e9] flex flex-col py-6">
-<div className="px-6 mb-10">
-<h1 className="text-xl font-bold tracking-tight text-[#006B54]">Editorial Agronomy</h1>
-<p className="text-xs font-medium text-on-surface-variant/70 uppercase tracking-widest">Crop Intelligence</p>
-</div>
-<nav className="flex-1 space-y-1">
-<a className="flex items-center px-6 py-3 text-[#3e4944] font-medium hover:bg-[#eeefe3] transition-colors duration-200" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
-                Dashboard
-            </a>
-<a className="flex items-center px-6 py-3 text-[#3e4944] font-medium hover:bg-[#eeefe3] transition-colors duration-200" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="database">database</span>
-                Kelola Data
-            </a>
-<a className="flex items-center px-6 py-3 text-[#3e4944] font-medium hover:bg-[#eeefe3] transition-colors duration-200" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="psychology">psychology</span>
-                Proses Rekomendasi
-            </a>
-<a className="flex items-center px-6 py-3 text-[#006B54] font-bold border-r-4 border-[#006B54] bg-[#eeefe3]" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="assessment">assessment</span>
-                Hasil Rekomendasi
-            </a>
-</nav>
-<div className="px-6 mt-auto pt-6 space-y-1">
-<a className="flex items-center py-2 text-[#3e4944] font-medium hover:text-[#006B54] transition-colors" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="settings">settings</span>
-                Settings
-            </a>
-<a className="flex items-center py-2 text-[#3e4944] font-medium hover:text-[#ba1a1a] transition-colors" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="logout">logout</span>
-                Logout
-            </a>
-</div>
-</aside>
+<Sidebar />
 {/* TopNavBar */}
-<header className="fixed top-0 right-0 left-64 h-16 z-40 bg-[#fafaee]/80 backdrop-blur-md flex justify-between items-center px-8" style="box-shadow: 0 12px 32px rgba(26, 28, 21, 0.06);">
-<div className="flex items-center bg-surface-container-highest px-4 py-2 rounded-xl w-96">
-<span className="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
-<input className="bg-transparent border-none focus:ring-0 text-sm w-full" placeholder="Search insights..." type="text" />
+<header className="fixed top-0 right-0 left-64 h-16 z-40 bg-[#fafaee]/60 backdrop-blur-xl flex justify-between items-center px-8 border-b border-[#006B54]/5">
+<div className="flex items-center bg-white/50 backdrop-blur-md border border-[#006B54]/10 px-4 py-2 rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-[#006B54]/20 transition-all w-96">
+<span className="material-symbols-outlined text-on-surface-variant/40 mr-2" data-icon="search">search</span>
+<input className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder-on-surface-variant/40 font-medium" placeholder="Search insights and analysis..." type="text" />
 </div>
 <div className="flex items-center space-x-6">
-<button className="relative text-on-surface-variant hover:text-primary transition-transform active:scale-95">
+<button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-outline-variant/10 text-on-surface-variant hover:text-[#006B54] transition-all active:scale-95 relative">
 <span className="material-symbols-outlined" data-icon="notifications">notifications</span>
-<span className="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+<span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#ba1a1a] rounded-full border-2 border-white"></span>
 </button>
-<button className="text-on-surface-variant hover:text-primary transition-transform active:scale-95">
+<button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white shadow-sm border border-outline-variant/10 text-on-surface-variant hover:text-[#006B54] transition-all active:scale-95">
 <span className="material-symbols-outlined" data-icon="help">help</span>
 </button>
-<div className="flex items-center space-x-3 pl-4 border-l border-outline-variant/20">
-<div className="text-right">
-<p className="text-xs font-bold text-on-surface leading-none">Admin Profile</p>
-<p className="text-[10px] text-on-surface-variant uppercase tracking-tighter">Chief Agronomist</p>
-</div>
-<img className="w-10 h-10 rounded-full object-cover border-2 border-surface-container-highest" data-alt="close-up portrait of a professional agronomist in a clean field setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYehe5BiuR6MJQzAn3EwPkfNltJVGesOxsFC7v0-a0p0pI_RYMVzk27Y7l5HDwSalfQpVqpmSbsRXBPSXqyq8DzzNovW8b4wHEK9SST031TX1w5J2rHXDOJc5P5Z-_QSbIDxBDaWDBdWzxI_4LjGVuN8eH3tHw7gwXd2A0vJMqaWVn_2IfWRb7EdZ9zTK7t5h3688dsR7-BXjlvaZMlx78ySdf9JO33CxHtm_i-xPhGIUsxDBJxoFefg3teIGp_iBUUPSDQb3wb_dT" />
-</div>
 </div>
 </header>
 {/* Main Content */}
@@ -128,7 +89,7 @@ export default function Page() {
 </div>
 <p className="text-3xl font-black text-on-surface">0.023</p>
 <div className="mt-2 w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
-<div className="bg-primary h-full" style="width: 92%"></div>
+<div className="bg-primary h-full" style={{ width: "92%" }}></div>
 </div>
 </div>
 <div className="p-4 bg-surface-container-lowest rounded-xl">

@@ -1,64 +1,12 @@
+import { Sidebar } from "@/components/Sidebar";
+import { Header } from "@/components/Header";
+
 export default function Page() {
   return (
     <div className="bg-background text-on-surface">
       
-{/* Sidebar Navigation */}
-<aside className="h-screen w-64 fixed left-0 top-0 bg-[#f4f4e9] dark:bg-stone-900 flex flex-col h-full py-6 z-50">
-<div className="px-6 mb-8">
-<h1 className="text-xl font-bold tracking-tight text-[#006B54] dark:text-[#00a884]">Editorial Agronomy</h1>
-<p className="text-xs font-medium text-on-surface-variant uppercase tracking-widest mt-1">Crop Intelligence</p>
-</div>
-<nav className="flex-1 px-4 space-y-1">
-<a className="flex items-center px-4 py-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200 rounded-xl group" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
-                Dashboard
-            </a>
-<a className="flex items-center px-4 py-3 text-[#006B54] dark:text-[#00a884] font-bold border-r-4 border-[#006B54] bg-[#eeefe3] dark:bg-stone-800 transition-all duration-150 rounded-l-xl" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="database" style="font-variation-settings: 'FILL' 1;">database</span>
-                Kelola Data
-            </a>
-<a className="flex items-center px-4 py-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200 rounded-xl" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="psychology">psychology</span>
-                Proses Rekomendasi
-            </a>
-<a className="flex items-center px-4 py-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200 rounded-xl" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="assessment">assessment</span>
-                Hasil Rekomendasi
-            </a>
-</nav>
-<div className="px-4 mt-auto pt-6 border-t border-outline-variant/10">
-<a className="flex items-center px-4 py-3 text-[#3e4944] font-medium hover:bg-[#eeefe3] transition-colors duration-200 rounded-xl" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="settings">settings</span>
-                Settings
-            </a>
-<a className="flex items-center px-4 py-3 text-error font-medium hover:bg-error-container/20 transition-colors duration-200 rounded-xl mt-1" href="#">
-<span className="material-symbols-outlined mr-3" data-icon="logout">logout</span>
-                Logout
-            </a>
-</div>
-</aside>
-{/* Top AppBar */}
-<header className="fixed top-0 right-0 left-64 h-16 z-40 bg-[#fafaee]/80 dark:bg-stone-950/80 backdrop-blur-md flex justify-between items-center px-8 w-full">
-<div className="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96">
-<span className="material-symbols-outlined text-on-surface-variant text-sm mr-2" data-icon="search">search</span>
-<input className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/50" placeholder="Cari data agronomi..." type="text" />
-</div>
-<div className="flex items-center space-x-6">
-<button className="text-on-surface-variant hover:text-primary transition-transform active:scale-95">
-<span className="material-symbols-outlined" data-icon="notifications">notifications</span>
-</button>
-<button className="text-on-surface-variant hover:text-primary transition-transform active:scale-95">
-<span className="material-symbols-outlined" data-icon="help">help</span>
-</button>
-<div className="flex items-center space-x-3 ml-2 pl-6 border-l border-outline-variant/20">
-<div className="text-right">
-<p className="text-xs font-bold text-on-surface">Admin User</p>
-<p className="text-[10px] text-on-surface-variant">SUPERVISOR</p>
-</div>
-<img alt="Admin Profile" className="w-8 h-8 rounded-full border-2 border-primary-container" data-alt="professional portrait of a man in business attire for an administrative dashboard profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbB5Sz0C-czWMa-qKfLebtg9Iau2gehThL4IrYm5gtMqvSAaxzI8OTlw-2jHknzH4E-sCutCbSJweH-gZN9dHvAO-uWFTprM_jinypw8c0L-1SwNTjK4j5KXoZtU0ezZ7Cimr2JdPWaBSwYdS84fMNtLvL3sbjiRs2kguOp4baPde73npBgGm_vJAp4sCiJcsyWXIVkbTGKa59y1U8hCk_PstzHKzT0lVf1gC9iMCTnbZqL4LQolJISeXdmJHAdAmLaNbJQwHr7lm-" />
-</div>
-</div>
-</header>
+<Sidebar />
+<Header />
 {/* Main Content */}
 <main className="ml-64 pt-24 pb-12 px-8 min-h-screen">
 {/* Page Header */}
@@ -68,7 +16,7 @@ export default function Page() {
 </div>
 {/* Success Notification */}
 <div className="mb-6 flex items-center bg-tertiary-fixed text-on-tertiary-fixed px-6 py-4 rounded-xl shadow-sm border-l-4 border-tertiary">
-<span className="material-symbols-outlined mr-3" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span className="material-symbols-outlined mr-3" data-icon="check_circle" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
 <span className="font-semibold tracking-wide">Data Berhasil Disimpan</span>
 <button className="ml-auto opacity-70 hover:opacity-100">
 <span className="material-symbols-outlined" data-icon="close">close</span>

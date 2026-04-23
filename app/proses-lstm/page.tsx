@@ -1,63 +1,12 @@
+import { Sidebar } from "@/components/Sidebar";
+import { Header } from "@/components/Header";
+
 export default function Page() {
   return (
     <div className="bg-background text-on-surface">
       
-{/* SideNavBar */}
-<aside className="h-screen w-64 fixed left-0 top-0 bg-[#f4f4e9] dark:bg-stone-900 flex flex-col py-6 z-50">
-<div className="px-6 mb-10">
-<h1 className="text-xl font-bold tracking-tight text-[#006B54] dark:text-[#00a884]">Editorial Agronomy</h1>
-<p className="text-xs font-medium text-on-surface-variant tracking-wide">Crop Intelligence</p>
-</div>
-<nav className="flex-1 space-y-1">
-<a className="flex items-center px-6 py-3 space-x-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200" href="#">
-<span className="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-<span className="text-sm">Dashboard</span>
-</a>
-<a className="flex items-center px-6 py-3 space-x-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200" href="#">
-<span className="material-symbols-outlined" data-icon="database">database</span>
-<span className="text-sm">Kelola Data</span>
-</a>
-<a className="flex items-center px-6 py-3 space-x-3 text-[#006B54] dark:text-[#00a884] font-bold border-r-4 border-[#006B54] transition-all duration-150" href="#">
-<span className="material-symbols-outlined" data-icon="psychology" style="font-variation-settings: 'FILL' 1;">psychology</span>
-<span className="text-sm">Proses Rekomendasi</span>
-</a>
-<a className="flex items-center px-6 py-3 space-x-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200" href="#">
-<span className="material-symbols-outlined" data-icon="assessment">assessment</span>
-<span className="text-sm">Hasil Rekomendasi</span>
-</a>
-</nav>
-<div className="px-6 pt-6 border-t border-outline-variant/10">
-<div className="flex items-center space-x-3 mb-6">
-<img alt="Admin Avatar" className="w-10 h-10 rounded-full object-cover" data-alt="professional portrait of an agronomist expert with a warm smile and neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDe-ajgCniTsfCgv9Wy3yI6dcBv1u6tT0v4baMxNj3DIcFShlmNtbvGxXtQyRPvvVc_mLGq7TUNnvQvtmjHKTx2o3eISQ6FfdZD2JbV_5-U6FF2H4BoTwRdQ52yiBiknORZ4GUzKP0_NGABguWl_yLF1gDOSG3-hdQ0MHO39Z1LdMNKaQOQBx1Gnw6jH4JIf545NhZHaBAIegwDbvMyeWXzt08w8xB_oSrUS8M15Lwlm5sbwgytV0rTAkL0LjZwyl7dnjqEbsTbYnOw" />
-<div>
-<p className="text-sm font-bold text-on-surface">Dr. Agron</p>
-<p className="text-[10px] text-on-surface-variant uppercase tracking-tighter">System Admin</p>
-</div>
-</div>
-<a className="flex items-center space-x-3 text-[#3e4944] py-2 hover:text-primary transition-colors" href="#">
-<span className="material-symbols-outlined" data-icon="settings">settings</span>
-<span className="text-sm font-medium">Settings</span>
-</a>
-<a className="flex items-center space-x-3 text-[#3e4944] py-2 hover:text-error transition-colors" href="#">
-<span className="material-symbols-outlined" data-icon="logout">logout</span>
-<span className="text-sm font-medium">Logout</span>
-</a>
-</div>
-</aside>
-{/* TopNavBar */}
-<header className="fixed top-0 right-0 left-64 h-16 z-40 bg-[#fafaee]/80 dark:bg-stone-950/80 backdrop-blur-md flex justify-between items-center px-8 w-full shadow-[0_12px_32px_rgba(26,28,21,0.06)]">
-<div className="flex items-center gap-4">
-<span className="text-lg font-black text-[#1a1c15] dark:text-stone-100 uppercase tracking-widest">Agronomy LSTM</span>
-</div>
-<div className="flex items-center space-x-6">
-<button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" data-icon="notifications">notifications</button>
-<button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" data-icon="help">help</button>
-<div className="h-8 w-[1px] bg-outline-variant/20"></div>
-<div className="flex items-center space-x-3">
-<span className="text-xs font-bold tracking-widest uppercase text-on-surface-variant">Active Instance: ID-992</span>
-</div>
-</div>
-</header>
+<Sidebar />
+<Header title="LSTM Engine" subtitle="Control Panel" />
 {/* Main Content */}
 <main className="ml-64 pt-16 min-h-screen bg-background p-8">
 <div className="max-w-6xl mx-auto space-y-8">
@@ -113,7 +62,7 @@ export default function Page() {
 <div className="bg-surface-container-low p-1 rounded-xl">
 <div className="bg-surface-container-lowest rounded-lg p-10 flex flex-col items-center justify-center text-center space-y-6 border border-outline-variant/5">
 <div className="w-20 h-20 bg-surface-container flex items-center justify-center rounded-full">
-<span className="material-symbols-outlined text-4xl text-primary" data-icon="play_circle" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+<span className="material-symbols-outlined text-4xl text-primary" data-icon="play_circle" style={{ fontVariationSettings: "'FILL' 1" }}>play_circle</span>
 </div>
 <div>
 <h3 className="text-2xl font-extrabold text-on-surface">Ready for Initialization</h3>
@@ -179,7 +128,7 @@ export default function Page() {
 <div className="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/10">
 <div className="flex justify-between items-start mb-4">
 <span className="text-[10px] font-bold uppercase text-on-surface-variant tracking-widest">System Health</span>
-<span className="text-tertiary material-symbols-outlined" data-icon="memory" style="font-variation-settings: 'FILL' 1;">memory</span>
+<span className="text-tertiary material-symbols-outlined" data-icon="memory" style={{ fontVariationSettings: "'FILL' 1" }}>memory</span>
 </div>
 <div className="flex items-end space-x-1 h-8">
 <div className="w-full bg-tertiary/20 h-4 rounded-sm"></div>

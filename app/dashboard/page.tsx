@@ -1,72 +1,12 @@
+import { Sidebar } from "@/components/Sidebar";
+import { Header } from "@/components/Header";
+
 export default function Page() {
   return (
     <div className="bg-background text-on-surface">
       
-{/* SideNavBar */}
-<aside className="h-screen w-64 fixed left-0 top-0 bg-[#f4f4e9] dark:bg-stone-900 flex flex-col py-6 z-50">
-<div className="px-6 mb-10">
-<h2 className="text-xl font-bold tracking-tight text-[#006B54] dark:text-[#00a884]">Editorial Agronomy</h2>
-<p className="text-xs font-medium text-on-surface-variant/70 uppercase tracking-widest mt-1">Crop Intelligence</p>
-</div>
-<nav className="flex-1 flex flex-col space-y-1">
-<a className="flex items-center px-6 py-3 space-x-3 text-[#006B54] dark:text-[#00a884] font-bold border-r-4 border-[#006B54] bg-[#eeefe3] transition-all duration-150" href="#">
-<span className="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-<span className="font-body text-sm">Dashboard</span>
-</a>
-<a className="flex items-center px-6 py-3 space-x-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200" href="#">
-<span className="material-symbols-outlined" data-icon="database">database</span>
-<span className="font-body text-sm">Kelola Data</span>
-</a>
-<a className="flex items-center px-6 py-3 space-x-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200" href="#">
-<span className="material-symbols-outlined" data-icon="psychology">psychology</span>
-<span className="font-body text-sm">Proses Rekomendasi</span>
-</a>
-<a className="flex items-center px-6 py-3 space-x-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] dark:hover:bg-stone-800 transition-colors duration-200" href="#">
-<span className="material-symbols-outlined" data-icon="assessment">assessment</span>
-<span className="font-body text-sm">Hasil Rekomendasi</span>
-</a>
-</nav>
-<div className="mt-auto px-6 space-y-1">
-<a className="flex items-center py-3 space-x-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] transition-colors duration-200" href="#">
-<span className="material-symbols-outlined" data-icon="settings">settings</span>
-<span className="font-body text-sm">Settings</span>
-</a>
-<a className="flex items-center py-3 space-x-3 text-[#3e4944] dark:text-stone-400 font-medium hover:bg-[#eeefe3] transition-colors duration-200" href="#">
-<span className="material-symbols-outlined" data-icon="logout">logout</span>
-<span className="font-body text-sm">Logout</span>
-</a>
-<div className="mt-6 pt-6 border-t border-outline-variant/10 flex items-center space-x-3">
-<img alt="Admin Avatar" className="w-10 h-10 rounded-full bg-surface-container-highest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbtdwaBkH_pEAHF_ARgc0orbTbGHRHqKPWj5mbDF3hkTUvHHf5eYA5oP7SHKwkS1KvG0mlG4StBn8ynIZLu84n8bxR4tHpidUmnj6liJDC92iROb1zRrJCjOXu0csZW10DSqf40lVI1rct0F7_kHvd3cu4Ql5RoGOH7ENRq4DX1ZZHWPNFXXIhpLz6_reOHHJRp0KGApANhlSUwzS3Cg5w8KG5RfR4KDDY5Ns8btrrKyJdfeQXGlBs_n8gKdZnVintVhwuDmpwuOZy" />
-<div>
-<p className="text-sm font-bold text-on-surface">Admin Utama</p>
-<p className="text-xs text-on-surface-variant">System Overseer</p>
-</div>
-</div>
-</div>
-</aside>
-{/* TopNavBar */}
-<header className="fixed top-0 right-0 left-64 h-16 z-40 bg-[#fafaee]/80 backdrop-blur-md flex justify-between items-center px-8 shadow-[0_12px_32px_rgba(26,28,21,0.06)]">
-<div className="flex items-center space-x-4">
-<div className="bg-surface-container-highest flex items-center px-4 py-1.5 rounded-full">
-<span className="material-symbols-outlined text-on-surface-variant text-sm mr-2" data-icon="search">search</span>
-<input className="bg-transparent border-none focus:ring-0 text-sm w-64 placeholder-on-surface-variant/50" placeholder="Cari data agronomi..." type="text" />
-</div>
-</div>
-<div className="flex items-center space-x-6">
-<span className="text-[#1a1c15] font-black text-lg tracking-tight">Agronomy LSTM</span>
-<div className="flex items-center space-x-4 text-on-surface-variant">
-<button className="hover:text-[#005137] transition-transform active:scale-95">
-<span className="material-symbols-outlined" data-icon="notifications">notifications</span>
-</button>
-<button className="hover:text-[#005137] transition-transform active:scale-95">
-<span className="material-symbols-outlined" data-icon="help">help</span>
-</button>
-<div className="w-8 h-8 rounded-full overflow-hidden bg-surface-container shadow-sm">
-<img alt="Admin Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDukp-w77fL6oXyslLLzC0znihRUlmPeS9ZZZ-38wLY_DPdWfk9WLsI-1tjoflTMa-jLo76O87v0HikFdyLH4wY1APTmmbMTfMTfg4ezDakJQ5RzeEqTsoFwO0L1LzJiaynaN3rLjK748b9CYlbbqTMv7ASryy65gn86TaNW6vyTf9FUvjYD4AGDhkOEIVTqELUzPhBQfZKhFufslKKJkxVbfOcegb76maLReq-Nje4pq61RvB2MguwH3zOlXehDKNXHvf-cJoPtwEE" />
-</div>
-</div>
-</div>
-</header>
+<Sidebar />
+<Header />
 {/* Main Content */}
 <main className="ml-64 pt-24 pb-12 px-8 min-h-screen">
 {/* Welcome Header */}
@@ -128,41 +68,10 @@ export default function Page() {
 </div>
 </div>
 </section>
-{/* Dynamic Visualization Section */}
-<section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-{/* Main Chart Card */}
-<div className="lg:col-span-2 bg-surface-container-low p-8 rounded-xl">
-<div className="flex items-center justify-between mb-8">
-<div>
-<h2 className="text-xl font-bold text-on-surface">Proyeksi Hasil Panen</h2>
-<p className="text-on-surface-variant text-sm">Berdasarkan pemrosesan LSTM 24 jam terakhir</p>
-</div>
-<select className="bg-surface-container-highest border-none text-xs rounded-lg px-4 py-2 focus:ring-1 focus:ring-primary/40 font-bold">
-<option>7 Hari Terakhir</option>
-<option>30 Hari Terakhir</option>
-</select>
-</div>
-<div className="aspect-[16/7] w-full bg-surface-container-lowest rounded-lg relative flex items-end p-6 overflow-hidden">
-{/* Placeholder for high-end visual graph */}
-<div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(#005137 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-<div className="w-full h-full flex items-end justify-between gap-2 relative z-10">
-<div className="w-full bg-primary/20 h-[40%] rounded-t-sm"></div>
-<div className="w-full bg-primary/40 h-[60%] rounded-t-sm"></div>
-<div className="w-full bg-primary/30 h-[55%] rounded-t-sm"></div>
-<div className="w-full bg-primary/60 h-[80%] rounded-t-sm"></div>
-<div className="w-full bg-primary/50 h-[65%] rounded-t-sm"></div>
-<div className="w-full bg-primary/80 h-[95%] rounded-t-sm"></div>
-<div className="w-full bg-primary h-[85%] rounded-t-sm"></div>
-<div className="w-full bg-primary/40 h-[45%] rounded-t-sm"></div>
-<div className="w-full bg-primary/60 h-[70%] rounded-t-sm"></div>
-<div className="w-full bg-primary/90 h-[100%] rounded-t-sm"></div>
-</div>
-</div>
-</div>
-{/* Health Gauge / Weather Sidebar */}
-<div className="space-y-8">
+{/* Health & Environment Section */}
+<section className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
 {/* Health Gauge */}
-<div className="bg-surface-container-lowest p-8 rounded-xl">
+<div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow">
 <h3 className="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-6">Indeks Kesehatan Tanah</h3>
 <div className="flex flex-col items-center py-4">
 <div className="relative w-40 h-40 flex items-center justify-center">
@@ -179,8 +88,9 @@ export default function Page() {
 <p className="text-center text-on-surface-variant text-sm mt-6">Kondisi hara dan kelembapan di wilayah utama stabil.</p>
 </div>
 </div>
+
 {/* Environment Chip Card */}
-<div className="bg-primary p-8 rounded-xl text-white relative overflow-hidden">
+<div className="bg-primary p-8 rounded-xl text-white relative overflow-hidden shadow-lg hover:brightness-105 transition-all">
 <div className="absolute -right-4 -bottom-4 opacity-10">
 <span className="material-symbols-outlined text-9xl" data-icon="eco">eco</span>
 </div>
@@ -195,6 +105,9 @@ export default function Page() {
 <p className="text-xl font-bold">4.2</p>
 </div>
 </div>
+<div className="mt-6 flex items-center space-x-2">
+<span className="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+<span className="text-xs font-medium opacity-90">Pemantauan Real-time Wilayah Utama</span>
 </div>
 </div>
 </section>
