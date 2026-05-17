@@ -1,194 +1,263 @@
+"use client";
+
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function Page() {
+  const [showNotification, setShowNotification] = useState(true);
+
+  // Mock data for recent activities
+  const recentActivities = [
+    { id: "#AGR-1092", kecamatan: "Lhoksukon", komoditas: "Padi", kecocokan: "98.2%", status: "Sukses", tanggal: "17 Mei 2026" },
+    { id: "#AGR-1091", kecamatan: "Tanah Luas", komoditas: "Jagung", kecocokan: "89.4%", status: "Sukses", tanggal: "16 Mei 2026" },
+    { id: "#AGR-1090", kecamatan: "Cot Girek", komoditas: "Kedelai", kecocokan: "74.1%", status: "Sukses", tanggal: "15 Mei 2026" },
+    { id: "#AGR-1089", kecamatan: "Dewantara", komoditas: "Padi", kecocokan: "88.7%", status: "Sukses", tanggal: "14 Mei 2026" },
+  ];
+
   return (
-    <div className="bg-background text-on-surface">
+    <div className="bg-stone-50 dark:bg-stone-950 text-stone-800 dark:text-stone-100 min-h-screen">
+      <Sidebar />
+      <Header title="Dashboard" subtitle="Sistem Informasi Rekomendasi Tanaman Pangan" />
       
-<Sidebar />
-<Header />
-{/* Main Content */}
-<main className="ml-64 pt-24 pb-12 px-8 min-h-screen">
-{/* Welcome Header */}
-<section className="mb-10">
-<div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-<div>
-<p className="text-primary font-bold text-sm uppercase tracking-widest mb-1 font-label">Dashboard Overview</p>
-<h1 className="text-4xl font-extrabold text-on-surface tracking-tight">Selamat Datang, Admin</h1>
-<p className="text-on-surface-variant mt-2 max-w-2xl font-body">Pantau kesehatan ekosistem pertanian dan optimalkan hasil panen melalui kecerdasan buatan berbasis LSTM.</p>
-</div>
-<div className="flex space-x-3">
-<button className="bg-primary hover:bg-primary-container text-white px-6 py-3 rounded-xl font-bold flex items-center space-x-2 transition-all">
-<span className="material-symbols-outlined text-lg" data-icon="add">add</span>
-<span>Input Data Baru</span>
-</button>
-</div>
-</div>
-</section>
-{/* Bento Grid Statistics */}
-<section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-{/* Total Data */}
-<div className="md:col-span-2 bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden flex flex-col justify-between min-h-[220px]">
-<div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-secondary/10 to-transparent rounded-bl-full"></div>
-<div>
-<span className="material-symbols-outlined text-primary mb-4 p-3 bg-primary/5 rounded-lg" data-icon="database">database</span>
-<h3 className="text-on-surface-variant text-sm font-bold uppercase tracking-wider">Total Data Terinput</h3>
-</div>
-<div className="mt-4">
-<div className="text-5xl font-black text-primary font-headline">1,240</div>
-<p className="text-tertiary font-medium text-sm mt-2 flex items-center">
-<span className="material-symbols-outlined text-xs mr-1" data-icon="trending_up">trending_up</span>
-                        +12% dibanding bulan lalu
-                    </p>
-</div>
-</div>
-{/* Status Sistem */}
-<div className="bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between">
-<div>
-<span className="material-symbols-outlined text-tertiary mb-4 p-3 bg-tertiary/5 rounded-lg" data-icon="dynamic_feed">dynamic_feed</span>
-<h3 className="text-on-surface-variant text-sm font-bold uppercase tracking-wider">Status Sistem</h3>
-</div>
-<div className="mt-auto">
-<div className="flex items-center space-x-2 mb-2">
-<div className="w-3 h-3 bg-tertiary rounded-full animate-pulse"></div>
-<span className="text-2xl font-bold text-on-surface">Aktif</span>
-</div>
-<p className="text-on-surface-variant text-xs">Semua sensor LSTM beroperasi normal.</p>
-</div>
-</div>
-{/* Wilayah Terdaftar */}
-<div className="bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between">
-<div>
-<span className="material-symbols-outlined text-secondary mb-4 p-3 bg-secondary/5 rounded-lg" data-icon="map">map</span>
-<h3 className="text-on-surface-variant text-sm font-bold uppercase tracking-wider">Wilayah</h3>
-</div>
-<div className="mt-auto">
-<div className="text-4xl font-black text-on-surface">15</div>
-<p className="text-on-surface-variant text-sm mt-1">Kecamatan Terdaftar</p>
-</div>
-</div>
-</section>
-{/* Health & Environment Section */}
-<section className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-{/* Health Gauge */}
-<div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-<h3 className="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-6">Indeks Kesehatan Tanah</h3>
-<div className="flex flex-col items-center py-4">
-<div className="relative w-40 h-40 flex items-center justify-center">
-{/* Circular Progress Simulation */}
-<svg className="w-full h-full transform -rotate-90">
-<circle className="text-surface-container" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" strokeWidth="12"></circle>
-<circle className="text-tertiary" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" strokeDasharray="440" strokeDashoffset="66" strokeWidth="12"></circle>
-</svg>
-<div className="absolute inset-0 flex flex-col items-center justify-center">
-<span className="text-3xl font-black text-on-surface">85%</span>
-<span className="text-[10px] uppercase font-bold text-tertiary">Optimal</span>
-</div>
-</div>
-<p className="text-center text-on-surface-variant text-sm mt-6">Kondisi hara dan kelembapan di wilayah utama stabil.</p>
-</div>
-</div>
+      {/* Main Content */}
+      <main className="ml-64 pt-20 pb-12 px-8 min-h-screen transition-all">
+        <div className="max-w-7xl mx-auto space-y-8">
+          
+          {/* Welcome Notification */}
+          {showNotification && (
+            <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/20 text-emerald-800 dark:text-emerald-400 p-4 rounded-2xl flex items-center justify-between shadow-sm animate-fade-in">
+              <div className="flex items-center space-x-3">
+                <span className="material-symbols-outlined text-emerald-600 dark:text-emerald-400" data-icon="energy_savings_leaf">energy_savings_leaf</span>
+                <div>
+                  <span className="font-bold text-sm">Sistem LSTM Siap Beroperasi:</span>
+                  <span className="text-xs ml-2 opacity-95">Model prediksi cuaca dan kecocokan lahan telah dikalibrasi untuk wilayah Aceh Utara.</span>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowNotification(false)}
+                className="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-200 transition-colors"
+              >
+                <span className="material-symbols-outlined text-lg" data-icon="close">close</span>
+              </button>
+            </div>
+          )}
 
-{/* Environment Chip Card */}
-<div className="bg-primary p-8 rounded-xl text-white relative overflow-hidden shadow-lg hover:brightness-105 transition-all">
-<div className="absolute -right-4 -bottom-4 opacity-10">
-<span className="material-symbols-outlined text-9xl" data-icon="eco">eco</span>
-</div>
-<h3 className="text-xs font-bold uppercase tracking-[0.2em] opacity-80 mb-4">Laporan Lingkungan</h3>
-<div className="grid grid-cols-2 gap-4">
-<div className="bg-white/10 backdrop-blur-md p-3 rounded-lg">
-<p className="text-[10px] uppercase opacity-70">Kelembapan</p>
-<p className="text-xl font-bold">68%</p>
-</div>
-<div className="bg-white/10 backdrop-blur-md p-3 rounded-lg">
-<p className="text-[10px] uppercase opacity-70">UV Index</p>
-<p className="text-xl font-bold">4.2</p>
-</div>
-</div>
-<div className="mt-6 flex items-center space-x-2">
-<span className="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
-<span className="text-xs font-medium opacity-90">Pemantauan Real-time Wilayah Utama</span>
-</div>
-</div>
-</section>
-{/* Bottom Detail Section: Recent Data */}
-<section className="mt-8">
-<div className="bg-surface-container-low rounded-xl overflow-hidden">
-<div className="px-8 py-6 border-b border-outline-variant/10 flex justify-between items-center">
-<h3 className="font-bold text-on-surface">Data Input Terbaru</h3>
-<button className="text-primary text-sm font-bold hover:underline">Lihat Semua</button>
-</div>
-<div className="overflow-x-auto">
-<table className="w-full text-left border-collapse">
-<thead>
-<tr className="bg-surface-container-high/30">
-<th className="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">ID Lahan</th>
-<th className="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Kecamatan</th>
-<th className="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Tipe Komoditas</th>
-<th className="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Status</th>
-<th className="px-8 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Aksi</th>
-</tr>
-</thead>
-<tbody className="divide-y divide-outline-variant/5">
-<tr className="hover:bg-surface-container-high transition-colors group">
-<td className="px-8 py-5 text-sm font-medium text-on-surface">#AGR-0921</td>
-<td className="px-8 py-5 text-sm text-on-surface-variant">Sukasari</td>
-<td className="px-8 py-5 text-sm text-on-surface-variant">Padi Varietas Unggul</td>
-<td className="px-8 py-5">
-<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-tertiary/10 text-tertiary">
-                                        Terverifikasi
-                                    </span>
-</td>
-<td className="px-8 py-5">
-<button className="opacity-0 group-hover:opacity-100 transition-opacity">
-<span className="material-symbols-outlined text-primary" data-icon="more_horiz">more_horiz</span>
-</button>
-</td>
-</tr>
-<tr className="hover:bg-surface-container-high transition-colors group">
-<td className="px-8 py-5 text-sm font-medium text-on-surface">#AGR-0922</td>
-<td className="px-8 py-5 text-sm text-on-surface-variant">Cicendo</td>
-<td className="px-8 py-5 text-sm text-on-surface-variant">Jagung Hibrida</td>
-<td className="px-8 py-5">
-<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-secondary/10 text-secondary">
-                                        Proses LSTM
-                                    </span>
-</td>
-<td className="px-8 py-5">
-<button className="opacity-0 group-hover:opacity-100 transition-opacity">
-<span className="material-symbols-outlined text-primary" data-icon="more_horiz">more_horiz</span>
-</button>
-</td>
-</tr>
-<tr className="hover:bg-surface-container-high transition-colors group">
-<td className="px-8 py-5 text-sm font-medium text-on-surface">#AGR-0923</td>
-<td className="px-8 py-5 text-sm text-on-surface-variant">Coblong</td>
-<td className="px-8 py-5 text-sm text-on-surface-variant">Kedelai</td>
-<td className="px-8 py-5">
-<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-tertiary/10 text-tertiary">
-                                        Terverifikasi
-                                    </span>
-</td>
-<td className="px-8 py-5">
-<button className="opacity-0 group-hover:opacity-100 transition-opacity">
-<span className="material-symbols-outlined text-primary" data-icon="more_horiz">more_horiz</span>
-</button>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-</main>
-{/* FAB Overlay (Suppressed for Dashboard Context but available for major action if needed) */}
-{/* Included for potential 'Add Data' shortcut on top-level */}
-<div className="fixed bottom-8 right-8 z-50">
-<button className="w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-[0_12px_32px_rgba(26,28,21,0.2)] active:scale-95 transition-transform">
-<span className="material-symbols-outlined text-2xl" data-icon="chat_bubble">chat_bubble</span>
-</button>
-</div>
+          {/* Welcome Header */}
+          <section className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-8 rounded-3xl relative overflow-hidden shadow-sm">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-[#006B54]/5 to-transparent rounded-bl-full pointer-events-none"></div>
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+              <div className="space-y-2">
+                <p className="text-[#006B54] dark:text-[#10b981] font-bold text-xs uppercase tracking-widest font-mono">
+                  Sistem Cerdas Rekomendasi Agronomi
+                </p>
+                <h1 className="text-3xl font-extrabold text-stone-950 dark:text-white tracking-tight leading-tight">
+                  Selamat Datang di Portal AI-LSTM Tanaman Pangan
+                </h1>
+                <p className="text-stone-500 dark:text-stone-400 text-sm max-w-2xl leading-relaxed">
+                  Platform digital cerdas yang memadukan pemodelan cuaca runtun waktu <strong>Long Short-Term Memory (LSTM)</strong> dan algoritma klasifikasi saraf tiruan guna merekomendasikan komoditas pertanian pangan paling optimal di wilayah Kabupaten Aceh Utara.
+                </p>
+              </div>
+              <div className="flex space-x-3 shrink-0">
+                <Link
+                  href="/prediksi"
+                  className="bg-[#006B54] hover:bg-[#00513f] text-white px-6 py-3 rounded-2xl font-bold flex items-center space-x-2 transition-all shadow-md shadow-[#006B54]/10 active:scale-95 text-sm"
+                >
+                  <span className="material-symbols-outlined text-base" data-icon="analytics">analytics</span>
+                  <span>Mulai Analisis Prediksi</span>
+                </Link>
+              </div>
+            </div>
+          </section>
 
+          {/* Statistics Grid */}
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            {/* Total Data */}
+            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px] relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-stone-50 dark:bg-stone-800/20 rounded-bl-full pointer-events-none"></div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Total Data Lahan</span>
+                <span className="material-symbols-outlined text-[#006B54] bg-[#006B54]/5 p-2 rounded-xl text-lg" data-icon="database">database</span>
+              </div>
+              <div className="mt-4">
+                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">1,240</div>
+                <p className="text-[#006B54] font-semibold text-xs mt-1 flex items-center space-x-1">
+                  <span className="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+                  <span>+12% vs bulan lalu</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Status Sistem */}
+            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Status LSTM Engine</span>
+                <span className="material-symbols-outlined text-emerald-600 bg-emerald-500/5 p-2 rounded-xl text-lg animate-pulse" data-icon="memory">memory</span>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+                  <div className="text-2xl font-extrabold text-stone-900 dark:text-white">Aktif</div>
+                </div>
+                <p className="text-stone-500 dark:text-stone-400 text-xs mt-1">Semua unit model beroperasi normal.</p>
+              </div>
+            </div>
+
+            {/* Kecamatan */}
+            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Kecamatan Terpetakan</span>
+                <span className="material-symbols-outlined text-amber-600 bg-amber-500/5 p-2 rounded-xl text-lg" data-icon="map">map</span>
+              </div>
+              <div className="mt-4">
+                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">15</div>
+                <p className="text-stone-500 dark:text-stone-400 text-xs mt-1">Wilayah binaan di Aceh Utara</p>
+              </div>
+            </div>
+
+            {/* Keakuratan Model */}
+            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Akurasi Model</span>
+                <span className="material-symbols-outlined text-[#10b981] bg-[#10b981]/5 p-2 rounded-xl text-lg" data-icon="verified">verified</span>
+              </div>
+              <div className="mt-4">
+                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">98.2%</div>
+                <p className="text-stone-500 dark:text-stone-400 text-xs mt-1">R-Squared pada evaluasi pengujian</p>
+              </div>
+            </div>
+
+          </section>
+
+          {/* Environmental Insight and Gauge */}
+          <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* Circular Soil Gauge */}
+            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between">
+              <div>
+                <h3 className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider mb-1">Kesehatan Lahan</h3>
+                <p className="text-sm font-bold text-stone-700 dark:text-stone-300">Rerata Indeks Kelembapan & pH</p>
+              </div>
+              <div className="flex flex-col items-center py-6">
+                <div className="relative w-36 h-36 flex items-center justify-center">
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle className="text-stone-100 dark:text-stone-800" cx="72" cy="72" fill="transparent" r="58" stroke="currentColor" strokeWidth="8"></circle>
+                    <circle className="text-[#006B54]" cx="72" cy="72" fill="transparent" r="58" stroke="currentColor" strokeDasharray="364.4" strokeDashoffset="43.7" strokeWidth="8" strokeLinecap="round"></circle>
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-2xl font-black text-stone-950 dark:text-white font-mono">88%</span>
+                    <span className="text-[9px] uppercase font-bold text-[#006B54] bg-[#006B54]/5 px-2 py-0.5 rounded-full mt-1">Optimal</span>
+                  </div>
+                </div>
+                <p className="text-center text-xs text-stone-500 dark:text-stone-400 mt-4 max-w-[200px]">
+                  Kondisi pH tanah (6.2 - 6.8) dan curah hujan harian di Aceh Utara stabil.
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Informational Guide */}
+            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between">
+              <div>
+                <h3 className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider mb-1">Panduan Penggunaan</h3>
+                <p className="text-sm font-bold text-stone-700 dark:text-stone-300">3 Langkah Mudah Rekomendasi</p>
+              </div>
+              <div className="space-y-4 my-4 flex-1 flex flex-col justify-center">
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 rounded-full bg-[#006B54]/10 text-[#006B54] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</div>
+                  <div className="text-xs">
+                    <p className="font-bold text-stone-800 dark:text-stone-200">Pilih / Input Kecamatan</p>
+                    <p className="text-stone-500 dark:text-stone-400">Masuk ke menu Prediksi dan tentukan subdistrik lahan.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 rounded-full bg-[#006B54]/10 text-[#006B54] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</div>
+                  <div className="text-xs">
+                    <p className="font-bold text-stone-800 dark:text-stone-200">Analisis Iklim LSTM</p>
+                    <p className="text-stone-500 dark:text-stone-400">Sistem memprediksi tren suhu, kelembapan, curah hujan 7 hari ke depan.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 rounded-full bg-[#006B54]/10 text-[#006B54] flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</div>
+                  <div className="text-xs">
+                    <p className="font-bold text-stone-800 dark:text-stone-200">Lihat Rekomendasi Tanaman</p>
+                    <p className="text-stone-500 dark:text-stone-400">Terima kecocokan varietas unggul beserta alasan saintifiknya.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick CTA Premium Panel */}
+            <div className="bg-[#006B54] text-white p-6 rounded-3xl flex flex-col justify-between shadow-md relative overflow-hidden">
+              <div className="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+                <span className="material-symbols-outlined text-9xl" data-icon="eco">eco</span>
+              </div>
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest opacity-80 font-mono">Tesis Pertanian Modern</span>
+                <h3 className="text-xl font-bold leading-snug">Implementasi Pembelajaran Mendalam (Deep Learning)</h3>
+                <p className="text-xs leading-relaxed opacity-90">
+                  Model LSTM meramalkan faktor klimatologi multivariat guna meminimalisir kegagalan panen akibat anomali cuaca.
+                </p>
+              </div>
+              <div className="mt-6 flex justify-between items-center bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/10">
+                <span className="text-[10px] font-medium opacity-90">Versi Model: 3.1.2-Stable</span>
+                <span className="material-symbols-outlined text-sm" data-icon="verified_user">verified_user</span>
+              </div>
+            </div>
+
+          </section>
+
+          {/* Recent History Table */}
+          <section className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 rounded-3xl overflow-hidden shadow-sm">
+            <div className="p-6 border-b border-stone-100 dark:border-stone-850 flex justify-between items-center">
+              <div>
+                <h3 className="text-sm font-bold text-stone-950 dark:text-white">Analisis Prediksi Terbaru</h3>
+                <p className="text-xs text-stone-500 dark:text-stone-400">Riwayat eksekusi pencarian komoditas pangan</p>
+              </div>
+              <Link 
+                href="/riwayat" 
+                className="text-[#006B54] dark:text-[#10b981] text-xs font-bold hover:underline flex items-center space-x-1"
+              >
+                <span>Lihat Semua Riwayat</span>
+                <span className="material-symbols-outlined text-xs" data-icon="arrow_forward">arrow_forward</span>
+              </Link>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-stone-50 dark:bg-stone-950 text-stone-400 dark:text-stone-500 border-b border-stone-100 dark:border-stone-850">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Kecamatan</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Komoditas Rekomendasi</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Kecocokan</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Tanggal</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100 dark:divide-stone-850">
+                  {recentActivities.map((act) => (
+                    <tr key={act.id} className="hover:bg-stone-50/50 dark:hover:bg-stone-900/30 transition-colors">
+                      <td className="px-6 py-4 text-xs font-bold text-stone-500 dark:text-stone-400">{act.id}</td>
+                      <td className="px-6 py-4 text-sm font-semibold">{act.kecamatan}</td>
+                      <td className="px-6 py-4 text-sm text-stone-700 dark:text-stone-300">{act.komoditas}</td>
+                      <td className="px-6 py-4 text-sm font-mono font-bold text-[#006B54] dark:text-[#10b981]">{act.kecocokan}</td>
+                      <td className="px-6 py-4 text-xs text-stone-500 dark:text-stone-400">{act.tanggal}</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10">
+                          {act.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+        </div>
+      </main>
     </div>
   );
 }

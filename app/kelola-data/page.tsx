@@ -1,209 +1,310 @@
+"use client";
+
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
+import { useState } from "react";
+
+interface KecamatanData {
+  periode: string;
+  kecamatan: string;
+  elevasi: number;
+  ph: number;
+  tanah: string;
+  hujan: number;
+  luasPanen: number;
+  produksi: number;
+  status: "Terverifikasi" | "Sedang Diproses";
+}
+
+const INITIAL_KECAMATAN_DATA: KecamatanData[] = [
+  { periode: "Mei 2026", kecamatan: "Lhoksukon", elevasi: 12, ph: 6.4, tanah: "Lempung Berliat", hujan: 2100, luasPanen: 1420, produksi: 52100, status: "Terverifikasi" },
+  { periode: "Mei 2026", kecamatan: "Tanah Luas", elevasi: 22, ph: 5.8, tanah: "Lempung Berpasir", hujan: 1950, luasPanen: 850, produksi: 31400, status: "Terverifikasi" },
+  { periode: "Mei 2026", kecamatan: "Cot Girek", elevasi: 58, ph: 5.2, tanah: "Lempung Liat Berpasir", hujan: 2400, luasPanen: 1100, produksi: 36800, status: "Sedang Diproses" },
+  { periode: "April 2026", kecamatan: "Dewantara", elevasi: 8, ph: 6.5, tanah: "Lempung", hujan: 1800, luasPanen: 950, produksi: 34200, status: "Terverifikasi" },
+  { periode: "April 2026", kecamatan: "Muara Batu", elevasi: 10, ph: 6.2, tanah: "Lempung Berpasir", hujan: 1850, luasPanen: 780, produksi: 28900, status: "Terverifikasi" },
+  { periode: "Maret 2026", kecamatan: "Samudera", elevasi: 14, ph: 6.1, tanah: "Lempung Berdebu", hujan: 2000, luasPanen: 1200, produksi: 44100, status: "Terverifikasi" },
+  { periode: "Maret 2026", kecamatan: "Baktiya", elevasi: 11, ph: 6.2, tanah: "Lempung Berliat", hujan: 2150, luasPanen: 1350, produksi: 49800, status: "Sedang Diproses" },
+];
 
 export default function Page() {
-  return (
-    <div className="bg-background text-on-surface">
-      
-<Sidebar />
-<Header />
-{/* Main Content */}
-<main className="ml-64 pt-24 pb-12 px-8 min-h-screen">
-{/* Page Header */}
-<div className="mb-8">
-<h2 className="text-3xl font-extrabold text-on-surface tracking-tight">Kelola Data Agronomi</h2>
-<p className="text-on-surface-variant mt-1">Manajemen input dan pemantauan variabel lingkungan tanaman</p>
-</div>
-{/* Success Notification */}
-<div className="mb-6 flex items-center bg-tertiary-fixed text-on-tertiary-fixed px-6 py-4 rounded-xl shadow-sm border-l-4 border-tertiary">
-<span className="material-symbols-outlined mr-3" data-icon="check_circle" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-<span className="font-semibold tracking-wide">Data Berhasil Disimpan</span>
-<button className="ml-auto opacity-70 hover:opacity-100">
-<span className="material-symbols-outlined" data-icon="close">close</span>
-</button>
-</div>
-{/* Form Section */}
-<section className="bg-surface-container-low rounded-3xl p-8 mb-8 relative overflow-hidden">
-{/* Decorative Gradient Soul */}
-<div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary/10 to-secondary-container/20 rounded-bl-full pointer-events-none"></div>
-<div className="flex items-center mb-6">
-<span className="material-symbols-outlined text-primary mr-2" data-icon="add_box">add_box</span>
-<h3 className="text-xl font-bold text-on-surface">Input Data Baru</h3>
-</div>
-<form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-<div className="space-y-1.5">
-<label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Periode</label>
-<input className="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" type="month" />
-</div>
-<div className="space-y-1.5">
-<label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Kecamatan</label>
-<select className="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4">
-<option>Pilih Kecamatan</option>
-<option>Sukomanunggal</option>
-<option>Wonokromo</option>
-<option>Gubeng</option>
-</select>
-</div>
-<div className="space-y-1.5">
-<label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M (°C)</label>
-<input className="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="28.5" step="0.1" type="number" />
-</div>
-<div className="space-y-1.5">
-<label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M_MAX (°C)</label>
-<input className="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="32.0" step="0.1" type="number" />
-</div>
-<div className="space-y-1.5">
-<label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M_MIN (°C)</label>
-<input className="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="24.2" step="0.1" type="number" />
-</div>
-<div className="space-y-1.5">
-<label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">RH2M (%)</label>
-<input className="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="85" step="1" type="number" />
-</div>
-<div className="space-y-1.5">
-<label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">PRECTOT (mm)</label>
-<input className="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="12.5" step="0.1" type="number" />
-</div>
-<div className="space-y-1.5">
-<label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">WS2M (m/s)</label>
-<input className="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="2.4" step="0.1" type="number" />
-</div>
-<div className="space-y-1.5">
-<label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Luas Panen (Ha)</label>
-<input className="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="1250" step="1" type="number" />
-</div>
-<div className="space-y-1.5">
-<label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Produksi (Ton)</label>
-<input className="w-full bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary/40 text-sm py-3 px-4" placeholder="45000" step="1" type="number" />
-</div>
-<div className="lg:col-span-5 flex justify-end mt-2">
-<button className="px-8 py-3 text-secondary font-semibold hover:bg-secondary/5 rounded-xl transition-colors mr-4" type="reset">Reset</button>
-<button className="px-10 py-3 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl active:scale-95 transition-transform" type="submit">Simpan Data</button>
-</div>
-</form>
-</section>
-{/* Table Section */}
-<section className="bg-surface-container-lowest rounded-3xl overflow-hidden">
-<div className="p-8 border-b border-surface-container-low flex justify-between items-center">
-<div className="flex items-center">
-<span className="material-symbols-outlined text-primary mr-2" data-icon="table_rows">table_rows</span>
-<h3 className="text-xl font-bold text-on-surface">Data Histori Agronomi</h3>
-</div>
-<div className="flex space-x-2">
-<button className="flex items-center px-4 py-2 bg-surface-container-high rounded-lg text-sm font-medium hover:bg-surface-container-highest transition-colors">
-<span className="material-symbols-outlined text-sm mr-2" data-icon="filter_list">filter_list</span>
-                        Filter
-                    </button>
-<button className="flex items-center px-4 py-2 bg-surface-container-high rounded-lg text-sm font-medium hover:bg-surface-container-highest transition-colors">
-<span className="material-symbols-outlined text-sm mr-2" data-icon="download">download</span>
-                        Export CSV
-                    </button>
-</div>
-</div>
-<div className="overflow-x-auto">
-<table className="w-full text-left">
-<thead>
-<tr className="bg-surface-container-low/30">
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Periode</th>
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Kecamatan</th>
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M</th>
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M_MAX</th>
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">T2M_MIN</th>
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">RH2M</th>
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">PRECTOT</th>
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">WS2M</th>
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider text-right">L. Panen</th>
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider text-right">Produksi</th>
-<th className="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider text-center">Aksi</th>
-</tr>
-</thead>
-<tbody className="divide-y divide-surface-container-low">
-<tr className="hover:bg-surface-container-high transition-colors group">
-<td className="px-6 py-5 font-semibold text-sm">Januari 2024</td>
-<td className="px-6 py-5 text-sm">Sukomanunggal</td>
-<td className="px-6 py-5 text-sm">28.2°</td>
-<td className="px-6 py-5 text-sm">31.5°</td>
-<td className="px-6 py-5 text-sm">25.0°</td>
-<td className="px-6 py-5 text-sm">82%</td>
-<td className="px-6 py-5 text-sm">11.2</td>
-<td className="px-6 py-5 text-sm">3.1</td>
-<td className="px-6 py-5 text-sm text-right">1,420 Ha</td>
-<td className="px-6 py-5 text-sm text-right">52,100 Ton</td>
-<td className="px-6 py-5">
-<div className="flex justify-center space-x-2">
-<button className="p-2 text-secondary hover:bg-secondary-container/20 rounded-lg transition-colors">
-<span className="material-symbols-outlined text-sm" data-icon="edit">edit</span>
-</button>
-<button className="p-2 text-error hover:bg-error-container/40 rounded-lg transition-colors">
-<span className="material-symbols-outlined text-sm" data-icon="delete">delete</span>
-</button>
-</div>
-</td>
-</tr>
-<tr className="hover:bg-surface-container-high transition-colors">
-<td className="px-6 py-5 font-semibold text-sm">Februari 2024</td>
-<td className="px-6 py-5 text-sm">Wonokromo</td>
-<td className="px-6 py-5 text-sm">27.8°</td>
-<td className="px-6 py-5 text-sm">30.2°</td>
-<td className="px-6 py-5 text-sm">24.5°</td>
-<td className="px-6 py-5 text-sm">88%</td>
-<td className="px-6 py-5 text-sm">15.8</td>
-<td className="px-6 py-5 text-sm">2.8</td>
-<td className="px-6 py-5 text-sm text-right">850 Ha</td>
-<td className="px-6 py-5 text-sm text-right">31,400 Ton</td>
-<td className="px-6 py-5">
-<div className="flex justify-center space-x-2">
-<button className="p-2 text-secondary hover:bg-secondary-container/20 rounded-lg transition-colors">
-<span className="material-symbols-outlined text-sm" data-icon="edit">edit</span>
-</button>
-<button className="p-2 text-error hover:bg-error-container/40 rounded-lg transition-colors">
-<span className="material-symbols-outlined text-sm" data-icon="delete">delete</span>
-</button>
-</div>
-</td>
-</tr>
-<tr className="hover:bg-surface-container-high transition-colors">
-<td className="px-6 py-5 font-semibold text-sm">Maret 2024</td>
-<td className="px-6 py-5 text-sm">Gubeng</td>
-<td className="px-6 py-5 text-sm">28.5°</td>
-<td className="px-6 py-5 text-sm">32.1°</td>
-<td className="px-6 py-5 text-sm">25.5°</td>
-<td className="px-6 py-5 text-sm">80%</td>
-<td className="px-6 py-5 text-sm">8.4</td>
-<td className="px-6 py-5 text-sm">3.5</td>
-<td className="px-6 py-5 text-sm text-right">2,100 Ha</td>
-<td className="px-6 py-5 text-sm text-right">76,800 Ton</td>
-<td className="px-6 py-5">
-<div className="flex justify-center space-x-2">
-<button className="p-2 text-secondary hover:bg-secondary-container/20 rounded-lg transition-colors">
-<span className="material-symbols-outlined text-sm" data-icon="edit">edit</span>
-</button>
-<button className="p-2 text-error hover:bg-error-container/40 rounded-lg transition-colors">
-<span className="material-symbols-outlined text-sm" data-icon="delete">delete</span>
-</button>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div className="px-8 py-6 flex items-center justify-between border-t border-surface-container-low">
-<p className="text-sm text-on-surface-variant font-medium">Menampilkan 3 dari 124 data</p>
-<div className="flex space-x-1">
-<button className="px-4 py-2 text-sm font-semibold text-on-surface-variant opacity-50 cursor-not-allowed">Sebelumnya</button>
-<button className="px-4 py-2 text-sm font-bold bg-primary text-white rounded-lg">1</button>
-<button className="px-4 py-2 text-sm font-semibold text-on-surface hover:bg-surface-container-high rounded-lg">2</button>
-<button className="px-4 py-2 text-sm font-semibold text-on-surface hover:bg-surface-container-high rounded-lg">3</button>
-<button className="px-4 py-2 text-sm font-semibold text-primary">Selanjutnya</button>
-</div>
-</div>
-</section>
-</main>
-{/* Floating Action Button (Contextual for New Record) */}
-<button className="fixed bottom-8 right-8 bg-gradient-to-br from-primary to-primary-container text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform z-50">
-<span className="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
-</button>
+  const [dataList, setDataList] = useState<KecamatanData[]>(INITIAL_KECAMATAN_DATA);
+  const [showToast, setShowToast] = useState(false);
+  
+  // Form State
+  const [periode, setPeriode] = useState("2026-05");
+  const [kecamatan, setKecamatan] = useState("Lhoksukon");
+  const [elevasi, setElevasi] = useState(12);
+  const [ph, setPh] = useState(6.4);
+  const [tanah, setTanah] = useState("Lempung Berliat");
+  const [hujan, setHujan] = useState(2100);
+  const [luasPanen, setLuasPanen] = useState(1000);
+  const [produksi, setProduksi] = useState(4000);
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Format year-month to Month Name Year (e.g. "2026-05" -> "Mei 2026")
+    const dateParts = periode.split("-");
+    const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const monthIndex = parseInt(dateParts[1]) - 1;
+    const formattedDate = `${months[monthIndex]} ${dateParts[0]}`;
+
+    const newRecord: KecamatanData = {
+      periode: formattedDate,
+      kecamatan,
+      elevasi: Number(elevasi),
+      ph: Number(ph),
+      tanah,
+      hujan: Number(hujan),
+      luasPanen: Number(luasPanen),
+      produksi: Number(produksi),
+      status: "Terverifikasi"
+    };
+
+    setDataList([newRecord, ...dataList]);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleDelete = (index: number) => {
+    setDataList(dataList.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="bg-stone-50 dark:bg-stone-950 text-stone-800 dark:text-stone-100 min-h-screen">
+      <Sidebar />
+      <Header title="Data Kecamatan" subtitle="Manajemen Profil Fisik & Klimatologi Wilayah" />
+
+      {/* Main Content */}
+      <main className="ml-64 pt-20 pb-12 px-8 min-h-screen">
+        <div className="max-w-7xl mx-auto space-y-8">
+
+          {/* Page Header */}
+          <div className="mb-4">
+            <h2 className="text-2xl font-black text-stone-950 dark:text-white tracking-tight">Manajemen Lahan Kecamatan</h2>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+              Kelola profil tanah, ketinggian topografi, serta volume curah hujan rata-rata tahunan pada masing-masing subdistrik di Aceh Utara.
+            </p>
+          </div>
+
+          {/* Success Toast */}
+          {showToast && (
+            <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/20 text-emerald-800 dark:text-emerald-400 p-4 rounded-2xl flex items-center shadow-sm animate-fade-in">
+              <span className="material-symbols-outlined mr-3 text-emerald-600" data-icon="check_circle">check_circle</span>
+              <span className="font-bold text-xs">Profil Data Lahan Kecamatan Berhasil Disimpan & Diperbarui!</span>
+            </div>
+          )}
+
+          {/* Form Input Section */}
+          <section className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 rounded-3xl p-6 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#006B54]/5 to-transparent rounded-bl-full pointer-events-none"></div>
+            
+            <div className="flex items-center space-x-2 mb-6">
+              <span className="material-symbols-outlined text-[#006B54]" data-icon="add_box">add_box</span>
+              <h3 className="font-bold text-sm text-stone-900 dark:text-white uppercase tracking-wider">Input Karakteristik Lahan Baru</h3>
+            </div>
+
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">Periode</label>
+                <input 
+                  type="month" 
+                  value={periode}
+                  onChange={(e) => setPeriode(e.target.value)}
+                  className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-2.5 px-4 transition-all"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">Kecamatan</label>
+                <select 
+                  value={kecamatan}
+                  onChange={(e) => setKecamatan(e.target.value)}
+                  className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-2.5 px-4 transition-all"
+                >
+                  <option value="Lhoksukon">Lhoksukon</option>
+                  <option value="Tanah Luas">Tanah Luas</option>
+                  <option value="Cot Girek">Cot Girek</option>
+                  <option value="Dewantara">Dewantara</option>
+                  <option value="Muara Batu">Muara Batu</option>
+                  <option value="Samudera">Samudera</option>
+                  <option value="Baktiya">Baktiya</option>
+                  <option value="Seunuddon">Seunuddon</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">Elevasi (mdpl)</label>
+                <input 
+                  type="number" 
+                  value={elevasi}
+                  onChange={(e) => setElevasi(Number(e.target.value))}
+                  className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-2.5 px-4 transition-all"
+                  placeholder="Elevasi" 
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">pH Tanah</label>
+                <input 
+                  type="number" 
+                  step="0.1" 
+                  value={ph}
+                  onChange={(e) => setPh(Number(e.target.value))}
+                  className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-2.5 px-4 transition-all"
+                  placeholder="pH" 
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">Jenis Tanah</label>
+                <select 
+                  value={tanah}
+                  onChange={(e) => setTanah(e.target.value)}
+                  className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-2.5 px-4 transition-all"
+                >
+                  <option value="Lempung Berliat">Lempung Berliat</option>
+                  <option value="Lempung Berpasir">Lempung Berpasir</option>
+                  <option value="Lempung Berdebu">Lempung Berdebu</option>
+                  <option value="Pasir Berlempung">Pasir Berlempung</option>
+                  <option value="Lempung">Lempung (Loam)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">Curah Hujan (mm/tahun)</label>
+                <input 
+                  type="number" 
+                  value={hujan}
+                  onChange={(e) => setHujan(Number(e.target.value))}
+                  className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-2.5 px-4 transition-all"
+                  placeholder="Curah Hujan" 
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">Luas Panen (Ha)</label>
+                <input 
+                  type="number" 
+                  value={luasPanen}
+                  onChange={(e) => setLuasPanen(Number(e.target.value))}
+                  className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-2.5 px-4 transition-all"
+                  placeholder="Luas Panen" 
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">Produksi Pangan (Ton)</label>
+                <input 
+                  type="number" 
+                  value={produksi}
+                  onChange={(e) => setProduksi(Number(e.target.value))}
+                  className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-2.5 px-4 transition-all"
+                  placeholder="Volume Produksi" 
+                  required
+                />
+              </div>
+
+              <div className="lg:col-span-4 flex justify-end space-x-2 pt-2 border-t border-stone-100 dark:border-stone-850 mt-2">
+                <button 
+                  type="reset" 
+                  className="px-5 py-2.5 bg-stone-50 hover:bg-stone-100 dark:bg-stone-950 dark:hover:bg-stone-800/50 rounded-2xl text-xs font-bold text-stone-500 dark:text-stone-400 transition-all cursor-pointer"
+                >
+                  Reset
+                </button>
+                <button 
+                  type="submit" 
+                  className="px-8 py-2.5 bg-[#006B54] hover:bg-[#00513f] text-white rounded-2xl text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  Simpan Profil Lahan
+                </button>
+              </div>
+            </form>
+          </section>
+
+          {/* Table Section */}
+          <section className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 rounded-3xl overflow-hidden shadow-sm">
+            <div className="p-6 border-b border-stone-100 dark:border-stone-850 flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <span className="material-symbols-outlined text-[#006B54]" data-icon="table_rows">table_rows</span>
+                <h3 className="font-bold text-sm text-stone-900 dark:text-white uppercase tracking-wider">Histori Profil Tanah & Hidrologi</h3>
+              </div>
+              <div className="flex space-x-2">
+                <button className="flex items-center px-3 py-1.5 bg-stone-50 hover:bg-stone-100 dark:bg-stone-950 dark:hover:bg-stone-800 rounded-xl text-xs font-bold border border-stone-100 dark:border-stone-850 transition-colors">
+                  <span className="material-symbols-outlined text-sm mr-1.5" data-icon="filter_list">filter_list</span>
+                  <span>Filter</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-stone-50 dark:bg-stone-950 text-stone-400 dark:text-stone-500 border-b border-stone-100 dark:border-stone-850">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Periode</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Kecamatan</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Elevasi</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">pH Lahan</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Tekstur Lahan</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Curah Hujan</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right">Luas Panen</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right">Vol Produksi</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Status</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100 dark:divide-stone-850">
+                  {dataList.map((item, index) => (
+                    <tr key={index} className="hover:bg-stone-50/50 dark:hover:bg-stone-900/30 transition-colors">
+                      <td className="px-6 py-4 text-xs font-bold text-stone-500 dark:text-stone-400">{item.periode}</td>
+                      <td className="px-6 py-4 text-sm font-semibold">{item.kecamatan}</td>
+                      <td className="px-6 py-4 text-sm font-mono text-center font-bold">{item.elevasi} mdpl</td>
+                      <td className="px-6 py-4 text-sm font-mono text-center font-bold text-[#006B54] dark:text-[#10b981]">{item.ph}</td>
+                      <td className="px-6 py-4 text-xs font-medium text-stone-600 dark:text-stone-400">{item.tanah}</td>
+                      <td className="px-6 py-4 text-sm font-mono text-center">{item.hujan} mm</td>
+                      <td className="px-6 py-4 text-sm font-mono text-right">{item.luasPanen.toLocaleString()} Ha</td>
+                      <td className="px-6 py-4 text-sm font-mono text-right font-bold text-stone-700 dark:text-stone-300">{item.produksi.toLocaleString()} Ton</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                          item.status === "Terverifikasi"
+                            ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10"
+                            : "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-500/10"
+                        }`}>
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex justify-center space-x-1">
+                          <button 
+                            onClick={() => handleDelete(index)}
+                            className="p-1 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors cursor-pointer text-stone-400"
+                            title="Hapus"
+                          >
+                            <span className="material-symbols-outlined text-base" data-icon="delete">delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="px-6 py-4 border-t border-stone-100 dark:border-stone-850 flex justify-between items-center text-xs text-stone-500">
+              <p>Menampilkan {dataList.length} data subdistrik</p>
+              <div className="flex space-x-1">
+                <button className="px-3 py-1 bg-[#006B54] text-white rounded-lg font-bold">1</button>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </main>
     </div>
   );
 }
