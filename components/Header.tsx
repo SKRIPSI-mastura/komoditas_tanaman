@@ -44,17 +44,10 @@ export function Header({ title, subtitle }: HeaderProps) {
 
         <div className="h-4 w-px bg-on-surface-variant/10 mx-2" />
 
-        {/* Primary Settings/Logout Group */}
+        {/* Primary Logout Group */}
         <div className="flex items-center bg-white/40 rounded-2xl p-1 border border-[#006B54]/5 shadow-sm">
             <Link 
-                href="/settings" 
-                title="System Settings" 
-                className="w-9 h-9 flex items-center justify-center rounded-xl text-on-surface-variant/40 hover:bg-white hover:text-[#006B54] transition-all"
-            >
-                <span className="material-symbols-outlined text-xl" data-icon="settings">settings</span>
-            </Link>
-            <Link 
-                href="/logout" 
+                href="/login" 
                 title="Sign Out" 
                 className="w-9 h-9 flex items-center justify-center rounded-xl text-on-surface-variant/40 hover:bg-error/10 hover:text-error transition-all"
             >
