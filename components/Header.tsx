@@ -31,19 +31,6 @@ export function Header({ title, subtitle }: HeaderProps) {
 
       {/* Global Actions */}
       <div className="flex items-center space-x-2">
-        {/* Secondary Actions Group */}
-        <div className="flex items-center bg-white/40 rounded-2xl p-1 border border-[#006B54]/5 shadow-sm">
-            <button title="Notifications" className="w-9 h-9 flex items-center justify-center rounded-xl text-on-surface-variant/40 hover:bg-white hover:text-[#006B54] transition-all relative group">
-                <span className="material-symbols-outlined text-xl" data-icon="notifications">notifications</span>
-                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-[#ba1a1a] rounded-full border-2 border-[#fafaee]" />
-            </button>
-            <button title="Help Center" className="w-9 h-9 flex items-center justify-center rounded-xl text-on-surface-variant/40 hover:bg-white hover:text-[#006B54] transition-all">
-                <span className="material-symbols-outlined text-xl" data-icon="help">help</span>
-            </button>
-        </div>
-
-        <div className="h-4 w-px bg-on-surface-variant/10 mx-2" />
-
         {/* Primary Logout Group */}
         <div className="flex items-center bg-white/40 rounded-2xl p-1 border border-[#006B54]/5 shadow-sm">
             <Link 
