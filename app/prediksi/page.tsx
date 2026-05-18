@@ -28,6 +28,16 @@ export default function Page() {
   const [jenisTanah, setJenisTanah] = useState("Lempung Berliat");
   const [elevasi, setElevasi] = useState(12);
   const [curahHujan, setCurahHujan] = useState(2100);
+  const [liat, setLiat] = useState(28);
+  const [pasir, setPasir] = useState(32);
+  const [debu, setDebu] = useState(40);
+  const [resikoBencana, setResikoBencana] = useState("Rendah");
+
+  // Dynamic lists and details from backend
+  const [kecamatanList, setKecamatanList] = useState<string[]>(Object.keys(KEC_PROFILES));
+  const [predictedClimate, setPredictedClimate] = useState<any[]>([]);
+  const [avgClimate, setAvgClimate] = useState<any>({ suhu: 27.3, kelembapan: 82.1, kecepatan_angin: 2.3 });
+  const [errorMsg, setErrorMsg] = useState("");
   
   // Interactive States
   const [isPredicting, setIsPredicting] = useState(false);
@@ -35,18 +45,56 @@ export default function Page() {
   const [hasPredicted, setHasPredicted] = useState(false);
   const [activeTab, setActiveTab] = useState<"suhu" | "kelembapan" | "angin">("suhu");
 
-  // Auto-fill form details when subdistrict changes
+  // Fetch all kecamatan list on mount
   useEffect(() => {
-    const profile = KEC_PROFILES[selectedKec];
-    if (profile) {
-      setPh(profile.ph);
-      setJenisTanah(profile.jenis_tanah);
-      setElevasi(profile.elevasi);
-      setCurahHujan(profile.hujan);
-    }
+    fetch("http://localhost:5000/api/kecamatan")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.status === "success" && Array.isArray(resData.data)) {
+          setKecamatanList(resData.data);
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch kecamatan from backend, using default list.", err);
+      });
+  }, []);
+
+  // Auto-fill form details when subdistrict changes from backend profile
+  useEffect(() => {
+    if (!selectedKec) return;
+    
+    fetch(`http://localhost:5000/api/kecamatan/${selectedKec}`)
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.status === "success" && resData.data) {
+          const d = resData.data;
+          setPh(Number((d.ph ?? 6.4).toFixed(1)));
+          setJenisTanah(d.jenis_tanah ?? "Lempung Berliat");
+          setElevasi(Math.round(d.elevasi ?? 12));
+          setCurahHujan(Math.round(d.hujan_tahunan ?? 2100));
+          setLiat(Math.round(d.tanah_liat_persen ?? 28));
+          setPasir(Math.round(d.tanah_pasir_persen ?? 32));
+          setDebu(Math.round(d.tanah_debu_persen ?? 40));
+          setResikoBencana(d.resiko_bencana ?? "Rendah");
+        }
+      })
+      .catch((err) => {
+        console.warn(`Failed to fetch profile for ${selectedKec}, using fallback KEC_PROFILES.`, err);
+        const profile = KEC_PROFILES[selectedKec];
+        if (profile) {
+          setPh(profile.ph);
+          setJenisTanah(profile.jenis_tanah);
+          setElevasi(profile.elevasi);
+          setCurahHujan(profile.hujan);
+          setLiat(profile.liat ?? 28);
+          setPasir(profile.pasir ?? 32);
+          setDebu(profile.debu ?? 40);
+          setResikoBencana(profile.elevasi < 15 ? "Tinggi" : "Rendah");
+        }
+      });
   }, [selectedKec]);
 
-  // LSTM Pipeline simulation steps
+  // LSTM Pipeline steps
   const steps = [
     "Memuat runtun waktu iklim historis (2020-2025)...",
     "Normalisasi skala data dengan MinMaxScaler...",
@@ -57,6 +105,7 @@ export default function Page() {
 
   const handlePredict = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg("");
     setIsPredicting(true);
     setPredictionStep(0);
     setHasPredicted(false);
@@ -65,39 +114,175 @@ export default function Page() {
   useEffect(() => {
     if (!isPredicting) return;
 
-    if (predictionStep < steps.length) {
+    if (predictionStep < 3) {
       const timer = setTimeout(() => {
         setPredictionStep((prev) => prev + 1);
-      }, 700);
+      }, 600);
       return () => clearTimeout(timer);
-    } else {
-      setIsPredicting(false);
-      setHasPredicted(true);
+    } else if (predictionStep === 3) {
+      // Step 3 is "Melatih Model Jaringan Saraf LSTM..."
+      // Start actual BE API calls here
+      const fetchPipeline = async () => {
+        try {
+          // 1. GET recommendation (triggers LSTM training and gets forecasts)
+          const getRes = await fetch(`http://localhost:5000/api/recommend/${selectedKec}`);
+          if (!getRes.ok) {
+            throw new Error(`Gagal memanggil API: ${getRes.statusText}`);
+          }
+          const getJson = await getRes.json();
+          if (getJson.status !== "success" || !getJson.data) {
+            throw new Error(getJson.message || "Gagal mendapatkan data rekomendasi.");
+          }
+          
+          const baselineData = getJson.data;
+          let finalRecommendations = baselineData.recommendations;
+          let finalTopRec = baselineData.top_recommendation;
+          let isCustomRun = false;
 
-      // Save input variables and dynamic climate outputs to localStorage for Recomendasi page to read
-      const profile = KEC_PROFILES[selectedKec] || { liat: 20, pasir: 50, debu: 30 };
-      const predictionData = {
-        kecamatan: selectedKec,
-        ph: Number(ph),
-        jenisTanah,
-        elevasi: Number(elevasi),
-        curahHujan: Number(curahHujan),
-        liat: profile.liat,
-        pasir: profile.pasir,
-        debu: profile.debu,
-        temp_pred: 27.4 + (Number(elevasi) > 30 ? -1.2 : 0.4) + (Number(ph) > 6.0 ? 0.2 : -0.3),
-        hum_pred: 82.5 + (curahHujan > 2000 ? 3.2 : -2.1),
-        wind_pred: 2.3 + (elevasi > 40 ? 0.8 : -0.2),
+          // 2. Fetch default profile to check if user customized any parameters
+          let hasCustomized = false;
+          try {
+            const profileRes = await fetch(`http://localhost:5000/api/kecamatan/${selectedKec}`);
+            if (profileRes.ok) {
+              const profileJson = await profileRes.json();
+              if (profileJson.status === "success" && profileJson.data) {
+                const pd = profileJson.data;
+                const phDiff = Math.abs(Number(ph) - Number(pd.ph));
+                const elevDiff = Math.abs(Number(elevasi) - Number(pd.elevasi));
+                const rainDiff = Math.abs(Number(curahHujan) - Number(pd.hujan_tahunan));
+                const soilDiff = jenisTanah.toLowerCase() !== (pd.jenis_tanah || "").toLowerCase();
+                
+                if (phDiff > 0.05 || elevDiff > 1 || rainDiff > 10 || soilDiff) {
+                  hasCustomized = true;
+                }
+              }
+            }
+          } catch (profileErr) {
+            console.warn("Failed to check customized parameters, fallback to check local defaults", profileErr);
+            const localProf = KEC_PROFILES[selectedKec];
+            if (localProf) {
+              if (ph !== localProf.ph || elevasi !== localProf.elevasi || curahHujan !== localProf.hujan || jenisTanah !== localProf.jenis_tanah) {
+                hasCustomized = true;
+              }
+            }
+          }
+
+          // 3. If customized, POST to /api/recommend to get custom NN recommendations
+          if (hasCustomized) {
+            isCustomRun = true;
+            const postPayload = {
+              jenis_tanah: jenisTanah,
+              ph_tanah: Number(ph),
+              tanah_liat_persen: Number(liat),
+              tanah_pasir_persen: Number(pasir),
+              tanah_debu_persen: Number(debu),
+              elevasi: Number(elevasi),
+              hujan_tahunan: Number(curahHujan),
+              suhu: Number(baselineData.avg_climate_prediction.suhu),
+              kelembapan: Number(baselineData.avg_climate_prediction.kelembapan),
+              kecepatan_angin: Number(baselineData.avg_climate_prediction.kecepatan_angin),
+              kecamatan: `${selectedKec} (Kustom)`
+            };
+
+            const postRes = await fetch("http://localhost:5000/api/recommend", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(postPayload)
+            });
+
+            if (postRes.ok) {
+              const postJson = await postRes.json();
+              if (postJson.status === "success" && postJson.data) {
+                finalRecommendations = postJson.data.recommendations;
+                finalTopRec = postJson.data.top_recommendation;
+              }
+            }
+          }
+
+          setPredictedClimate(baselineData.climate_prediction || []);
+          setAvgClimate(baselineData.avg_climate_prediction || { suhu: 27.3, kelembapan: 82.1, kecepatan_angin: 2.3 });
+
+          // Save complete structured result into localStorage
+          const localStoreData = {
+            isCustom: isCustomRun,
+            inputs: {
+              kecamatan: selectedKec,
+              ph: Number(ph),
+              jenisTanah: jenisTanah,
+              elevasi: Number(elevasi),
+              curahHujan: Number(curahHujan),
+              liat: Number(liat),
+              pasir: Number(pasir),
+              debu: Number(debu),
+              temp_pred: Number(baselineData.avg_climate_prediction.suhu),
+              hum_pred: Number(baselineData.avg_climate_prediction.kelembapan),
+              wind_pred: Number(baselineData.avg_climate_prediction.kecepatan_angin)
+            },
+            climate_prediction: baselineData.climate_prediction || [],
+            recommendations: finalRecommendations || [],
+            top_recommendation: finalTopRec
+          };
+          localStorage.setItem("agro_lstm_prediction", JSON.stringify(localStoreData));
+
+          // Save to history in localStorage
+          try {
+            const currentHistoryJson = localStorage.getItem("agro_prediction_history");
+            let historyList = [];
+            if (currentHistoryJson) {
+              historyList = JSON.parse(currentHistoryJson);
+            }
+            if (!Array.isArray(historyList)) historyList = [];
+
+            const newRecord = {
+              id: `AGR-${Math.floor(1000 + Math.random() * 9000)}`,
+              kecamatan: selectedKec + (isCustomRun ? " (Kustom Lahan)" : ""),
+              tanggal: new Date().toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+              }) + `, ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}`,
+              ph: Number(ph),
+              elevasi: Number(elevasi),
+              curahHujan: Number(curahHujan),
+              tanah: jenisTanah,
+              komoditas: finalTopRec?.komoditas || "N/A",
+              skor: finalTopRec?.score || 0,
+              suitability: finalTopRec?.kelayakan || "Layak"
+            };
+
+            historyList.unshift(newRecord);
+            if (historyList.length > 50) historyList = historyList.slice(0, 50);
+            localStorage.setItem("agro_prediction_history", JSON.stringify(historyList));
+          } catch (historyErr) {
+            console.error("Failed to update prediction history", historyErr);
+          }
+
+          // Advance to Step 5
+          setPredictionStep(4);
+        } catch (err: any) {
+          console.error("Pipeline execution failed", err);
+          setErrorMsg(err.message || "Terjadi kesalahan saat memanggil server API backend.");
+          setIsPredicting(false);
+        }
       };
-      localStorage.setItem("agro_lstm_prediction", JSON.stringify(predictionData));
+
+      fetchPipeline();
+    } else if (predictionStep === 4) {
+      const timer = setTimeout(() => {
+        setIsPredicting(false);
+        setHasPredicted(true);
+      }, 800);
+      return () => clearTimeout(timer);
     }
   }, [isPredicting, predictionStep]);
 
   // Chart dataset for 7-day forecast
   const forecastData = {
-    suhu: [26.8, 27.2, 27.5, 27.1, 27.6, 27.9, 27.4],
-    kelembapan: [80, 82, 83, 81, 84, 85, 82],
-    angin: [2.1, 2.3, 2.5, 2.2, 2.4, 2.6, 2.3],
+    suhu: predictedClimate.length > 0 ? predictedClimate.map((c) => c.suhu) : [26.8, 27.2, 27.5, 27.1, 27.6, 27.9, 27.4],
+    kelembapan: predictedClimate.length > 0 ? predictedClimate.map((c) => c.kelembapan) : [80, 82, 83, 81, 84, 85, 82],
+    angin: predictedClimate.length > 0 ? predictedClimate.map((c) => c.kecepatan_angin) : [2.1, 2.3, 2.5, 2.2, 2.4, 2.6, 2.3],
   };
 
   // Convert array to SVG path
@@ -108,9 +293,8 @@ export default function Page() {
     
     return data.map((val, idx) => {
       const x = idx * stepX;
-      // Map val between minVal and maxVal to height
       const ratio = (val - minVal) / (maxVal - minVal);
-      const y = height - ratio * height * 0.8 - height * 0.1; // margin top/bottom
+      const y = height - ratio * height * 0.8 - height * 0.1;
       return `${idx === 0 ? "M" : "L"} ${x} ${y}`;
     }).join(" ");
   };
@@ -118,15 +302,7 @@ export default function Page() {
   const getSvgGradientPath = (data: number[], minVal: number, maxVal: number) => {
     const width = 680;
     const height = 180;
-    const stepX = width / (data.length - 1);
     const linePath = getSvgPath(data, minVal, maxVal);
-    
-    // Connect to bottom right and bottom left to close path
-    const lastRatio = (data[data.length - 1] - minVal) / (maxVal - minVal);
-    const lastY = height - lastRatio * height * 0.8 - height * 0.1;
-    const firstRatio = (data[0] - minVal) / (maxVal - minVal);
-    const firstY = height - firstRatio * height * 0.8 - height * 0.1;
-    
     return `${linePath} L ${width} ${height} L 0 ${height} Z`;
   };
 
@@ -153,6 +329,13 @@ export default function Page() {
             </p>
           </div>
 
+          {errorMsg && (
+            <div className="bg-red-50 dark:bg-red-950/20 border border-red-500/20 text-red-800 dark:text-red-400 p-4 rounded-2xl flex items-center shadow-sm animate-fade-in">
+              <span className="material-symbols-outlined mr-3 text-red-600" data-icon="error">error</span>
+              <span className="font-bold text-xs">{errorMsg}</span>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Input Form Column (Left) */}
@@ -174,7 +357,7 @@ export default function Page() {
                       onChange={(e) => setSelectedKec(e.target.value)}
                       className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-3 px-4 transition-all"
                     >
-                      {Object.keys(KEC_PROFILES).map((kec) => (
+                      {kecamatanList.map((kec) => (
                         <option key={kec} value={kec}>{kec}</option>
                       ))}
                     </select>
@@ -220,7 +403,9 @@ export default function Page() {
                       onChange={(e) => setJenisTanah(e.target.value)}
                       className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-3 px-4 transition-all"
                     >
+                      <option value="Aluvial">Aluvial (Alluvial)</option>
                       <option value="Lempung">Lempung (Clay)</option>
+                      <option value="Lempung Berliat">Lempung Berliat (Clay Loam)</option>
                       <option value="Lempung Berpasir">Lempung Berpasir (Sandy Clay)</option>
                       <option value="Lempung Berdebu">Lempung Berdebu (Silty Clay)</option>
                       <option value="Pasir Berlempung">Pasir Berlempung (Loamy Sand)</option>
@@ -350,7 +535,7 @@ export default function Page() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">Rerata Suhu</span>
                           <span className="material-symbols-outlined text-lg" data-icon="thermostat">thermostat</span>
                         </div>
-                        <p className="text-xl font-bold mt-2 font-mono">27.3 °C</p>
+                        <p className="text-xl font-bold mt-2 font-mono">{avgClimate.suhu.toFixed(1)} °C</p>
                         <p className="text-[10px] text-stone-400 mt-1">Sesuai tanaman pangan</p>
                       </div>
 
@@ -360,7 +545,7 @@ export default function Page() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">Kelembapan</span>
                           <span className="material-symbols-outlined text-lg" data-icon="humidity_percentage">humidity_percentage</span>
                         </div>
-                        <p className="text-xl font-bold mt-2 font-mono">82.1 %</p>
+                        <p className="text-xl font-bold mt-2 font-mono">{avgClimate.kelembapan.toFixed(1)} %</p>
                         <p className="text-[10px] text-stone-400 mt-1">Rentang ideal</p>
                       </div>
 
@@ -370,7 +555,7 @@ export default function Page() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">Kecepatan Angin</span>
                           <span className="material-symbols-outlined text-lg" data-icon="wind_power">wind_power</span>
                         </div>
-                        <p className="text-xl font-bold mt-2 font-mono">2.3 m/s</p>
+                        <p className="text-xl font-bold mt-2 font-mono">{avgClimate.kecepatan_angin.toFixed(1)} m/s</p>
                         <p className="text-[10px] text-stone-400 mt-1">Kecepatan normal</p>
                       </div>
                     </div>
@@ -437,21 +622,21 @@ export default function Page() {
                           {/* Gradient Fill under Path */}
                           {activeTab === "suhu" && (
                             <path 
-                              d={getSvgGradientPath(forecastData.suhu, 25.0, 30.0)} 
+                              d={getSvgGradientPath(forecastData.suhu, 23.0, 32.0)} 
                               fill="url(#chartGradient)"
                               className="transition-all duration-500"
                             />
                           )}
                           {activeTab === "kelembapan" && (
                             <path 
-                              d={getSvgGradientPath(forecastData.kelembapan, 70, 90)} 
+                              d={getSvgGradientPath(forecastData.kelembapan, 60, 95)} 
                               fill="url(#chartGradient)"
                               className="transition-all duration-500"
                             />
                           )}
                           {activeTab === "angin" && (
                             <path 
-                              d={getSvgGradientPath(forecastData.angin, 1.5, 3.0)} 
+                              d={getSvgGradientPath(forecastData.angin, 0.5, 5.0)} 
                               fill="url(#chartGradient)"
                               className="transition-all duration-500"
                             />
@@ -460,7 +645,7 @@ export default function Page() {
                           {/* Path Line */}
                           {activeTab === "suhu" && (
                             <path 
-                              d={getSvgPath(forecastData.suhu, 25.0, 30.0)} 
+                              d={getSvgPath(forecastData.suhu, 23.0, 32.0)} 
                               fill="none" 
                               stroke="#006B54" 
                               strokeWidth="3.5" 
@@ -471,7 +656,7 @@ export default function Page() {
                           )}
                           {activeTab === "kelembapan" && (
                             <path 
-                              d={getSvgPath(forecastData.kelembapan, 70, 90)} 
+                              d={getSvgPath(forecastData.kelembapan, 60, 95)} 
                               fill="none" 
                               stroke="#3b82f6" 
                               strokeWidth="3.5" 
@@ -482,7 +667,7 @@ export default function Page() {
                           )}
                           {activeTab === "angin" && (
                             <path 
-                              d={getSvgPath(forecastData.angin, 1.5, 3.0)} 
+                              d={getSvgPath(forecastData.angin, 0.5, 5.0)} 
                               fill="none" 
                               stroke="#f59e0b" 
                               strokeWidth="3.5" 
@@ -495,7 +680,7 @@ export default function Page() {
                           {/* Circular Points */}
                           {activeTab === "suhu" && forecastData.suhu.map((val, idx) => {
                             const stepX = 680 / 6;
-                            const ratio = (val - 25.0) / (30.0 - 25.0);
+                            const ratio = (val - 23.0) / (32.0 - 23.0);
                             const y = 180 - ratio * 180 * 0.8 - 180 * 0.1;
                             return (
                               <circle key={idx} cx={idx * stepX} cy={y} r="5" fill="white" stroke="#006B54" strokeWidth="2" />
@@ -503,7 +688,7 @@ export default function Page() {
                           })}
                           {activeTab === "kelembapan" && forecastData.kelembapan.map((val, idx) => {
                             const stepX = 680 / 6;
-                            const ratio = (val - 70) / (90 - 70);
+                            const ratio = (val - 60) / (95 - 60);
                             const y = 180 - ratio * 180 * 0.8 - 180 * 0.1;
                             return (
                               <circle key={idx} cx={idx * stepX} cy={y} r="5" fill="white" stroke="#3b82f6" strokeWidth="2" />
@@ -511,7 +696,7 @@ export default function Page() {
                           })}
                           {activeTab === "angin" && forecastData.angin.map((val, idx) => {
                             const stepX = 680 / 6;
-                            const ratio = (val - 1.5) / (3.0 - 1.5);
+                            const ratio = (val - 0.5) / (5.0 - 0.5);
                             const y = 180 - ratio * 180 * 0.8 - 180 * 0.1;
                             return (
                               <circle key={idx} cx={idx * stepX} cy={y} r="5" fill="white" stroke="#f59e0b" strokeWidth="2" />
@@ -521,9 +706,9 @@ export default function Page() {
 
                         {/* Point details / data labels overlay */}
                         <div className="absolute top-2 left-0 right-0 flex justify-between px-2 font-mono text-[9px] text-stone-400 font-bold">
-                          {activeTab === "suhu" && forecastData.suhu.map((val, idx) => <span key={idx}>{val}°C</span>)}
-                          {activeTab === "kelembapan" && forecastData.kelembapan.map((val, idx) => <span key={idx}>{val}%</span>)}
-                          {activeTab === "angin" && forecastData.angin.map((val, idx) => <span key={idx}>{val}m/s</span>)}
+                          {activeTab === "suhu" && forecastData.suhu.map((val, idx) => <span key={idx}>{val.toFixed(1)}°C</span>)}
+                          {activeTab === "kelembapan" && forecastData.kelembapan.map((val, idx) => <span key={idx}>{val.toFixed(1)}%</span>)}
+                          {activeTab === "angin" && forecastData.angin.map((val, idx) => <span key={idx}>{val.toFixed(1)}m/s</span>)}
                         </div>
                       </div>
 

@@ -3,18 +3,59 @@
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Page() {
   const [showNotification, setShowNotification] = useState(true);
+  const [totalKecamatan, setTotalKecamatan] = useState(12);
+  const [totalEvaluations, setTotalEvaluations] = useState(9);
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
 
-  // Mock data for recent activities
-  const recentActivities = [
-    { id: "#AGR-1092", kecamatan: "Lhoksukon", komoditas: "Padi", kecocokan: "98.2%", status: "Sukses", tanggal: "17 Mei 2026" },
-    { id: "#AGR-1091", kecamatan: "Tanah Luas", komoditas: "Jagung", kecocokan: "89.4%", status: "Sukses", tanggal: "16 Mei 2026" },
-    { id: "#AGR-1090", kecamatan: "Cot Girek", komoditas: "Kedelai", kecocokan: "74.1%", status: "Sukses", tanggal: "15 Mei 2026" },
-    { id: "#AGR-1089", kecamatan: "Dewantara", komoditas: "Padi", kecocokan: "88.7%", status: "Sukses", tanggal: "14 Mei 2026" },
-  ];
+  useEffect(() => {
+    // 1. Fetch kecamatan count from Flask BE
+    fetch("http://localhost:5000/api/kecamatan")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.status === "success" && Array.isArray(resData.data)) {
+          setTotalKecamatan(resData.data.length);
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch kecamatan count for dashboard, using fallback.", err);
+      });
+
+    // 2. Fetch recent activities from localStorage
+    const storedHistory = localStorage.getItem("agro_prediction_history");
+    if (storedHistory) {
+      try {
+        const parsed = JSON.parse(storedHistory);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setTotalEvaluations(parsed.length);
+          const formatted = parsed.slice(0, 4).map((r) => ({
+            id: r.id.startsWith("#") ? r.id : `#${r.id}`,
+            kecamatan: r.kecamatan,
+            komoditas: r.komoditas,
+            kecocokan: typeof r.skor === "number" ? `${r.skor.toFixed(1)}%` : r.skor,
+            status: "Sukses",
+            tanggal: r.tanggal.split(",")[0]
+          }));
+          setRecentActivities(formatted);
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse prediction history in dashboard", e);
+      }
+    }
+
+    // Fallback default logs if localStorage is completely clean
+    const defaultList = [
+      { id: "#AGR-1092", kecamatan: "Lhoksukon", komoditas: "Padi", kecocokan: "98.2%", status: "Sukses", tanggal: "17 Mei 2026" },
+      { id: "#AGR-1091", kecamatan: "Tanah Luas", komoditas: "Jagung", kecocokan: "89.4%", status: "Sukses", tanggal: "16 Mei 2026" },
+      { id: "#AGR-1090", kecamatan: "Cot Girek", komoditas: "Kedelai", kecocokan: "74.1%", status: "Sukses", tanggal: "15 Mei 2026" },
+      { id: "#AGR-1089", kecamatan: "Dewantara", komoditas: "Padi", kecocokan: "88.7%", status: "Sukses", tanggal: "14 Mei 2026" },
+    ];
+    setRecentActivities(defaultList);
+  }, []);
 
   return (
     <div className="bg-stone-50 dark:bg-stone-950 text-stone-800 dark:text-stone-100 min-h-screen">
@@ -52,7 +93,7 @@ export default function Page() {
                 <p className="text-[#006B54] dark:text-[#10b981] font-bold text-xs uppercase tracking-widest font-mono">
                   Sistem Cerdas Rekomendasi Agronomi
                 </p>
-                <h1 className="text-3xl font-extrabold text-stone-950 dark:text-white tracking-tight leading-tight">
+                <h1 className="text-3xl font-extrabold text-stone-955 dark:text-white tracking-tight leading-tight">
                   Selamat Datang di Portal AI-LSTM Tanaman Pangan
                 </h1>
                 <p className="text-stone-500 dark:text-stone-400 text-sm max-w-2xl leading-relaxed">
@@ -78,14 +119,14 @@ export default function Page() {
             <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px] relative overflow-hidden">
               <div className="absolute top-0 right-0 w-20 h-20 bg-stone-50 dark:bg-stone-800/20 rounded-bl-full pointer-events-none"></div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Total Data Lahan</span>
+                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Total Evaluasi</span>
                 <span className="material-symbols-outlined text-[#006B54] bg-[#006B54]/5 p-2 rounded-xl text-lg" data-icon="database">database</span>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">1,240</div>
+                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">{totalEvaluations} Kali</div>
                 <p className="text-[#006B54] font-semibold text-xs mt-1 flex items-center space-x-1">
                   <span className="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
-                  <span>+12% vs bulan lalu</span>
+                  <span>Evaluasi aktif pengguna</span>
                 </p>
               </div>
             </div>
@@ -112,8 +153,8 @@ export default function Page() {
                 <span className="material-symbols-outlined text-amber-600 bg-amber-500/5 p-2 rounded-xl text-lg" data-icon="map">map</span>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">15</div>
-                <p className="text-stone-500 dark:text-stone-400 text-xs mt-1">Wilayah binaan di Aceh Utara</p>
+                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">{totalKecamatan}</div>
+                <p className="text-stone-500 dark:text-stone-400 text-xs mt-1">Wilayah terdata di database</p>
               </div>
             </div>
 
@@ -147,7 +188,7 @@ export default function Page() {
                     <circle className="text-[#006B54]" cx="72" cy="72" fill="transparent" r="58" stroke="currentColor" strokeDasharray="364.4" strokeDashoffset="43.7" strokeWidth="8" strokeLinecap="round"></circle>
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-2xl font-black text-stone-950 dark:text-white font-mono">88%</span>
+                    <span className="text-2xl font-black text-stone-955 dark:text-white font-mono">88%</span>
                     <span className="text-[9px] uppercase font-bold text-[#006B54] bg-[#006B54]/5 px-2 py-0.5 rounded-full mt-1">Optimal</span>
                   </div>
                 </div>

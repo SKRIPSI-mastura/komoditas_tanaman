@@ -49,10 +49,56 @@ const KEC_PROFILES: Record<string, { elevasi: number; ph: number; jenis_tanah: s
   "Nibong": { elevasi: 20, ph: 5.9, jenis_tanah: "Lempung", hujan: 1980, liat: 16, pasir: 48, debu: 36 },
 };
 
+const CROP_RANGES: Record<string, { ph: string; phArr: [number, number]; hujan: string; hujanArr: [number, number]; temp: string; tempArr: [number, number] }> = {
+  "Padi": { ph: "5.5 - 7.0", phArr: [5.5, 7.0], hujan: "1500 - 2500 mm", hujanArr: [1500, 2500], temp: "24°C - 30°C", tempArr: [24, 30] },
+  "Jagung": { ph: "5.6 - 7.5", phArr: [5.6, 7.5], hujan: "1000 - 1800 mm", hujanArr: [1000, 1800], temp: "22°C - 30°C", tempArr: [22, 30] },
+  "Kedelai": { ph: "5.8 - 6.8", phArr: [5.8, 6.8], hujan: "800 - 1500 mm", hujanArr: [800, 1500], temp: "23°C - 29°C", tempArr: [23, 29] },
+  "Kacang Hijau": { ph: "5.5 - 6.5", phArr: [5.5, 6.5], hujan: "500 - 1000 mm", hujanArr: [500, 1000], temp: "25°C - 35°C", tempArr: [25, 35] },
+  "Kacang Tanah": { ph: "6.0 - 6.5", phArr: [6.0, 6.5], hujan: "600 - 1300 mm", hujanArr: [600, 1300], temp: "25°C - 30°C", tempArr: [25, 30] },
+  "Ubi Jalar": { ph: "5.5 - 6.5", phArr: [5.5, 6.5], hujan: "750 - 1500 mm", hujanArr: [750, 1500], temp: "21°C - 28°C", tempArr: [21, 28] },
+  "Ubi Kayu": { ph: "4.5 - 8.0", phArr: [4.5, 8.0], hujan: "750 - 2500 mm", hujanArr: [750, 2500], temp: "20°C - 30°C", tempArr: [20, 30] }
+};
+
+const generateCropReasons = (cropName: string, inp: InputData): string[] => {
+  const range = CROP_RANGES[cropName] || { ph: "5.5 - 7.0", phArr: [5.5, 7.0], hujan: "1000 - 2000 mm", hujanArr: [1000, 2000], temp: "22°C - 30°C", tempArr: [22, 30] };
+  const ph = inp.ph;
+  const optimalPh = range.phArr;
+  const reasons: string[] = [];
+
+  if (ph >= optimalPh[0] && ph <= optimalPh[1]) {
+    reasons.push(`Kadar keasaman pH tanah (${ph.toFixed(1)}) sangat optimal untuk pertumbuhan tanaman ${cropName}.`);
+  } else if (ph < optimalPh[0]) {
+    reasons.push(`Kondisi pH tanah cenderung masam (${ph.toFixed(1)}), memerlukan pengapuran (dolomit) untuk hasil optimal.`);
+  } else {
+    reasons.push(`Kondisi pH tanah cenderung basa (${ph.toFixed(1)}), diperlukan penambahan sulfur untuk mencapai rentang tumbuh.`);
+  }
+
+  const hujan = inp.curahHujan;
+  const optimalHujan = range.hujanArr;
+  if (hujan >= optimalHujan[0] && hujan <= optimalHujan[1]) {
+    reasons.push(`Volume curah hujan tahunan (${hujan} mm) sangat ideal untuk kebutuhan hidrologi vegetatif.`);
+  } else if (hujan > optimalHujan[1]) {
+    reasons.push(`Curah hujan tinggi (${hujan} mm) berisiko menggenangi akar, diperlukan pembuatan saluran drainase aktif.`);
+  } else {
+    reasons.push(`Curah hujan rendah (${hujan} mm), disarankan penambahan pompa irigasi teknis.`);
+  }
+
+  const temp = inp.temp_pred;
+  const optimalTemp = range.tempArr;
+  if (temp >= optimalTemp[0] && temp <= optimalTemp[1]) {
+    reasons.push(`Temperatur rata-rata (${temp.toFixed(1)}°C) berada pada rentang fotosintesis terbaik.`);
+  } else {
+    reasons.push(`Temperatur rata-rata (${temp.toFixed(1)}°C) berada di luar batas optimal fisiologi (${range.temp}).`);
+  }
+  
+  reasons.push(`Tekstur tanah "${inp.jenisTanah}" mendukung ketersediaan hara bagi komoditas ${cropName}.`);
+  return reasons;
+};
+
 interface CropScore {
   name: string;
   score: number;
-  suitability: "Sangat Layak" | "Layak" | "Kurang Layak";
+  suitability: "Sangat Layak" | "Layak" | "Kurang Layak" | "Tidak Layak";
   phRange: string;
   hujanRange: string;
   tempRange: string;
@@ -64,8 +110,28 @@ export default function Page() {
   const [inputs, setInputs] = useState<InputData>(DEFAULT_INPUTS);
   const [recommendations, setRecommendations] = useState<CropScore[]>([]);
   const [selectedCrop, setSelectedCrop] = useState<CropScore | null>(null);
+  const [topExplanation, setTopExplanation] = useState<string>("");
 
-  // 1. Check local storage for recent prediction sequence on mount
+  // Dynamic state helpers
+  const [kecamatanList, setKecamatanList] = useState<string[]>(Object.keys(KEC_PROFILES));
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+
+  // 1. Fetch kecamatan names from backend on mount
+  useEffect(() => {
+    fetch("http://localhost:5000/api/kecamatan")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.status === "success" && Array.isArray(resData.data)) {
+          setKecamatanList(resData.data);
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch kecamatan list, using local fallback.", err);
+      });
+  }, []);
+
+  // 2. Check local storage for recent prediction sequence on mount
   useEffect(() => {
     const localData = localStorage.getItem("agro_lstm_prediction");
     if (localData) {
@@ -73,6 +139,8 @@ export default function Page() {
         const parsed = JSON.parse(localData);
         if (parsed.kecamatan) {
           setSelectedKec(parsed.kecamatan);
+        } else if (parsed.inputs && parsed.inputs.kecamatan) {
+          setSelectedKec(parsed.inputs.kecamatan);
         }
       } catch (e) {
         console.error("Failed to parse local storage", e);
@@ -80,212 +148,121 @@ export default function Page() {
     }
   }, []);
 
-  // 2. Perform reactively calculated evaluations when subdistrict selection updates
+  // 3. Reactively fetch recommendation calculations from backend Flask API
   useEffect(() => {
     if (!selectedKec) {
       setRecommendations([]);
       setSelectedCrop(null);
+      setTopExplanation("");
       return;
     }
 
-    let currentInputs = DEFAULT_INPUTS;
-    const localData = localStorage.getItem("agro_lstm_prediction");
+    setErrorMsg("");
     let hasLoadedLocal = false;
+    const localData = localStorage.getItem("agro_lstm_prediction");
 
+    // Load from localStorage if parameters match
     if (localData) {
       try {
         const parsed = JSON.parse(localData);
-        if (parsed.kecamatan === selectedKec) {
-          currentInputs = parsed;
+        if (parsed.inputs && parsed.inputs.kecamatan === selectedKec) {
+          const fetchedInputs: InputData = parsed.inputs;
+          setInputs(fetchedInputs);
+          
+          const rawCrops = parsed.recommendations || [];
+          const topRec = parsed.top_recommendation || {};
+          setTopExplanation(topRec.explanation || "");
+
+          const mappedCrops: CropScore[] = rawCrops.map((c: any) => {
+            const range = CROP_RANGES[c.komoditas] || { ph: "5.5 - 7.0", phArr: [5.5, 7.0], hujan: "1000 - 1500 mm", hujanArr: [1000, 1500], temp: "24°C - 30°C", tempArr: [24, 30] };
+            return {
+              name: c.komoditas,
+              score: c.score,
+              suitability: c.kelayakan as any,
+              phRange: range.ph,
+              hujanRange: range.hujan,
+              tempRange: range.temp,
+              reasons: generateCropReasons(c.komoditas, fetchedInputs)
+            };
+          });
+
+          const sorted = mappedCrops.sort((a, b) => b.score - a.score);
+          setRecommendations(sorted);
+          setSelectedCrop(sorted[0]);
           hasLoadedLocal = true;
         }
       } catch (e) {
-        console.error("Failed to parse local storage", e);
+        console.error("Failed to parse local storage in rekomendasi page", e);
       }
     }
 
+    // No local storage cache matches selected subdistrict -> query live endpoint!
     if (!hasLoadedLocal) {
-      const profile = KEC_PROFILES[selectedKec];
-      if (profile) {
-        currentInputs = {
-          kecamatan: selectedKec,
-          ph: profile.ph,
-          jenisTanah: profile.jenis_tanah,
-          elevasi: profile.elevasi,
-          curahHujan: profile.hujan,
-          liat: profile.liat,
-          pasir: profile.pasir,
-          debu: profile.debu,
-          temp_pred: 27.4 + (profile.elevasi > 30 ? -1.2 : 0.4) + (profile.ph > 6.0 ? 0.2 : -0.3),
-          hum_pred: 82.5 + (profile.hujan > 2000 ? 3.2 : -2.1),
-          wind_pred: 2.3 + (profile.elevasi > 40 ? 0.8 : -0.2),
-        };
-      }
+      setIsLoading(true);
+      fetch(`http://localhost:5000/api/recommend/${selectedKec}`)
+        .then((res) => res.json())
+        .then((resData) => {
+          if (resData.status !== "success" || !resData.data) {
+            throw new Error(resData.message || "Gagal mendapatkan data rekomendasi dari server.");
+          }
+
+          const apiData = resData.data;
+          
+          const fetchedInputs: InputData = {
+            kecamatan: selectedKec,
+            ph: Number(apiData.profil_wilayah.ph ?? 6.0),
+            jenisTanah: apiData.profil_wilayah.jenis_tanah ?? "Lempung",
+            elevasi: Math.round(apiData.profil_wilayah.elevasi ?? 10),
+            curahHujan: Math.round(apiData.profil_wilayah.curah_hujan_tahunan ?? 2000),
+            liat: Math.round(apiData.profil_wilayah.tanah_liat_persen ?? 30),
+            pasir: Math.round(apiData.profil_wilayah.tanah_pasir_persen ?? 30),
+            debu: Math.round(apiData.profil_wilayah.tanah_debu_persen ?? 40),
+            temp_pred: Number(apiData.avg_climate_prediction.suhu ?? 27.0),
+            hum_pred: Number(apiData.avg_climate_prediction.kelembapan ?? 80.0),
+            wind_pred: Number(apiData.avg_climate_prediction.kecepatan_angin ?? 2.0),
+          };
+
+          setInputs(fetchedInputs);
+          
+          const rawCrops = apiData.recommendations || [];
+          const topRec = apiData.top_recommendation || {};
+          setTopExplanation(topRec.explanation || "");
+
+          const mappedCrops: CropScore[] = rawCrops.map((c: any) => {
+            const range = CROP_RANGES[c.komoditas] || { ph: "5.5 - 7.0", phArr: [5.5, 7.0], hujan: "1000 - 1500 mm", hujanArr: [1000, 1500], temp: "24°C - 30°C", tempArr: [24, 30] };
+            return {
+              name: c.komoditas,
+              score: c.score,
+              suitability: c.kelayakan as any,
+              phRange: range.ph,
+              hujanRange: range.hujan,
+              tempRange: range.temp,
+              reasons: generateCropReasons(c.komoditas, fetchedInputs)
+            };
+          });
+
+          const sorted = mappedCrops.sort((a, b) => b.score - a.score);
+          setRecommendations(sorted);
+          setSelectedCrop(sorted[0]);
+
+          // Save standard prediction run to local storage for caching
+          const localStoreData = {
+            isCustom: false,
+            inputs: fetchedInputs,
+            climate_prediction: apiData.climate_prediction || [],
+            recommendations: rawCrops,
+            top_recommendation: topRec
+          };
+          localStorage.setItem("agro_lstm_prediction", JSON.stringify(localStoreData));
+        })
+        .catch((err) => {
+          console.error("Failed to run dynamic recommendation API", err);
+          setErrorMsg(err.message || "Gagal menghubungi server backend Flask untuk mendapatkan rekomendasi.");
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
-
-    setInputs(currentInputs);
-
-    const evaluateCrops = (inp: InputData): CropScore[] => {
-      const crops = [
-        {
-          name: "Padi",
-          optimalPh: [5.5, 7.0],
-          optimalHujan: [1500, 2500],
-          optimalTemp: [24.0, 30.0],
-          phRange: "5.5 - 7.0",
-          hujanRange: "1500 - 2500 mm",
-          tempRange: "24°C - 30°C",
-          textures: ["Lempung", "Lempung Berliat", "Lempung Berdebu", "Aluvial"]
-        },
-        {
-          name: "Jagung",
-          optimalPh: [5.6, 7.5],
-          optimalHujan: [1000, 1800],
-          optimalTemp: [22.0, 30.0],
-          phRange: "5.6 - 7.5",
-          hujanRange: "1000 - 1800 mm",
-          tempRange: "22°C - 30°C",
-          textures: ["Lempung", "Lempung Berpasir", "Latosol", "Regosol"]
-        },
-        {
-          name: "Kedelai",
-          optimalPh: [5.8, 6.8],
-          optimalHujan: [800, 1500],
-          optimalTemp: [23.0, 29.0],
-          phRange: "5.8 - 6.8",
-          hujanRange: "800 - 1500 mm",
-          tempRange: "23°C - 29°C",
-          textures: ["Lempung", "Latosol", "Grumosol"]
-        },
-        {
-          name: "Kacang Hijau",
-          optimalPh: [5.5, 6.5],
-          optimalHujan: [500, 1000],
-          optimalTemp: [25.0, 35.0],
-          phRange: "5.5 - 6.5",
-          hujanRange: "500 - 1000 mm",
-          tempRange: "25°C - 35°C",
-          textures: ["Lempung Berpasir", "Aluvial", "Regosol"]
-        },
-        {
-          name: "Kacang Tanah",
-          optimalPh: [6.0, 6.5],
-          optimalHujan: [600, 1300],
-          optimalTemp: [25.0, 30.0],
-          phRange: "6.0 - 6.5",
-          hujanRange: "600 - 1300 mm",
-          tempRange: "25°C - 30°C",
-          textures: ["Pasir Berlempung", "Lempung Berpasir", "Regosol"]
-        },
-        {
-          name: "Ubi Jalar",
-          optimalPh: [5.5, 6.5],
-          optimalHujan: [750, 1500],
-          optimalTemp: [21.0, 28.0],
-          phRange: "5.5 - 6.5",
-          hujanRange: "750 - 1500 mm",
-          tempRange: "21°C - 28°C",
-          textures: ["Pasir Berlempung", "Lempung", "Latosol"]
-        },
-        {
-          name: "Ubi Kayu",
-          optimalPh: [4.5, 8.0],
-          optimalHujan: [750, 2500],
-          optimalTemp: [20.0, 30.0],
-          phRange: "4.5 - 8.0",
-          hujanRange: "750 - 2500 mm",
-          tempRange: "20°C - 30°C",
-          textures: ["Lempung", "Mediteran", "Latosol"]
-        }
-      ];
-
-      return crops.map((crop) => {
-        let baseScore = 75;
-
-        // Soil pH verification
-        const ph = inp.ph;
-        const optimalPh = crop.optimalPh;
-        if (ph >= optimalPh[0] && ph <= optimalPh[1]) {
-          baseScore += 12;
-        } else {
-          const distance = Math.min(Math.abs(ph - optimalPh[0]), Math.abs(ph - optimalPh[1]));
-          baseScore -= Math.min(distance * 15, 25);
-        }
-
-        // Annual rainfall verification
-        const hujan = inp.curahHujan;
-        const optimalHujan = crop.optimalHujan;
-        if (hujan >= optimalHujan[0] && hujan <= optimalHujan[1]) {
-          baseScore += 8;
-        } else {
-          const distance = Math.min(Math.abs(hujan - optimalHujan[0]), Math.abs(hujan - optimalHujan[1]));
-          baseScore -= Math.min((distance / 100) * 5, 20);
-        }
-
-        // Forecasted Temp verification
-        const temp = inp.temp_pred;
-        const optimalTemp = crop.optimalTemp;
-        if (temp >= optimalTemp[0] && temp <= optimalTemp[1]) {
-          baseScore += 5;
-        } else {
-          const distance = Math.min(Math.abs(temp - optimalTemp[0]), Math.abs(temp - optimalTemp[1]));
-          baseScore -= Math.min(distance * 8, 15);
-        }
-
-        // Texture / Jenis Tanah verification
-        const matchedTexture = crop.textures.some(t => inp.jenisTanah.toLowerCase().includes(t.toLowerCase()));
-        if (matchedTexture) {
-          baseScore += 5;
-        } else {
-          baseScore -= 8;
-        }
-
-        const finalScore = Math.max(Math.min(Number(baseScore.toFixed(1)), 99.2), 22.5);
-        
-        let suitability: "Sangat Layak" | "Layak" | "Kurang Layak" = "Layak";
-        if (finalScore >= 88.0) suitability = "Sangat Layak";
-        else if (finalScore < 60.0) suitability = "Kurang Layak";
-
-        const reasons: string[] = [];
-        if (ph >= optimalPh[0] && ph <= optimalPh[1]) {
-          reasons.push(`Kadar keasaman pH tanah (${ph.toFixed(1)}) sangat optimal untuk pertumbuhan tanaman ${crop.name}.`);
-        } else if (ph < optimalPh[0]) {
-          reasons.push(`Kondisi pH tanah cenderung masam (${ph.toFixed(1)}), memerlukan pengapuran (dolomit) untuk hasil optimal.`);
-        } else {
-          reasons.push(`Kondisi pH tanah cenderung basa (${ph.toFixed(1)}), diperlukan penambahan sulfur untuk mencapai rentang tumbuh.`);
-        }
-
-        if (hujan >= optimalHujan[0] && hujan <= optimalHujan[1]) {
-          reasons.push(`Volume curah hujan tahunan (${hujan} mm) sangat ideal untuk kebutuhan hidrologi vegetatif.`);
-        } else if (hujan > optimalHujan[1]) {
-          reasons.push(`Curah hujan tinggi (${hujan} mm) berisiko menggenangi akar, diperlukan pembuatan saluran drainase aktif.`);
-        } else {
-          reasons.push(`Curah hujan rendah (${hujan} mm), disarankan penambahan pompa irigasi teknis.`);
-        }
-
-        reasons.push(`Temperatur prediksi LSTM (${temp.toFixed(1)}°C) berada pada rentang fotosintesis terbaik.`);
-        
-        if (matchedTexture) {
-          reasons.push(`Tekstur tanah "${inp.jenisTanah}" sangat sesuai untuk mendukung penyerapan nutrisi akar.`);
-        } else {
-          reasons.push(`Tekstur tanah "${inp.jenisTanah}" kurang ideal, disarankan modifikasi pupuk organik tambahan.`);
-        }
-
-        return {
-          name: crop.name,
-          score: finalScore,
-          suitability,
-          phRange: crop.phRange,
-          hujanRange: crop.hujanRange,
-          tempRange: crop.tempRange,
-          reasons
-        };
-      });
-    };
-
-    const sortedCrops = evaluateCrops(currentInputs).sort((a, b) => b.score - a.score);
-    setRecommendations(sortedCrops);
-    setSelectedCrop(sortedCrops[0]);
   }, [selectedKec]);
 
   return (
@@ -322,7 +299,7 @@ export default function Page() {
                   className="bg-white dark:bg-stone-900 border border-stone-150 dark:border-stone-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-xs py-2 px-3 transition-all font-bold text-[#006B54] dark:text-[#10b981]"
                 >
                   <option value="">-- Pilih Kecamatan --</option>
-                  {Object.keys(KEC_PROFILES).map((kec) => (
+                  {kecamatanList.map((kec) => (
                     <option key={kec} value={kec}>{kec}</option>
                   ))}
                 </select>
@@ -338,8 +315,15 @@ export default function Page() {
             </div>
           </div>
 
+          {errorMsg && (
+            <div className="bg-red-50 dark:bg-red-950/20 border border-red-500/20 text-red-800 dark:text-red-400 p-4 rounded-2xl flex items-center shadow-sm animate-fade-in mb-4">
+              <span className="material-symbols-outlined mr-3 text-red-600" data-icon="error">error</span>
+              <span className="font-bold text-xs">{errorMsg}</span>
+            </div>
+          )}
+
           {/* Conditional Layout: State 1 - Choose subdistrict prompt */}
-          {!selectedKec && (
+          {!selectedKec && !isLoading && (
             <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 rounded-3xl p-12 text-center flex flex-col items-center justify-center min-h-[460px] shadow-sm relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#006B54]/5 to-transparent rounded-bl-full pointer-events-none"></div>
               
@@ -347,7 +331,7 @@ export default function Page() {
                 <span className="material-symbols-outlined text-4xl" data-icon="explore">explore</span>
               </div>
               
-              <h4 className="text-xl font-black text-stone-900 dark:text-white leading-tight">Silakan Pilih Kecamatan Terlebih Dahulu</h4>
+              <h4 className="text-xl font-black text-stone-955 dark:text-white leading-tight">Silakan Pilih Kecamatan Terlebih Dahulu</h4>
               <p className="text-xs text-stone-400 dark:text-stone-500 max-w-md mt-2 leading-relaxed">
                 Untuk menganalisis kesesuaian komoditas pertanian pangan berdasarkan pemodelan cuaca jangka panjang LSTM & sifat fisik kimia lahan, silakan pilih salah satu kecamatan di wilayah Kabupaten Aceh Utara.
               </p>
@@ -359,7 +343,7 @@ export default function Page() {
                   className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-150 dark:border-stone-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/25 text-sm py-4 px-5 transition-all text-center font-bold text-[#006B54] dark:text-[#10b981] cursor-pointer"
                 >
                   <option value="">-- PILIH KECAMATAN ACEH UTARA --</option>
-                  {Object.keys(KEC_PROFILES).map((kec) => (
+                  {kecamatanList.map((kec) => (
                     <option key={kec} value={kec}>{kec}</option>
                   ))}
                 </select>
@@ -372,8 +356,19 @@ export default function Page() {
             </div>
           )}
 
+          {/* Scientific Loading state */}
+          {isLoading && (
+            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 rounded-3xl p-12 text-center flex flex-col items-center justify-center min-h-[460px] shadow-sm animate-pulse">
+              <div className="w-16 h-16 rounded-full border-4 border-t-[#006B54] border-stone-100 dark:border-stone-800 animate-spin mb-6" />
+              <h4 className="text-lg font-black text-stone-950 dark:text-white leading-tight">Melatih & Menganalisis dengan Model AI...</h4>
+              <p className="text-xs text-stone-400 dark:text-stone-500 max-w-sm mt-2 leading-relaxed">
+                Menjalankan data runtun waktu historis kecamatan pada model LSTM & mengevaluasi parameter tanah dengan model Neural Network (NN). Mohon tunggu beberapa saat.
+              </p>
+            </div>
+          )}
+
           {/* Conditional Layout: State 2 - Results Displayed */}
-          {selectedKec && recommendations.length > 0 && (
+          {selectedKec && recommendations.length > 0 && !isLoading && (
             <>
               {/* Summary Banner */}
               <div className="bg-gradient-to-r from-[#006B54] to-[#10b981] text-white rounded-3xl p-6 shadow-lg shadow-[#006B54]/10 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
@@ -433,7 +428,9 @@ export default function Page() {
                                   ? "text-emerald-600 dark:text-emerald-400" 
                                   : crop.suitability === "Layak" 
                                     ? "text-amber-600 dark:text-amber-400" 
-                                    : "text-rose-600 dark:text-rose-400"
+                                    : crop.suitability === "Kurang Layak"
+                                      ? "text-amber-500 dark:text-amber-500/80"
+                                      : "text-rose-600 dark:text-rose-400"
                               }`}>
                                 {crop.suitability}
                               </p>
@@ -463,7 +460,9 @@ export default function Page() {
                               ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/10" 
                               : selectedCrop.suitability === "Layak" 
                                 ? "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-500/10" 
-                                : "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border-rose-500/10"
+                                : selectedCrop.suitability === "Kurang Layak"
+                                  ? "bg-amber-50/40 dark:bg-amber-950/10 text-amber-500 dark:text-amber-500 border-amber-500/5"
+                                  : "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border-rose-500/10"
                           }`}>
                             {selectedCrop.suitability}
                           </span>
@@ -474,6 +473,17 @@ export default function Page() {
                           <p className="text-3xl font-black text-[#006B54] dark:text-[#10b981] font-mono mt-0.5">{selectedCrop.score}%</p>
                         </div>
                       </div>
+
+                      {/* AI Neural Network Dynamic Explanation paragraph */}
+                      {topExplanation && selectedCrop.name === recommendations[0].name && (
+                        <div className="bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-500/10 p-4 rounded-2xl text-xs text-stone-700 dark:text-stone-300 leading-relaxed shadow-sm">
+                          <p className="font-bold text-[#006B54] dark:text-[#10b981] mb-1.5 flex items-center space-x-1.5">
+                            <span className="material-symbols-outlined text-sm" data-icon="psychology">psychology</span>
+                            <span>Justifikasi Model AI (Neural Network)</span>
+                          </p>
+                          {topExplanation}
+                        </div>
+                      )}
 
                       {/* Growth Criteria Comparison */}
                       <div>

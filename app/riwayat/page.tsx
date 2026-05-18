@@ -2,7 +2,7 @@
 
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface HistoryRecord {
   id: string;
@@ -14,13 +14,13 @@ interface HistoryRecord {
   tanah: string;
   komoditas: string;
   skor: number;
-  suitability: "Sangat Layak" | "Layak" | "Kurang Layak";
+  suitability: "Sangat Layak" | "Layak" | "Kurang Layak" | "Tidak Layak";
 }
 
 const HISTORICAL_DATA: HistoryRecord[] = [
   { id: "AGR-1092", kecamatan: "Lhoksukon", tanggal: "17 Mei 2026, 14:32", ph: 6.4, elevasi: 12, curahHujan: 2100, tanah: "Lempung Berliat", komoditas: "Padi", skor: 98.2, suitability: "Sangat Layak" },
   { id: "AGR-1091", kecamatan: "Tanah Luas", tanggal: "16 Mei 2026, 09:15", ph: 5.8, elevasi: 22, curahHujan: 1950, tanah: "Lempung Berpasir", komoditas: "Jagung", skor: 89.4, suitability: "Layak" },
-  { id: "AGR-1090", kecamatan: "Cot Girek", tanggal: "15 Mei 2026, 11:45", ph: 5.2, elevasi: 58, curahHujan: 2400, tanah: "Lempung Liat", komoditas: "Kedelai", skor: 74.1, suitability: "Layak" },
+  { id: "AGR-1090", kecamatan: "Cot Girek", tanggal: "15 Mei 2026, 11:45", ph: 5.2, elevasi: 58, curahHujan: 2400, tanah: "Lempung Liat Berpasir", komoditas: "Kedelai", skor: 74.1, suitability: "Layak" },
   { id: "AGR-1089", kecamatan: "Dewantara", tanggal: "14 Mei 2026, 16:20", ph: 6.5, elevasi: 8, curahHujan: 1800, tanah: "Lempung", komoditas: "Padi", skor: 88.7, suitability: "Layak" },
   { id: "AGR-1088", kecamatan: "Muara Batu", tanggal: "12 Mei 2026, 10:10", ph: 6.2, elevasi: 10, curahHujan: 1850, tanah: "Lempung Berpasir", komoditas: "Kacang Tanah", skor: 83.5, suitability: "Layak" },
   { id: "AGR-1087", kecamatan: "Syamtalira Aron", tanggal: "10 Mei 2026, 08:30", ph: 6.3, elevasi: 15, curahHujan: 2050, tanah: "Lempung Berdebu", komoditas: "Padi", skor: 95.8, suitability: "Sangat Layak" },
@@ -31,9 +31,29 @@ const HISTORICAL_DATA: HistoryRecord[] = [
 
 export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterTab, setFilterTab] = useState<"Semua" | "Sangat Layak" | "Layak" | "Kurang Layak">("Semua");
+  const [filterTab, setFilterTab] = useState<"Semua" | "Sangat Layak" | "Layak" | "Kurang Layak" | "Tidak Layak">("Semua");
+  const [historyList, setHistoryList] = useState<HistoryRecord[]>([]);
 
-  const filteredHistory = HISTORICAL_DATA.filter((record) => {
+  // Load history from localStorage
+  useEffect(() => {
+    const storedHistory = localStorage.getItem("agro_prediction_history");
+    if (storedHistory) {
+      try {
+        const parsed = JSON.parse(storedHistory);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setHistoryList(parsed);
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse history from localStorage", e);
+      }
+    }
+    // Pre-populate with historical mock data if empty
+    setHistoryList(HISTORICAL_DATA);
+    localStorage.setItem("agro_prediction_history", JSON.stringify(HISTORICAL_DATA));
+  }, []);
+
+  const filteredHistory = historyList.filter((record) => {
     const matchesSearch = 
       record.kecamatan.toLowerCase().includes(searchTerm.toLowerCase()) || 
       record.komoditas.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -43,6 +63,75 @@ export default function Page() {
     
     return matchesSearch && matchesTab;
   });
+
+  // Dynamic text report generator & download
+  const handleDownloadReport = (record: HistoryRecord) => {
+    const reportText = `=====================================================
+LAPORAN HASIL REKOMENDASI KOMODITAS PERTANIAN PANGAN
+SISTEM CERDAS AGRO-LSTM & NEURAL NETWORK (ACEH UTARA)
+=====================================================
+ID Laporan       : ${record.id}
+Tanggal Analisis : ${record.tanggal}
+Wilayah Evaluasi : Kecamatan ${record.kecamatan}
+
+VARIABEL KONDISI FISIK DAN KIMIA LAHAN:
+-----------------------------------------------------
+- Derajat Keasaman (pH) : ${record.ph.toFixed(1)}
+- Elevasi Lahan        : ${record.elevasi} mdpl (meter di atas permukaan laut)
+- Curah Hujan Tahunan  : ${record.curahHujan} mm
+- Tekstur Tanah        : ${record.tanah}
+
+HASIL PREDIKSI MODEL KECERDASAN BUATAN:
+-----------------------------------------------------
+- Komoditas Direkomendasikan : ${record.komoditas}
+- Tingkat Kesesuaian Lahan  : ${record.skor.toFixed(1)}%
+- Kategori Kelayakan         : ${record.suitability}
+
+REKOMENDASI VEGETATIF:
+Berdasarkan analisis model neural network, komoditas ${record.komoditas}
+memiliki indeks kecocokan sebesar ${record.skor.toFixed(1)}% (${record.suitability}) untuk ditanam pada
+wilayah Kecamatan ${record.kecamatan} dengan karakteristik kondisi lahan di atas.
+=====================================================
+Laporan ini dihasilkan secara otomatis oleh Sistem Agro-LSTM.`;
+
+    const blob = new Blob([reportText], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Laporan_Agro_${record.id}_${record.kecamatan.replace(/\s+/g, "_")}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Full table CSV export
+  const handleExportCSV = () => {
+    if (historyList.length === 0) return;
+    
+    const headers = ["ID", "Kecamatan", "Tanggal", "pH", "Elevasi(mdpl)", "Curah Hujan(mm)", "Jenis Tanah", "Komoditas", "Skor(%)", "Kelayakan"];
+    const rows = historyList.map((r) => [
+      r.id,
+      r.kecamatan,
+      r.tanggal,
+      r.ph,
+      r.elevasi,
+      r.curahHujan,
+      r.tanah,
+      r.komoditas,
+      r.skor,
+      r.suitability
+    ]);
+    
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map(e => e.map(val => `"${val}"`).join(","))].join("\n");
+      
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "Riwayat_Prediksi_Agro_Lahan.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="bg-stone-50 dark:bg-stone-950 text-stone-800 dark:text-stone-100 min-h-screen">
@@ -63,7 +152,10 @@ export default function Page() {
             </div>
             
             <div className="flex space-x-2 shrink-0">
-              <button className="flex items-center px-4 py-2.5 bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 hover:bg-stone-50 rounded-xl text-xs font-bold transition-all shadow-sm">
+              <button 
+                onClick={handleExportCSV}
+                className="flex items-center px-4 py-2.5 bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 hover:bg-stone-50 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+              >
                 <span className="material-symbols-outlined text-sm mr-1.5" data-icon="download">download</span>
                 <span>Export CSV</span>
               </button>
@@ -86,7 +178,7 @@ export default function Page() {
 
             {/* Suitability Tabs */}
             <div className="flex bg-stone-50 dark:bg-stone-950 p-1 rounded-2xl border border-stone-100 dark:border-stone-850 overflow-x-auto">
-              {(["Semua", "Sangat Layak", "Layak", "Kurang Layak"] as const).map((tab) => (
+              {(["Semua", "Sangat Layak", "Layak", "Kurang Layak", "Tidak Layak"] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setFilterTab(tab)}
@@ -126,7 +218,7 @@ export default function Page() {
                         <td className="px-6 py-4 text-xs text-stone-400 dark:text-stone-500">{record.tanggal}</td>
                         <td className="px-6 py-4 text-xs">
                           <div className="flex space-x-2 font-mono text-stone-600 dark:text-stone-400 font-bold">
-                            <span className="bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 px-2 py-0.5 rounded-lg">pH {record.ph}</span>
+                            <span className="bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 px-2 py-0.5 rounded-lg">pH {record.ph.toFixed(1)}</span>
                             <span className="bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 px-2 py-0.5 rounded-lg">{record.elevasi}m</span>
                             <span className="bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 px-2 py-0.5 rounded-lg">{record.curahHujan}mm</span>
                           </div>
@@ -134,18 +226,24 @@ export default function Page() {
                         <td className="px-6 py-4 text-sm font-bold text-stone-700 dark:text-stone-300">{record.komoditas}</td>
                         <td className="px-6 py-4 text-center">
                           <div className="flex items-center justify-center space-x-1.5">
-                            <span className="text-sm font-black font-mono text-[#006B54] dark:text-[#10b981]">{record.skor}%</span>
+                            <span className="text-sm font-black font-mono text-[#006B54] dark:text-[#10b981]">{record.skor.toFixed(1)}%</span>
                             <span className={`w-1.5 h-1.5 rounded-full ${
                               record.suitability === "Sangat Layak" 
                                 ? "bg-emerald-500" 
                                 : record.suitability === "Layak" 
                                   ? "bg-amber-500" 
-                                  : "bg-rose-500"
+                                  : record.suitability === "Kurang Layak"
+                                    ? "bg-amber-500/60"
+                                    : "bg-rose-500"
                             }`} />
                           </div>
                         </td>
                         <td className="px-6 py-4 text-center">
-                          <button className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 text-[#006B54] dark:text-[#10b981] rounded-lg transition-colors cursor-pointer" title="Unduh Laporan">
+                          <button 
+                            onClick={() => handleDownloadReport(record)}
+                            className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 text-[#006B54] dark:text-[#10b981] rounded-lg transition-colors cursor-pointer" 
+                            title="Unduh Laporan"
+                          >
                             <span className="material-symbols-outlined text-base" data-icon="cloud_download">cloud_download</span>
                           </button>
                         </td>
