@@ -5,32 +5,44 @@ import { Header } from "@/components/Header";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// Real-like profiles from Aceh Utara
+// Real database profiles from Aceh Utara models
 const KEC_PROFILES: Record<string, { elevasi: number; ph: number; jenis_tanah: string; hujan: number; liat: number; pasir: number; debu: number }> = {
-  "Lhoksukon": { elevasi: 12, ph: 6.4, jenis_tanah: "Lempung Berliat", hujan: 2100, liat: 28, pasir: 32, debu: 40 },
-  "Tanah Luas": { elevasi: 22, ph: 5.8, jenis_tanah: "Lempung Berpasir", hujan: 1950, liat: 20, pasir: 60, debu: 20 },
-  "Cot Girek": { elevasi: 58, ph: 5.2, jenis_tanah: "Lempung Liat Berpasir", hujan: 2400, liat: 25, pasir: 55, debu: 20 },
-  "Dewantara": { elevasi: 8, ph: 6.5, jenis_tanah: "Lempung", hujan: 1800, liat: 15, pasir: 45, debu: 40 },
-  "Muara Batu": { elevasi: 10, ph: 6.2, jenis_tanah: "Lempung Berpasir", hujan: 1850, liat: 18, pasir: 52, debu: 30 },
-  "Syamtalira Aron": { elevasi: 15, ph: 6.3, jenis_tanah: "Lempung Berdebu", hujan: 2050, liat: 22, pasir: 28, debu: 50 },
-  "Samudera": { elevasi: 14, ph: 6.1, jenis_tanah: "Lempung Berdebu", hujan: 2000, liat: 20, pasir: 30, debu: 50 },
-  "Baktiya": { elevasi: 11, ph: 6.2, jenis_tanah: "Lempung Berliat", hujan: 2150, liat: 26, pasir: 34, debu: 40 },
-  "Seunuddon": { elevasi: 5, ph: 6.6, jenis_tanah: "Pasir Berlempung", hujan: 1750, liat: 10, pasir: 75, debu: 15 },
-  "Syamtalira Bayu": { elevasi: 16, ph: 6.0, jenis_tanah: "Lempung Berdebu", hujan: 2000, liat: 18, pasir: 32, debu: 50 },
-  "Meurah Mulia": { elevasi: 32, ph: 5.6, jenis_tanah: "Lempung Berpasir", hujan: 2200, liat: 21, pasir: 54, debu: 25 },
-  "Nibong": { elevasi: 20, ph: 5.9, jenis_tanah: "Lempung", hujan: 1980, liat: 16, pasir: 48, debu: 36 },
+  "Baktiya": { elevasi: 11, ph: 5.5, jenis_tanah: "Aluvial", hujan: 2284, liat: 36, pasir: 28, debu: 37 },
+  "Baktiya Barat": { elevasi: 4, ph: 5.5, jenis_tanah: "Aluvial", hujan: 2284, liat: 36, pasir: 32, debu: 33 },
+  "Banda Baro": { elevasi: 35, ph: 5.3, jenis_tanah: "Aluvial", hujan: 2478, liat: 36, pasir: 34, debu: 29 },
+  "Cot Girek": { elevasi: 124, ph: 5.1, jenis_tanah: "Podsolik", hujan: 2284, liat: 35, pasir: 36, debu: 28 },
+  "Dewantara": { elevasi: 9, ph: 5.4, jenis_tanah: "Aluvial", hujan: 2478, liat: 35, pasir: 36, debu: 29 },
+  "Kuta Makmur": { elevasi: 141, ph: 5.4, jenis_tanah: "Podsolik", hujan: 2478, liat: 35, pasir: 35, debu: 30 },
+  "Langkahan": { elevasi: 71, ph: 5.3, jenis_tanah: "Podsolik", hujan: 2284, liat: 36, pasir: 33, debu: 31 },
+  "Lapang": { elevasi: 4, ph: 5.2, jenis_tanah: "Aluvial", hujan: 2284, liat: 38, pasir: 33, debu: 29 },
+  "Lhoksukon": { elevasi: 12, ph: 5.4, jenis_tanah: "Aluvial", hujan: 2284, liat: 34, pasir: 34, debu: 32 },
+  "Matangkuli": { elevasi: 12, ph: 5.4, jenis_tanah: "Aluvial", hujan: 2284, liat: 33, pasir: 30, debu: 37 },
+  "Meurah Mulia": { elevasi: 18, ph: 5.1, jenis_tanah: "Aluvial", hujan: 2478, liat: 36, pasir: 36, debu: 28 },
+  "Muara Batu": { elevasi: 10, ph: 5.2, jenis_tanah: "Aluvial", hujan: 2478, liat: 34, pasir: 39, debu: 27 },
+  "Nibong": { elevasi: 17, ph: 5.2, jenis_tanah: "Aluvial", hujan: 2284, liat: 40, pasir: 28, debu: 32 },
+  "Nisam": { elevasi: 31, ph: 5.4, jenis_tanah: "Aluvial", hujan: 2478, liat: 32, pasir: 35, debu: 33 },
+  "Nisam Antara": { elevasi: 459, ph: 5.3, jenis_tanah: "Podsolik", hujan: 2478, liat: 39, pasir: 33, debu: 28 },
+  "Paya Bakong": { elevasi: 81, ph: 4.9, jenis_tanah: "Podsolik", hujan: 2284, liat: 34, pasir: 38, debu: 28 },
+  "Samudera": { elevasi: 7, ph: 5.8, jenis_tanah: "Aluvial", hujan: 2284, liat: 33, pasir: 33, debu: 34 },
+  "Sawang": { elevasi: 381, ph: 5.2, jenis_tanah: "Podsolik", hujan: 2478, liat: 35, pasir: 34, debu: 31 },
+  "Seunuddon": { elevasi: 4, ph: 5.6, jenis_tanah: "Aluvial", hujan: 2284, liat: 40, pasir: 26, debu: 34 },
+  "Syamtalira Aron": { elevasi: 5, ph: 5.6, jenis_tanah: "Aluvial", hujan: 2478, liat: 31, pasir: 32, debu: 36 },
+  "Syamtalira Bayu": { elevasi: 20, ph: 5.8, jenis_tanah: "Aluvial", hujan: 2284, liat: 33, pasir: 33, debu: 34 },
+  "Tanah Jambo Aye": { elevasi: 10, ph: 5.5, jenis_tanah: "Aluvial", hujan: 2284, liat: 36, pasir: 32, debu: 32 },
+  "Tanah Luas": { elevasi: 239, ph: 5.3, jenis_tanah: "Podsolik", hujan: 2284, liat: 32, pasir: 33, debu: 34 },
+  "Tanah Pasir": { elevasi: 5, ph: 5.6, jenis_tanah: "Aluvial", hujan: 2284, liat: 34, pasir: 32, debu: 34 },
 };
 
 export default function Page() {
   const router = useRouter();
   const [selectedKec, setSelectedKec] = useState("Lhoksukon");
-  const [ph, setPh] = useState(6.4);
-  const [jenisTanah, setJenisTanah] = useState("Lempung Berliat");
+  const [ph, setPh] = useState(5.4);
+  const [jenisTanah, setJenisTanah] = useState("Aluvial");
   const [elevasi, setElevasi] = useState(12);
-  const [curahHujan, setCurahHujan] = useState(2100);
-  const [liat, setLiat] = useState(28);
-  const [pasir, setPasir] = useState(32);
-  const [debu, setDebu] = useState(40);
+  const [curahHujan, setCurahHujan] = useState(2284);
+  const [liat, setLiat] = useState(34);
+  const [pasir, setPasir] = useState(34);
+  const [debu, setDebu] = useState(32);
   const [resikoBencana, setResikoBencana] = useState("Rendah");
 
   // Dynamic lists and details from backend
@@ -407,9 +419,12 @@ export default function Page() {
                       <option value="Lempung">Lempung (Clay)</option>
                       <option value="Lempung Berliat">Lempung Berliat (Clay Loam)</option>
                       <option value="Lempung Berpasir">Lempung Berpasir (Sandy Clay)</option>
-                      <option value="Lempung Berdebu">Lempung Berdebu (Silty Clay)</option>
+                      <option value="Latosol">Latosol (Latosol)</option>
+                      <option value="Regosol">Regosol (Regosol)</option>
+                      <option value="Grumosol">Grumosol (Grumosol)</option>
                       <option value="Pasir Berlempung">Pasir Berlempung (Loamy Sand)</option>
-                      <option value="Lempung Liat Berpasir">Lempung Liat Berpasir (Clay Loam)</option>
+                      <option value="Mediteran">Mediteran (Mediteran)</option>
+                      <option value="Podsolik">Podsolik (Podzolic)</option>
                     </select>
                   </div>
 
