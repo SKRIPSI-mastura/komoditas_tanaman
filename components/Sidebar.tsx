@@ -3,9 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Read state from localStorage reactively on navigation
+    setIsAdmin(localStorage.getItem("admin_logged_in") === "true");
+  }, [pathname]);
 
   const menuItems = [
     {
@@ -13,7 +20,11 @@ export function Sidebar() {
       items: [
         { name: "Dashboard", icon: "dashboard", href: "/dashboard" },
         { name: "Prediksi Iklim LSTM", icon: "cloud_sync", href: "/prediksi" },
-        { name: "Data Kecamatan", icon: "map", href: "/kelola-data" },
+        { 
+          name: isAdmin ? "Data Kecamatan" : "Kelola Data (Admin Only)", 
+          icon: isAdmin ? "map" : "lock", 
+          href: "/kelola-data" 
+        },
         { name: "Rekomendasi Tanaman", icon: "grass", href: "/rekomendasi" },
         { name: "Riwayat Prediksi", icon: "history", href: "/riwayat" },
       ]
@@ -76,7 +87,7 @@ export function Sidebar() {
                     >
                       {item.icon}
                     </span>
-                    <span>{item.name}</span>
+                    <span className="truncate">{item.name}</span>
                   </Link>
                 );
               })}
@@ -114,18 +125,41 @@ export function Sidebar() {
         </div>
 
         {/* User Detail Hook */}
-        <div className="bg-stone-50 dark:bg-stone-900/30 p-3 rounded-2xl flex items-center space-x-3 border border-stone-100 dark:border-stone-800/50">
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-[#006B54]/20 shrink-0">
-                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbtdwaBkH_pEAHF_ARgc0orbTbGHRHqKPWj5mbDF3hkTUvHHf5eYA5oP7SHKwkS1KvG0mlG4StBn8ynIZLu84n8bxR4tHpidUmnj6liJDC92iROb1zRrJCjOXu0csZW10DSqf40lVI1rct0F7_kHvd3cu4Ql5RoGOH7ENRq4DX1ZZHWPNFXXIhpLz6_reOHHJRp0KGApANhlSUwzS3Cg5w8KG5RfR4KDDY5Ns8btrrKyJdfeQXGlBs_n8gKdZnVintVhwuDmpwuOZy" alt="User" />
-            </div>
-            <div className="overflow-hidden bg-transparent">
-                <p className="text-xs font-bold text-stone-800 dark:text-stone-200 truncate leading-tight">Mastura, S.T.</p>
-                <div className="flex items-center space-x-1 mt-0.5">
-                    <span className="w-1.5 h-1.5 bg-[#006B54] dark:bg-emerald-500 rounded-full" />
-                    <span className="text-[9px] text-stone-500 font-bold uppercase tracking-wider">Peneliti Skripsi</span>
+        {isAdmin ? (
+          <div className="bg-stone-50 dark:bg-stone-900/30 p-3 rounded-2xl flex items-center space-x-3 border border-stone-100 dark:border-stone-800/50">
+              <div className="w-8 h-8 rounded-full overflow-hidden border border-[#006B54]/20 shrink-0">
+                  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbtdwaBkH_pEAHF_ARgc0orbTbGHRHqKPWj5mbDF3hkTUvHHf5eYA5oP7SHKwkS1KvG0mlG4StBn8ynIZLu84n8bxR4tHpidUmnj6liJDC92iROb1zRrJCjOXu0csZW10DSqf40lVI1rct0F7_kHvd3cu4Ql5RoGOH7ENRq4DX1ZZHWPNFXXIhpLz6_reOHHJRp0KGApANhlSUwzS3Cg5w8KG5RfR4KDDY5Ns8btrrKyJdfeQXGlBs_n8gKdZnVintVhwuDmpwuOZy" alt="User" />
+              </div>
+              <div className="overflow-hidden bg-transparent flex-1">
+                  <p className="text-xs font-bold text-stone-850 dark:text-stone-200 truncate leading-tight">Mastura, S.T.</p>
+                  <div className="flex items-center space-x-1 mt-0.5">
+                      <span className="w-1.5 h-1.5 bg-[#006B54] dark:bg-emerald-500 rounded-full animate-pulse" />
+                      <span className="text-[9px] text-[#006B54] dark:text-[#10b981] font-bold uppercase tracking-wider">Admin Dinas</span>
+                  </div>
+              </div>
+          </div>
+        ) : (
+          <div className="bg-stone-50 dark:bg-stone-900/30 p-3 rounded-2xl flex items-center justify-between border border-stone-100 dark:border-stone-800/50">
+              <div className="flex items-center space-x-3 overflow-hidden">
+                <div className="w-8 h-8 rounded-full bg-stone-200 dark:bg-stone-800 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-stone-500 text-base" data-icon="person">person</span>
                 </div>
-            </div>
-        </div>
+                <div className="overflow-hidden bg-transparent">
+                    <p className="text-xs font-bold text-stone-705 dark:text-stone-300 truncate leading-tight">Tamu Publik</p>
+                    <div className="flex items-center space-x-1 mt-0.5">
+                        <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
+                        <span className="text-[9px] text-stone-500 font-bold uppercase tracking-wider">Pengguna Umum</span>
+                    </div>
+                </div>
+              </div>
+              <Link 
+                href="/login" 
+                className="text-[9px] font-black text-[#006B54] border border-[#006B54]/20 hover:bg-[#006B54] hover:text-white px-2 py-1 rounded-lg transition-all shadow-sm shrink-0"
+              >
+                Login
+              </Link>
+          </div>
+        )}
       </div>
     </aside>
   );

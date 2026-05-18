@@ -2,7 +2,8 @@
 
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface KecamatanData {
   periode: string;
@@ -27,6 +28,8 @@ const INITIAL_KECAMATAN_DATA: KecamatanData[] = [
 ];
 
 export default function Page() {
+  const router = useRouter();
+  const [authorized, setAuthorized] = useState(false);
   const [dataList, setDataList] = useState<KecamatanData[]>(INITIAL_KECAMATAN_DATA);
   const [showToast, setShowToast] = useState(false);
   
@@ -39,6 +42,19 @@ export default function Page() {
   const [hujan, setHujan] = useState(2100);
   const [luasPanen, setLuasPanen] = useState(1000);
   const [produksi, setProduksi] = useState(4000);
+
+  useEffect(() => {
+    const isAdmin = localStorage.getItem("admin_logged_in") === "true";
+    if (!isAdmin) {
+      router.push("/login");
+    } else {
+      setAuthorized(true);
+    }
+  }, [router]);
+
+  if (!authorized) {
+    return null; // Prevents FOUC
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

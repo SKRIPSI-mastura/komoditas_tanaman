@@ -17,7 +17,8 @@ export default function Page() {
       return;
     }
     // Simple demo logic: support default credentials or any login for ease of testing
-    router.push("/dashboard");
+    localStorage.setItem("admin_logged_in", "true");
+    router.push("/kelola-data");
   };
 
   return (
@@ -114,9 +115,21 @@ export default function Page() {
             
             {/* Login Button */}
             <div className="pt-2">
-              <button className="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold py-4 rounded-xl shadow-lg hover:shadow-primary/20 hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-2" type="submit">
+              <button className="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold py-4 rounded-xl shadow-lg hover:shadow-primary/20 hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer" type="submit">
                 <span>Login</span>
                 <span className="material-symbols-outlined text-xl" data-icon="arrow_forward">arrow_forward</span>
+              </button>
+            </div>
+
+            {/* Kembali ke Portal Button */}
+            <div className="mt-3">
+              <button 
+                type="button"
+                onClick={() => router.push("/dashboard")}
+                className="w-full bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 border border-stone-200 text-xs cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-sm" data-icon="home">home</span>
+                <span>Kembali ke Portal Publik</span>
               </button>
             </div>
           </form>

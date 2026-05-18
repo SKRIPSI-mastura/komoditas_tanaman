@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   title?: string;
@@ -8,6 +10,19 @@ interface HeaderProps {
 }
 
 export function Header({ title, subtitle }: HeaderProps) {
+  const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    setIsAdmin(localStorage.getItem("admin_logged_in") === "true");
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin_logged_in");
+    setIsAdmin(false);
+    router.push("/dashboard");
+  };
+
   return (
     <header className="fixed top-0 right-0 left-64 h-16 z-40 bg-[#fafaee]/60 backdrop-blur-xl flex justify-between items-center px-8 border-b border-[#006B54]/5">
       {/* Page Title / Search Area */}
@@ -31,16 +46,27 @@ export function Header({ title, subtitle }: HeaderProps) {
 
       {/* Global Actions */}
       <div className="flex items-center space-x-2">
-        {/* Primary Logout Group */}
-        <div className="flex items-center bg-white/40 rounded-2xl p-1 border border-[#006B54]/5 shadow-sm">
-            <Link 
-                href="/login" 
-                title="Sign Out" 
-                className="w-9 h-9 flex items-center justify-center rounded-xl text-on-surface-variant/40 hover:bg-error/10 hover:text-error transition-all"
-            >
-                <span className="material-symbols-outlined text-xl" data-icon="logout">logout</span>
-            </Link>
-        </div>
+        {isAdmin ? (
+          <div className="flex items-center bg-white/40 rounded-2xl p-1 border border-[#006B54]/5 shadow-sm">
+              <button 
+                  onClick={handleLogout}
+                  title="Keluar dari Admin" 
+                  className="w-9 h-9 flex items-center justify-center rounded-xl text-stone-500 hover:bg-rose-50 hover:text-rose-600 transition-all cursor-pointer"
+              >
+                  <span className="material-symbols-outlined text-xl" data-icon="logout">logout</span>
+              </button>
+          </div>
+        ) : (
+          <div className="flex items-center bg-white/40 rounded-2xl p-1 border border-[#006B54]/5 shadow-sm">
+              <Link 
+                  href="/login" 
+                  title="Login Admin" 
+                  className="w-9 h-9 flex items-center justify-center rounded-xl text-stone-500 hover:bg-emerald-50 hover:text-[#006B54] transition-all"
+              >
+                  <span className="material-symbols-outlined text-xl" data-icon="login">login</span>
+              </Link>
+          </div>
+        )}
       </div>
     </header>
   );
