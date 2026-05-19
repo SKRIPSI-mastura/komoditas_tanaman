@@ -161,6 +161,11 @@ export function Sidebar() {
           </div>
         )}
       </div>
-    </aside>
+    {isAdmin && (
+  <Link href="/admin" className="block w-full px-4 py-2 mt-2 text-sm text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors">
+    Data Admin
+  </Link>
+)}
+</aside>
   );
 }
