@@ -59,7 +59,7 @@ export default function Page() {
 
   // Fetch all kecamatan list on mount
   useEffect(() => {
-    fetch("http://localhost:5000/api/kecamatan")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan`)
       .then((res) => res.json())
       .then((resData) => {
         if (resData.status === "success" && Array.isArray(resData.data)) {
@@ -75,7 +75,7 @@ export default function Page() {
   useEffect(() => {
     if (!selectedKec) return;
     
-    fetch(`http://localhost:5000/api/kecamatan/${selectedKec}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan/${selectedKec}`)
       .then((res) => res.json())
       .then((resData) => {
         if (resData.status === "success" && resData.data) {
@@ -137,7 +137,7 @@ export default function Page() {
       const fetchPipeline = async () => {
         try {
           // 1. GET recommendation (triggers LSTM training and gets forecasts)
-          const getRes = await fetch(`http://localhost:5000/api/recommend/${selectedKec}`);
+          const getRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/recommend/${selectedKec}`);
           if (!getRes.ok) {
             throw new Error(`Gagal memanggil API: ${getRes.statusText}`);
           }
@@ -154,7 +154,7 @@ export default function Page() {
           // 2. Fetch default profile to check if user customized any parameters
           let hasCustomized = false;
           try {
-            const profileRes = await fetch(`http://localhost:5000/api/kecamatan/${selectedKec}`);
+            const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan/${selectedKec}`);
             if (profileRes.ok) {
               const profileJson = await profileRes.json();
               if (profileJson.status === "success" && profileJson.data) {
@@ -196,7 +196,7 @@ export default function Page() {
               kecamatan: `${selectedKec} (Kustom)`
             };
 
-            const postRes = await fetch("http://localhost:5000/api/recommend", {
+            const postRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/recommend`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"

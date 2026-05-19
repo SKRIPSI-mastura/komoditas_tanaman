@@ -131,7 +131,7 @@ export default function Page() {
 
   // 1. Fetch kecamatan names from backend on mount
   useEffect(() => {
-    fetch("http://localhost:5000/api/kecamatan")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan`)
       .then((res) => res.json())
       .then((resData) => {
         if (resData.status === "success" && Array.isArray(resData.data)) {
@@ -211,7 +211,7 @@ export default function Page() {
     // No local storage cache matches selected subdistrict -> query live endpoint!
     if (!hasLoadedLocal) {
       setIsLoading(true);
-      fetch(`http://localhost:5000/api/recommend/${selectedKec}`)
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/recommend/${selectedKec}`)
         .then((res) => res.json())
         .then((resData) => {
           if (resData.status !== "success" || !resData.data) {

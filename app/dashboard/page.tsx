@@ -13,7 +13,7 @@ export default function Page() {
 
   useEffect(() => {
     // 1. Fetch kecamatan count from Flask BE
-    fetch("http://localhost:5000/api/kecamatan")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan`)
       .then((res) => res.json())
       .then((resData) => {
         if (resData.status === "success" && Array.isArray(resData.data)) {
