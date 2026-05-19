@@ -128,6 +128,11 @@ export default function Page() {
   const [kecamatanList, setKecamatanList] = useState<string[]>(Object.keys(KEC_PROFILES));
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsAdmin(localStorage.getItem("admin_logged_in") === "true");
+  }, []);
 
   // 1. Fetch kecamatan names from backend on mount
   useEffect(() => {
@@ -317,13 +322,15 @@ export default function Page() {
                 </select>
               </div>
 
-              <Link 
-                href="/prediksi"
-                className="px-4 py-2 bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 hover:bg-stone-50 text-stone-700 dark:text-stone-300 font-bold text-xs rounded-xl transition-all flex items-center space-x-1"
-              >
-                <span className="material-symbols-outlined text-sm" data-icon="edit">edit</span>
-                <span>Ubah Parameter</span>
-              </Link>
+              {isAdmin && (
+                <Link 
+                  href="/prediksi"
+                  className="px-4 py-2 bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 hover:bg-stone-50 text-stone-700 dark:text-stone-300 font-bold text-xs rounded-xl transition-all flex items-center space-x-1"
+                >
+                  <span className="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+                  <span>Ubah Parameter</span>
+                </Link>
+              )}
             </div>
           </div>
 

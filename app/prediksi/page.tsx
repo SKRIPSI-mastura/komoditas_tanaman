@@ -59,6 +59,10 @@ export default function Page() {
 
   // Fetch all kecamatan list on mount
   useEffect(() => {
+    if (localStorage.getItem("admin_logged_in") !== "true") {
+      router.push("/login");
+      return;
+    }
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan`)
       .then((res) => res.json())
       .then((resData) => {

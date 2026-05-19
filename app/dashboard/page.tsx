@@ -4,14 +4,20 @@ import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
   const [showNotification, setShowNotification] = useState(true);
   const [totalKecamatan, setTotalKecamatan] = useState(12);
   const [totalEvaluations, setTotalEvaluations] = useState(9);
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
 
   useEffect(() => {
+    if (localStorage.getItem("admin_logged_in") !== "true") {
+      router.push("/login");
+      return;
+    }
     // 1. Fetch kecamatan count from Flask BE
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan`)
       .then((res) => res.json())

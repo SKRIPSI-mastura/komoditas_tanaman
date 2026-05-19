@@ -3,6 +3,7 @@
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface HistoryRecord {
   id: string;
@@ -30,12 +31,17 @@ const HISTORICAL_DATA: HistoryRecord[] = [
 ];
 
 export default function Page() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterTab, setFilterTab] = useState<"Semua" | "Sangat Layak" | "Layak" | "Kurang Layak" | "Tidak Layak">("Semua");
   const [historyList, setHistoryList] = useState<HistoryRecord[]>([]);
 
   // Load history from localStorage
   useEffect(() => {
+    if (localStorage.getItem("admin_logged_in") !== "true") {
+      router.push("/login");
+      return;
+    }
     const storedHistory = localStorage.getItem("agro_prediction_history");
     if (storedHistory) {
       try {

@@ -19,7 +19,7 @@ export function Sidebar() {
       group: "NAVIGASI UTAMA",
       items: [
         { name: "Dashboard", icon: "dashboard", href: "/dashboard" },
-        { name: "Prediksi Iklim LSTM", icon: "cloud_sync", href: "/prediksi" },
+        ...(isAdmin ? [{ name: "Prediksi Iklim LSTM", icon: "cloud_sync", href: "/prediksi" }] : []),
         { 
           name: isAdmin ? "Data Kecamatan" : "Kelola Data (Admin Only)", 
           icon: isAdmin ? "map" : "lock", 
@@ -99,13 +99,15 @@ export function Sidebar() {
       {/* Action / Status Section */}
       <div className="px-4 mt-auto pt-2 pb-4 space-y-3">
         {/* Quick Action Button */}
-        <Link 
-            href="/prediksi" 
-            className="w-full bg-[#006B54] hover:bg-[#00513f] text-white py-3 px-4 rounded-2xl flex items-center justify-center space-x-2 shadow-lg shadow-[#006B54]/10 active:scale-95 transition-all group font-bold text-xs"
-        >
-            <span className="material-symbols-outlined text-base group-hover:rotate-90 transition-transform" data-icon="rocket_launch">rocket_launch</span>
-            <span>Mulai Prediksi</span>
-        </Link>
+        {isAdmin && (
+          <Link 
+              href="/prediksi" 
+              className="w-full bg-[#006B54] hover:bg-[#00513f] text-white py-3 px-4 rounded-2xl flex items-center justify-center space-x-2 shadow-lg shadow-[#006B54]/10 active:scale-95 transition-all group font-bold text-xs"
+          >
+              <span className="material-symbols-outlined text-base group-hover:rotate-90 transition-transform" data-icon="rocket_launch">rocket_launch</span>
+              <span>Mulai Prediksi</span>
+          </Link>
+        )}
 
         {/* Engine Activity Widget */}
         <div className="bg-[#006B54]/5 dark:bg-stone-900/40 p-4 rounded-2xl border border-[#006B54]/10 relative overflow-hidden">

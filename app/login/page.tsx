@@ -125,7 +125,7 @@ export default function Page() {
             <div className="mt-3">
               <button 
                 type="button"
-                onClick={() => router.push("/dashboard")}
+                onClick={() => router.push("/rekomendasi")}
                 className="w-full bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 border border-stone-200 text-xs cursor-pointer"
               >
                 <span className="material-symbols-outlined text-sm" data-icon="home">home</span>

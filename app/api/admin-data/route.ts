@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 export async function GET() {
-  const csvPath = path.resolve(process.cwd(), 'lstm_komoditas', 'data', 'Elevasi_Kecamatan_Aceh_Utara.csv');
+  const csvPath = path.resolve(process.cwd(), '..', 'lstm_komoditas', 'data', 'Elevasi_Kecamatan_Aceh_Utara.csv');
   try {
     const fileContent = await fs.promises.readFile(csvPath, 'utf-8');
     const lines = fileContent.trim().split('\n');
