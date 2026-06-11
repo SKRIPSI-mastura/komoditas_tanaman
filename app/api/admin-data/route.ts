@@ -1,24 +1,25 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
-  const csvPath = path.resolve(process.cwd(), '..', 'lstm_komoditas', 'data', 'Elevasi_Kecamatan_Aceh_Utara.csv');
   try {
-    const fileContent = await fs.promises.readFile(csvPath, 'utf-8');
-    const lines = fileContent.trim().split('\n');
-    const headers = lines[0].split(',');
-    const rows = lines.slice(1).map(line => {
-      const values = line.split(',');
-      const obj: Record<string, string> = {};
-      headers.forEach((h, i) => {
-        obj[h.trim()] = values[i]?.trim() ?? '';
-      });
-      return obj;
-    });
+    const { data, error } = await supabase
+      .from('kecamatan')
+      .select('nama_kecamatan, elevasi_mdpl')
+      .order('nama_kecamatan', { ascending: true });
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    const rows = data.map(item => ({
+      elevasi_mdpl: item.elevasi_mdpl,
+      kecamatan: item.nama_kecamatan
+    }));
+
     return NextResponse.json({ data: rows });
-  } catch (err) {
-    console.error('Error reading CSV:', err);
+  } catch (err: any) {
+    console.error('Error fetching admin-data from Supabase:', err);
     return NextResponse.json({ error: 'Failed to load data' }, { status: 500 });
   }
 }

@@ -1,24 +1,30 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
-  const csvPath = path.resolve(process.cwd(), '..', 'lstm_komoditas', 'data', 'Admin_Data.csv');
   try {
-    const fileContent = await fs.promises.readFile(csvPath, 'utf-8');
-    const lines = fileContent.trim().split('\n');
-    const headers = lines[0].split(',');
-    const rows = lines.slice(1).map(line => {
-      const values = line.split(',');
-      const obj: Record<string, string> = {};
-      headers.forEach((h, i) => {
-        obj[h.trim()] = values[i]?.trim() ?? '';
-      });
-      return obj;
-    });
+    const { data, error } = await supabase
+      .from('admin')
+      .select('id, nama, username, email, peran, terakhir_login')
+      .order('id', { ascending: true });
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Format fields appropriately
+    const rows = data.map(item => ({
+      id: String(item.id),
+      nama: item.nama || '',
+      username: item.username || '',
+      email: item.email || '',
+      peran: item.peran || '',
+      terakhir_login: item.terakhir_login || 'Belum pernah login'
+    }));
+
     return NextResponse.json({ data: rows });
-  } catch (err) {
-    console.error('Error reading admin CSV:', err);
+  } catch (err: any) {
+    console.error('Error fetching admin-users from Supabase:', err);
     return NextResponse.json({ error: 'Failed to load admin data' }, { status: 500 });
   }
 }

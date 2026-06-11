@@ -18,8 +18,8 @@ export default function Page() {
       router.push("/login");
       return;
     }
-    // 1. Fetch kecamatan count from Flask BE
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan`)
+    // 1. Fetch kecamatan count from Next.js local API
+    fetch(`/api/kecamatan`)
       .then((res) => res.json())
       .then((resData) => {
         if (resData.status === "success" && Array.isArray(resData.data)) {
@@ -30,37 +30,58 @@ export default function Page() {
         console.warn("Failed to fetch kecamatan count for dashboard, using fallback.", err);
       });
 
-    // 2. Fetch recent activities from localStorage
-    const storedHistory = localStorage.getItem("agro_prediction_history");
-    if (storedHistory) {
-      try {
-        const parsed = JSON.parse(storedHistory);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setTotalEvaluations(parsed.length);
-          const formatted = parsed.slice(0, 4).map((r) => ({
-            id: r.id.startsWith("#") ? r.id : `#${r.id}`,
-            kecamatan: r.kecamatan,
-            komoditas: r.komoditas,
-            kecocokan: typeof r.skor === "number" ? `${r.skor.toFixed(1)}%` : r.skor,
+    // 2. Fetch recent activities from Supabase via /api/riwayat
+    fetch(`/api/riwayat`)
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.status === "success" && Array.isArray(resData.data) && resData.data.length > 0) {
+          setTotalEvaluations(resData.data.length);
+          const formatted = resData.data.slice(0, 4).map((r: any) => ({
+            id: `#AGR-${r.id}`,
+            kecamatan: r.kecamatan?.nama_kecamatan || `Kecamatan #${r.kecamatan_id}`,
+            komoditas: r.top_komoditas,
+            kecocokan: typeof r.top_score === "string" ? `${parseFloat(r.top_score).toFixed(1)}%` : `${r.top_score}%`,
             status: "Sukses",
-            tanggal: r.tanggal.split(",")[0]
+            tanggal: new Date(r.tanggal_analisis).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "short",
+              year: "numeric"
+            })
           }));
           setRecentActivities(formatted);
-          return;
+        } else {
+          // If empty/no data from API, try localStorage as backup or fallback to defaults
+          const storedHistory = localStorage.getItem("agro_prediction_history");
+          if (storedHistory) {
+            const parsed = JSON.parse(storedHistory);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setTotalEvaluations(parsed.length);
+              const formatted = parsed.slice(0, 4).map((r) => ({
+                id: r.id.startsWith("#") ? r.id : `#${r.id}`,
+                kecamatan: r.kecamatan,
+                komoditas: r.komoditas,
+                kecocokan: typeof r.skor === "number" ? `${r.skor.toFixed(1)}%` : r.skor,
+                status: "Sukses",
+                tanggal: r.tanggal.split(",")[0]
+              }));
+              setRecentActivities(formatted);
+              return;
+            }
+          }
+          throw new Error("No data");
         }
-      } catch (e) {
-        console.error("Failed to parse prediction history in dashboard", e);
-      }
-    }
-
-    // Fallback default logs if localStorage is completely clean
-    const defaultList = [
-      { id: "#AGR-1092", kecamatan: "Lhoksukon", komoditas: "Padi", kecocokan: "98.2%", status: "Sukses", tanggal: "17 Mei 2026" },
-      { id: "#AGR-1091", kecamatan: "Tanah Luas", komoditas: "Jagung", kecocokan: "89.4%", status: "Sukses", tanggal: "16 Mei 2026" },
-      { id: "#AGR-1090", kecamatan: "Cot Girek", komoditas: "Kedelai", kecocokan: "74.1%", status: "Sukses", tanggal: "15 Mei 2026" },
-      { id: "#AGR-1089", kecamatan: "Dewantara", komoditas: "Padi", kecocokan: "88.7%", status: "Sukses", tanggal: "14 Mei 2026" },
-    ];
-    setRecentActivities(defaultList);
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch riwayat from Supabase, using mock fallback.", err);
+        // Fallback default logs if API is empty/fails and localStorage is clean
+        const defaultList = [
+          { id: "#AGR-1092", kecamatan: "Lhoksukon", komoditas: "Padi", kecocokan: "98.2%", status: "Sukses", tanggal: "17 Mei 2026" },
+          { id: "#AGR-1091", kecamatan: "Tanah Luas", komoditas: "Jagung", kecocokan: "89.4%", status: "Sukses", tanggal: "16 Mei 2026" },
+          { id: "#AGR-1090", kecamatan: "Cot Girek", komoditas: "Kedelai", kecocokan: "74.1%", status: "Sukses", tanggal: "15 Mei 2026" },
+          { id: "#AGR-1089", kecamatan: "Dewantara", komoditas: "Padi", kecocokan: "88.7%", status: "Sukses", tanggal: "14 Mei 2026" },
+        ];
+        setRecentActivities(defaultList);
+      });
   }, []);
 
   return (

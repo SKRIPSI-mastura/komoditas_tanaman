@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 interface HistoryRecord {
   id: string;
+  dbId: number;
   kecamatan: string;
   tanggal: string;
   ph: number;
@@ -17,15 +18,15 @@ interface HistoryRecord {
 }
 
 const HISTORICAL_DATA: HistoryRecord[] = [
-  { id: "AGR-1092", kecamatan: "Lhoksukon", tanggal: "17 Mei 2026, 14:32", ph: 6.4, elevasi: 12, komoditas: "Padi", skor: 98.2, suitability: "Sangat Layak" },
-  { id: "AGR-1091", kecamatan: "Tanah Luas", tanggal: "16 Mei 2026, 09:15", ph: 5.8, elevasi: 22, komoditas: "Jagung", skor: 89.4, suitability: "Layak" },
-  { id: "AGR-1090", kecamatan: "Cot Girek", tanggal: "15 Mei 2026, 11:45", ph: 5.2, elevasi: 58, komoditas: "Kedelai", skor: 74.1, suitability: "Layak" },
-  { id: "AGR-1089", kecamatan: "Dewantara", tanggal: "14 Mei 2026, 16:20", ph: 6.5, elevasi: 8, komoditas: "Padi", skor: 88.7, suitability: "Layak" },
-  { id: "AGR-1088", kecamatan: "Muara Batu", tanggal: "12 Mei 2026, 10:10", ph: 6.2, elevasi: 10, komoditas: "Kacang Tanah", skor: 83.5, suitability: "Layak" },
-  { id: "AGR-1087", kecamatan: "Syamtalira Aron", tanggal: "10 Mei 2026, 08:30", ph: 6.3, elevasi: 15, komoditas: "Padi", skor: 95.8, suitability: "Sangat Layak" },
-  { id: "AGR-1086", kecamatan: "Samudera", tanggal: "08 Mei 2026, 15:40", ph: 6.1, elevasi: 14, komoditas: "Padi", skor: 91.2, suitability: "Sangat Layak" },
-  { id: "AGR-1085", kecamatan: "Baktiya", tanggal: "06 Mei 2026, 11:05", ph: 6.2, elevasi: 11, komoditas: "Padi", skor: 97.4, suitability: "Sangat Layak" },
-  { id: "AGR-1084", kecamatan: "Seunuddon", tanggal: "04 Mei 2026, 14:55", ph: 4.8, elevasi: 5, komoditas: "Kacang Tanah", skor: 58.5, suitability: "Kurang Layak" },
+  { id: "AGR-1092", dbId: -1, kecamatan: "Lhoksukon", tanggal: "17 Mei 2026, 14:32", ph: 6.4, elevasi: 12, komoditas: "Padi", skor: 98.2, suitability: "Sangat Layak" },
+  { id: "AGR-1091", dbId: -2, kecamatan: "Tanah Luas", tanggal: "16 Mei 2026, 09:15", ph: 5.8, elevasi: 22, komoditas: "Jagung", skor: 89.4, suitability: "Layak" },
+  { id: "AGR-1090", dbId: -3, kecamatan: "Cot Girek", tanggal: "15 Mei 2026, 11:45", ph: 5.2, elevasi: 58, komoditas: "Kedelai", skor: 74.1, suitability: "Layak" },
+  { id: "AGR-1089", dbId: -4, kecamatan: "Dewantara", tanggal: "14 Mei 2026, 16:20", ph: 6.5, elevasi: 8, komoditas: "Padi", skor: 88.7, suitability: "Layak" },
+  { id: "AGR-1088", dbId: -5, kecamatan: "Muara Batu", tanggal: "12 Mei 2026, 10:10", ph: 6.2, elevasi: 10, komoditas: "Kacang Tanah", skor: 83.5, suitability: "Layak" },
+  { id: "AGR-1087", dbId: -6, kecamatan: "Syamtalira Aron", tanggal: "10 Mei 2026, 08:30", ph: 6.3, elevasi: 15, komoditas: "Padi", skor: 95.8, suitability: "Sangat Layak" },
+  { id: "AGR-1086", dbId: -7, kecamatan: "Samudera", tanggal: "08 Mei 2026, 15:40", ph: 6.1, elevasi: 14, komoditas: "Padi", skor: 91.2, suitability: "Sangat Layak" },
+  { id: "AGR-1085", dbId: -8, kecamatan: "Baktiya", tanggal: "06 Mei 2026, 11:05", ph: 6.2, elevasi: 11, komoditas: "Padi", skor: 97.4, suitability: "Sangat Layak" },
+  { id: "AGR-1084", dbId: -9, kecamatan: "Seunuddon", tanggal: "04 Mei 2026, 14:55", ph: 4.8, elevasi: 5, komoditas: "Kacang Tanah", skor: 58.5, suitability: "Kurang Layak" },
 ];
 
 export default function Page() {
@@ -35,7 +36,7 @@ export default function Page() {
   const [historyList, setHistoryList] = useState<HistoryRecord[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Load history from localStorage - Admin Only
+  // Load history from Supabase API - Admin Only
   useEffect(() => {
     const adminStatus = localStorage.getItem("admin_logged_in") === "true";
     if (!adminStatus) {
@@ -44,22 +45,63 @@ export default function Page() {
     }
     setIsAdmin(adminStatus);
 
-    const storedHistory = localStorage.getItem("agro_prediction_history");
-    if (storedHistory) {
-      try {
-        const parsed = JSON.parse(storedHistory);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setHistoryList(parsed);
-          return;
+    fetch("/api/riwayat")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.status === "success" && Array.isArray(resData.data)) {
+          const mapped = resData.data.map((r: any) => ({
+            id: `AGR-${r.id}`,
+            dbId: r.id,
+            kecamatan: r.kecamatan?.nama_kecamatan || `Kecamatan #${r.kecamatan_id}`,
+            tanggal: new Date(r.tanggal_analisis).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric"
+            }) + `, ${new Date(r.tanggal_analisis).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}`,
+            ph: r.profil_wilayah?.ph ? Number(r.profil_wilayah.ph) : 6.0,
+            elevasi: r.profil_wilayah?.elevasi ? Math.round(Number(r.profil_wilayah.elevasi)) : 0,
+            komoditas: r.top_komoditas,
+            skor: Number(r.top_score),
+            suitability: r.top_kelayakan as any
+          }));
+          setHistoryList(mapped);
+        } else {
+          setHistoryList(HISTORICAL_DATA);
         }
-      } catch (e) {
-        console.error("Failed to parse history from localStorage", e);
-      }
-    }
-    // Pre-populate with historical mock data if empty
-    setHistoryList(HISTORICAL_DATA);
-    localStorage.setItem("agro_prediction_history", JSON.stringify(HISTORICAL_DATA));
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch history from Supabase, using mock fallback", err);
+        setHistoryList(HISTORICAL_DATA);
+      });
   }, []);
+
+  const handleDeleteRecord = async (dbId: number) => {
+    if (dbId < 0) {
+      // Local mock data deletion
+      setHistoryList((prev) => prev.filter((r) => r.dbId !== dbId));
+      return;
+    }
+
+    if (!confirm("Apakah Anda yakin ingin menghapus riwayat rekomendasi ini dari database?")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/riwayat/${dbId}`, {
+        method: "DELETE"
+      });
+
+      const json = await res.json();
+      if (json.status === "success") {
+        setHistoryList((prev) => prev.filter((r) => r.dbId !== dbId));
+      } else {
+        alert(json.message || "Gagal menghapus data.");
+      }
+    } catch (err) {
+      console.error("Error deleting record:", err);
+      alert("Terjadi kesalahan koneksi.");
+    }
+  };
 
   const filteredHistory = historyList.filter((record) => {
     const matchesSearch = 
@@ -251,13 +293,22 @@ Laporan ini dihasilkan secara otomatis oleh Sistem Agro-LSTM.`;
                         </td>
                         <td className="px-6 py-4 text-center">
                           {isAdmin ? (
-                            <button 
-                              onClick={() => handleDownloadReport(record)}
-                              className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 text-[#006B54] dark:text-[#10b981] rounded-lg transition-colors cursor-pointer" 
-                              title="Unduh Laporan"
-                            >
-                              <span className="material-symbols-outlined text-base" data-icon="cloud_download">cloud_download</span>
-                            </button>
+                            <div className="flex justify-center space-x-2">
+                              <button 
+                                onClick={() => handleDownloadReport(record)}
+                                className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 text-[#006B54] dark:text-[#10b981] rounded-lg transition-colors cursor-pointer flex items-center justify-center" 
+                                title="Unduh Laporan"
+                              >
+                                <span className="material-symbols-outlined text-base" data-icon="cloud_download">cloud_download</span>
+                              </button>
+                              <button 
+                                onClick={() => handleDeleteRecord(record.dbId)}
+                                className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/20 text-red-600 dark:text-red-400 rounded-lg transition-colors cursor-pointer flex items-center justify-center" 
+                                title="Hapus Riwayat"
+                              >
+                                <span className="material-symbols-outlined text-base" data-icon="delete">delete</span>
+                              </button>
+                            </div>
                           ) : (
                             <span className="material-symbols-outlined text-stone-300 dark:text-stone-700 text-base" data-icon="lock" title="Login untuk unduh">lock</span>
                           )}

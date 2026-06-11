@@ -18,7 +18,7 @@ export default function Page() {
   const [resikoBencana, setResikoBencana] = useState("Rendah");
 
   // Dynamic lists and details from backend
-  const [kecamatanList, setKecamatanList] = useState<string[]>([]);
+  const [kecamatanList, setKecamatanList] = useState<any[]>([]);
   const [predictedClimate, setPredictedClimate] = useState<any[]>([]);
   const [avgClimate, setAvgClimate] = useState<any>({ suhu: 27.3, kelembapan: 82.1, kecepatan_angin: 2.3 });
   const [errorMsg, setErrorMsg] = useState("");
@@ -36,7 +36,7 @@ export default function Page() {
       return;
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan`)
+    fetch(`/api/kecamatan`)
       .then((res) => res.json())
       .then((resData) => {
         if (resData.status === "success" && Array.isArray(resData.data)) {
@@ -44,7 +44,7 @@ export default function Page() {
         }
       })
       .catch((err) => {
-        console.warn("Failed to fetch kecamatan from backend, using default list.", err);
+        console.warn("Failed to fetch kecamatan from Next.js API, using default list.", err);
       });
   }, []);
 
@@ -52,16 +52,16 @@ export default function Page() {
   useEffect(() => {
     if (!selectedKec) return;
     
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan/${selectedKec}`)
+    fetch(`/api/kecamatan/${encodeURIComponent(selectedKec)}`)
       .then((res) => res.json())
       .then((resData) => {
         if (resData.status === "success" && resData.data) {
           const d = resData.data;
-          setPh(Number((d.ph ?? 6.4).toFixed(1)));
-          setElevasi(Math.round(d.elevasi ?? 12));
-          setLiat(Math.round(d.tanah_liat_persen ?? 28));
-          setPasir(Math.round(d.tanah_pasir_persen ?? 32));
-          setDebu(Math.round(d.tanah_debu_persen ?? 40));
+          setPh(Number((d.ph_tanah ?? d.ph ?? 6.4).toFixed(1)));
+          setElevasi(Math.round(d.elevasi_mdpl ?? d.elevasi ?? 12));
+          setLiat(Math.round(d.tanah_liat ?? d.tanah_liat_persen ?? 28));
+          setPasir(Math.round(d.tanah_pasir ?? d.tanah_pasir_persen ?? 32));
+          setDebu(Math.round(d.tanah_debu ?? d.tanah_debu_persen ?? 40));
           setResikoBencana(d.resiko_bencana ?? "Rendah");
         }
       })
@@ -102,7 +102,7 @@ export default function Page() {
       const fetchPipeline = async () => {
         try {
           // 1. GET recommendation (triggers LSTM training and gets forecasts)
-          const getRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/recommend/${selectedKec}`);
+          const getRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/recommend/${encodeURIComponent(selectedKec)}`);
           if (!getRes.ok) {
             throw new Error(`Gagal memanggil API: ${getRes.statusText}`);
           }
@@ -119,7 +119,7 @@ export default function Page() {
           // 2. Fetch default profile to check if user customized any parameters
           let hasCustomized = false;
           try {
-            const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan/${selectedKec}`);
+            const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan/${encodeURIComponent(selectedKec)}`);
             if (profileRes.ok) {
               const profileJson = await profileRes.json();
               if (profileJson.status === "success" && profileJson.data) {
@@ -193,8 +193,44 @@ export default function Page() {
           };
           localStorage.setItem("agro_lstm_prediction", JSON.stringify(localStoreData));
 
-          // Save to history in localStorage
+          // Save to history in localStorage and Supabase
           try {
+            const selectedKecObj = kecamatanList.find((k: any) => k.nama_kecamatan === selectedKec);
+            const kecamatanId = selectedKecObj ? selectedKecObj.id : 1;
+
+            const dbPayload = {
+              kecamatan_id: kecamatanId,
+              tanggal_analisis: new Date().toISOString(),
+              prediksi_iklim: localStoreData.climate_prediction,
+              profil_wilayah: {
+                ph: Number(ph),
+                elevasi: Number(elevasi),
+                tanah_liat: Number(liat),
+                tanah_pasir: Number(pasir),
+                tanah_debu: Number(debu),
+                resiko_bencana: resikoBencana
+              },
+              rekomendasi: localStoreData.recommendations,
+              top_komoditas: finalTopRec?.komoditas || "N/A",
+              top_score: String(finalTopRec?.score || 0),
+              top_kelayakan: finalTopRec?.kelayakan || "Layak",
+              penjelasan: finalTopRec?.reasons ? finalTopRec.reasons.join(". ") : "",
+              sumber: isCustomRun ? "Web (Custom Lahan)" : "Web"
+            };
+
+            fetch("/api/riwayat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(dbPayload)
+            })
+            .then(res => res.json())
+            .then(data => {
+              console.log("Successfully saved prediction history to Supabase:", data);
+            })
+            .catch(dbErr => {
+              console.error("Failed to save prediction history to Supabase:", dbErr);
+            });
+
             const currentHistoryJson = localStorage.getItem("agro_prediction_history");
             let historyList = [];
             if (currentHistoryJson) {
@@ -322,9 +358,13 @@ export default function Page() {
                       onChange={(e) => setSelectedKec(e.target.value)}
                       className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-3 px-4 transition-all"
                     >
-                      {kecamatanList.map((kec) => (
-                        <option key={kec} value={kec}>{kec}</option>
-                      ))}
+                      {kecamatanList.map((kec) => {
+                        const name = typeof kec === 'string' ? kec : kec.nama_kecamatan;
+                        const id = typeof kec === 'string' ? kec : kec.id;
+                        return (
+                          <option key={id} value={name}>{name}</option>
+                        );
+                      })}
                     </select>
                   </div>
 

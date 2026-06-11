@@ -1,0 +1,68 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
+
+// POST /api/login — Autentikasi admin
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { username, password } = body;
+
+    if (!username || !password) {
+      return NextResponse.json(
+        { status: 'error', message: 'Username dan password wajib diisi' },
+        { status: 400 }
+      );
+    }
+
+    // Query admin dari Supabase
+    const { data: admin, error } = await supabase
+      .from('admin')
+      .select('*')
+      .eq('username', username)
+      .maybeSingle();
+
+    if (error) {
+      return NextResponse.json(
+        { status: 'error', message: error.message },
+        { status: 500 }
+      );
+    }
+
+    if (!admin) {
+      return NextResponse.json(
+        { status: 'error', message: 'Username tidak ditemukan' },
+        { status: 401 }
+      );
+    }
+
+    // Bandingkan password plain-text (karena data lama plain-text)
+    if (admin.password !== password) {
+      return NextResponse.json(
+        { status: 'error', message: 'Password salah' },
+        { status: 401 }
+      );
+    }
+
+    // Update terakhir login
+    const now = new Date().toISOString();
+    await supabase
+      .from('admin')
+      .update({ terakhir_login: now })
+      .eq('id', admin.id);
+
+    return NextResponse.json({
+      status: 'success',
+      data: {
+        username: admin.username,
+        nama: admin.nama,
+        peran: admin.peran,
+      }
+    });
+  } catch (err: any) {
+    console.error('Login API error:', err);
+    return NextResponse.json(
+      { status: 'error', message: 'Terjadi kesalahan internal server' },
+      { status: 500 }
+    );
+  }
+}

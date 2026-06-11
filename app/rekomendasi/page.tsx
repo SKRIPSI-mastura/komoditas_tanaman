@@ -291,7 +291,7 @@ function RekomendasiPage() {
 
     if (!hasLoadedLocal) {
       setIsLoading(true);
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/recommend/${selectedKec}`)
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/recommend/${encodeURIComponent(selectedKec)}`)
         .then((res) => res.json())
         .then((resData) => {
           if (resData.status !== "success" || !resData.data) {

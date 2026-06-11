@@ -35,7 +35,7 @@ function LoginForm() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/login`, {
+      const res = await fetch(`/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -45,7 +45,9 @@ function LoginForm() {
       });
 
       if (!res.ok) {
-        throw new Error(`Server error: ${res.status}`);
+        // Handle unauthorized or other errors specifically
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || `Server error: ${res.status}`);
       }
 
       const data = await res.json();
@@ -68,7 +70,7 @@ function LoginForm() {
     } catch (err: any) {
       console.error("Login error:", err);
       setErrorMsg(
-        "Tidak dapat terhubung ke server. Pastikan server backend sedang berjalan."
+        err.message || "Tidak dapat terhubung ke server. Silakan coba lagi."
       );
     } finally {
       setIsLoading(false);
