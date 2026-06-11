@@ -11,23 +11,21 @@ interface HistoryRecord {
   tanggal: string;
   ph: number;
   elevasi: number;
-  curahHujan: number;
-  tanah: string;
   komoditas: string;
   skor: number;
   suitability: "Sangat Layak" | "Layak" | "Kurang Layak" | "Tidak Layak";
 }
 
 const HISTORICAL_DATA: HistoryRecord[] = [
-  { id: "AGR-1092", kecamatan: "Lhoksukon", tanggal: "17 Mei 2026, 14:32", ph: 6.4, elevasi: 12, curahHujan: 2100, tanah: "Lempung Berliat", komoditas: "Padi", skor: 98.2, suitability: "Sangat Layak" },
-  { id: "AGR-1091", kecamatan: "Tanah Luas", tanggal: "16 Mei 2026, 09:15", ph: 5.8, elevasi: 22, curahHujan: 1950, tanah: "Lempung Berpasir", komoditas: "Jagung", skor: 89.4, suitability: "Layak" },
-  { id: "AGR-1090", kecamatan: "Cot Girek", tanggal: "15 Mei 2026, 11:45", ph: 5.2, elevasi: 58, curahHujan: 2400, tanah: "Lempung Liat Berpasir", komoditas: "Kedelai", skor: 74.1, suitability: "Layak" },
-  { id: "AGR-1089", kecamatan: "Dewantara", tanggal: "14 Mei 2026, 16:20", ph: 6.5, elevasi: 8, curahHujan: 1800, tanah: "Lempung", komoditas: "Padi", skor: 88.7, suitability: "Layak" },
-  { id: "AGR-1088", kecamatan: "Muara Batu", tanggal: "12 Mei 2026, 10:10", ph: 6.2, elevasi: 10, curahHujan: 1850, tanah: "Lempung Berpasir", komoditas: "Kacang Tanah", skor: 83.5, suitability: "Layak" },
-  { id: "AGR-1087", kecamatan: "Syamtalira Aron", tanggal: "10 Mei 2026, 08:30", ph: 6.3, elevasi: 15, curahHujan: 2050, tanah: "Lempung Berdebu", komoditas: "Padi", skor: 95.8, suitability: "Sangat Layak" },
-  { id: "AGR-1086", kecamatan: "Samudera", tanggal: "08 Mei 2026, 15:40", ph: 6.1, elevasi: 14, curahHujan: 2000, tanah: "Lempung Berdebu", komoditas: "Padi", skor: 91.2, suitability: "Sangat Layak" },
-  { id: "AGR-1085", kecamatan: "Baktiya", tanggal: "06 Mei 2026, 11:05", ph: 6.2, elevasi: 11, curahHujan: 2150, tanah: "Lempung Berliat", komoditas: "Padi", skor: 97.4, suitability: "Sangat Layak" },
-  { id: "AGR-1084", kecamatan: "Seunuddon", tanggal: "04 Mei 2026, 14:55", ph: 4.8, elevasi: 5, curahHujan: 1750, tanah: "Pasir Berlempung", komoditas: "Kacang Tanah", skor: 58.5, suitability: "Kurang Layak" },
+  { id: "AGR-1092", kecamatan: "Lhoksukon", tanggal: "17 Mei 2026, 14:32", ph: 6.4, elevasi: 12, komoditas: "Padi", skor: 98.2, suitability: "Sangat Layak" },
+  { id: "AGR-1091", kecamatan: "Tanah Luas", tanggal: "16 Mei 2026, 09:15", ph: 5.8, elevasi: 22, komoditas: "Jagung", skor: 89.4, suitability: "Layak" },
+  { id: "AGR-1090", kecamatan: "Cot Girek", tanggal: "15 Mei 2026, 11:45", ph: 5.2, elevasi: 58, komoditas: "Kedelai", skor: 74.1, suitability: "Layak" },
+  { id: "AGR-1089", kecamatan: "Dewantara", tanggal: "14 Mei 2026, 16:20", ph: 6.5, elevasi: 8, komoditas: "Padi", skor: 88.7, suitability: "Layak" },
+  { id: "AGR-1088", kecamatan: "Muara Batu", tanggal: "12 Mei 2026, 10:10", ph: 6.2, elevasi: 10, komoditas: "Kacang Tanah", skor: 83.5, suitability: "Layak" },
+  { id: "AGR-1087", kecamatan: "Syamtalira Aron", tanggal: "10 Mei 2026, 08:30", ph: 6.3, elevasi: 15, komoditas: "Padi", skor: 95.8, suitability: "Sangat Layak" },
+  { id: "AGR-1086", kecamatan: "Samudera", tanggal: "08 Mei 2026, 15:40", ph: 6.1, elevasi: 14, komoditas: "Padi", skor: 91.2, suitability: "Sangat Layak" },
+  { id: "AGR-1085", kecamatan: "Baktiya", tanggal: "06 Mei 2026, 11:05", ph: 6.2, elevasi: 11, komoditas: "Padi", skor: 97.4, suitability: "Sangat Layak" },
+  { id: "AGR-1084", kecamatan: "Seunuddon", tanggal: "04 Mei 2026, 14:55", ph: 4.8, elevasi: 5, komoditas: "Kacang Tanah", skor: 58.5, suitability: "Kurang Layak" },
 ];
 
 export default function Page() {
@@ -35,13 +33,17 @@ export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterTab, setFilterTab] = useState<"Semua" | "Sangat Layak" | "Layak" | "Kurang Layak" | "Tidak Layak">("Semua");
   const [historyList, setHistoryList] = useState<HistoryRecord[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  // Load history from localStorage
+  // Load history from localStorage - Admin Only
   useEffect(() => {
-    if (localStorage.getItem("admin_logged_in") !== "true") {
+    const adminStatus = localStorage.getItem("admin_logged_in") === "true";
+    if (!adminStatus) {
       router.push("/login");
       return;
     }
+    setIsAdmin(adminStatus);
+
     const storedHistory = localStorage.getItem("agro_prediction_history");
     if (storedHistory) {
       try {
@@ -74,7 +76,7 @@ export default function Page() {
   const handleDownloadReport = (record: HistoryRecord) => {
     const reportText = `=====================================================
 LAPORAN HASIL REKOMENDASI KOMODITAS PERTANIAN PANGAN
-SISTEM CERDAS AGRO-LSTM & NEURAL NETWORK (ACEH UTARA)
+SISTEM CERDAS AGRO-LSTM (ACEH UTARA)
 =====================================================
 ID Laporan       : ${record.id}
 Tanggal Analisis : ${record.tanggal}
@@ -84,8 +86,6 @@ VARIABEL KONDISI FISIK DAN KIMIA LAHAN:
 -----------------------------------------------------
 - Derajat Keasaman (pH) : ${record.ph.toFixed(1)}
 - Elevasi Lahan        : ${record.elevasi} mdpl (meter di atas permukaan laut)
-- Curah Hujan Tahunan  : ${record.curahHujan} mm
-- Tekstur Tanah        : ${record.tanah}
 
 HASIL PREDIKSI MODEL KECERDASAN BUATAN:
 -----------------------------------------------------
@@ -94,7 +94,7 @@ HASIL PREDIKSI MODEL KECERDASAN BUATAN:
 - Kategori Kelayakan         : ${record.suitability}
 
 REKOMENDASI VEGETATIF:
-Berdasarkan analisis model neural network, komoditas ${record.komoditas}
+Berdasarkan analisis model LSTM, komoditas ${record.komoditas}
 memiliki indeks kecocokan sebesar ${record.skor.toFixed(1)}% (${record.suitability}) untuk ditanam pada
 wilayah Kecamatan ${record.kecamatan} dengan karakteristik kondisi lahan di atas.
 =====================================================
@@ -113,15 +113,13 @@ Laporan ini dihasilkan secara otomatis oleh Sistem Agro-LSTM.`;
   const handleExportCSV = () => {
     if (historyList.length === 0) return;
     
-    const headers = ["ID", "Kecamatan", "Tanggal", "pH", "Elevasi(mdpl)", "Curah Hujan(mm)", "Jenis Tanah", "Komoditas", "Skor(%)", "Kelayakan"];
+    const headers = ["ID", "Kecamatan", "Tanggal", "pH", "Elevasi(mdpl)", "Komoditas", "Skor(%)", "Kelayakan"];
     const rows = historyList.map((r) => [
       r.id,
       r.kecamatan,
       r.tanggal,
       r.ph,
       r.elevasi,
-      r.curahHujan,
-      r.tanah,
       r.komoditas,
       r.skor,
       r.suitability
@@ -142,7 +140,7 @@ Laporan ini dihasilkan secara otomatis oleh Sistem Agro-LSTM.`;
   return (
     <div className="bg-stone-50 dark:bg-stone-950 text-stone-800 dark:text-stone-100 min-h-screen">
       <Sidebar />
-      <Header title="Riwayat Prediksi" subtitle="Daftar Log Hasil Perhitungan LSTM & Neural Network" />
+      <Header title="Riwayat Prediksi" subtitle="Daftar Log Hasil Perhitungan LSTM" />
 
       {/* Main Content */}
       <main className="ml-64 pt-20 pb-12 px-8 min-h-screen">
@@ -157,15 +155,23 @@ Laporan ini dihasilkan secara otomatis oleh Sistem Agro-LSTM.`;
               </p>
             </div>
             
-            <div className="flex space-x-2 shrink-0">
-              <button 
-                onClick={handleExportCSV}
-                className="flex items-center px-4 py-2.5 bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 hover:bg-stone-50 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-sm mr-1.5" data-icon="download">download</span>
-                <span>Export CSV</span>
-              </button>
-            </div>
+            {isAdmin && (
+              <div className="flex space-x-2 shrink-0">
+                <button 
+                  onClick={handleExportCSV}
+                  className="flex items-center px-4 py-2.5 bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 hover:bg-stone-50 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-sm mr-1.5" data-icon="download">download</span>
+                  <span>Export CSV</span>
+                </button>
+              </div>
+            )}
+            {!isAdmin && (
+              <div className="flex items-center space-x-2 bg-amber-50 dark:bg-amber-950/20 border border-amber-500/20 px-4 py-2 rounded-xl">
+                <span className="material-symbols-outlined text-amber-600 text-sm" data-icon="lock">lock</span>
+                <span className="text-xs font-bold text-amber-700 dark:text-amber-400">Export CSV hanya untuk Admin</span>
+              </div>
+            )}
           </div>
 
           {/* Search and filter controls */}
@@ -209,7 +215,7 @@ Laporan ini dihasilkan secara otomatis oleh Sistem Agro-LSTM.`;
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">ID</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Kecamatan</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Tanggal Eksekusi</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Variabel Lahan (pH/Elev/Hujan)</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Variabel Lahan (pH/Elev)</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Rekomendasi Utama</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Tingkat Kecocokan</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Aksi</th>
@@ -217,8 +223,8 @@ Laporan ini dihasilkan secara otomatis oleh Sistem Agro-LSTM.`;
                 </thead>
                 <tbody className="divide-y divide-stone-100 dark:divide-stone-850">
                   {filteredHistory.length > 0 ? (
-                    filteredHistory.map((record) => (
-                      <tr key={record.id} className="hover:bg-stone-50/50 dark:hover:bg-stone-900/30 transition-colors">
+                    filteredHistory.map((record, idx) => (
+                      <tr key={`${record.id}-${idx}`} className="hover:bg-stone-50/50 dark:hover:bg-stone-900/30 transition-colors">
                         <td className="px-6 py-4 text-xs font-bold text-stone-500">{record.id}</td>
                         <td className="px-6 py-4 text-sm font-semibold">{record.kecamatan}</td>
                         <td className="px-6 py-4 text-xs text-stone-400 dark:text-stone-500">{record.tanggal}</td>
@@ -226,7 +232,6 @@ Laporan ini dihasilkan secara otomatis oleh Sistem Agro-LSTM.`;
                           <div className="flex space-x-2 font-mono text-stone-600 dark:text-stone-400 font-bold">
                             <span className="bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 px-2 py-0.5 rounded-lg">pH {record.ph.toFixed(1)}</span>
                             <span className="bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 px-2 py-0.5 rounded-lg">{record.elevasi}m</span>
-                            <span className="bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 px-2 py-0.5 rounded-lg">{record.curahHujan}mm</span>
                           </div>
                         </td>
                         <td className="px-6 py-4 text-sm font-bold text-stone-700 dark:text-stone-300">{record.komoditas}</td>
@@ -245,13 +250,17 @@ Laporan ini dihasilkan secara otomatis oleh Sistem Agro-LSTM.`;
                           </div>
                         </td>
                         <td className="px-6 py-4 text-center">
-                          <button 
-                            onClick={() => handleDownloadReport(record)}
-                            className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 text-[#006B54] dark:text-[#10b981] rounded-lg transition-colors cursor-pointer" 
-                            title="Unduh Laporan"
-                          >
-                            <span className="material-symbols-outlined text-base" data-icon="cloud_download">cloud_download</span>
-                          </button>
+                          {isAdmin ? (
+                            <button 
+                              onClick={() => handleDownloadReport(record)}
+                              className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-800 text-[#006B54] dark:text-[#10b981] rounded-lg transition-colors cursor-pointer" 
+                              title="Unduh Laporan"
+                            >
+                              <span className="material-symbols-outlined text-base" data-icon="cloud_download">cloud_download</span>
+                            </button>
+                          ) : (
+                            <span className="material-symbols-outlined text-stone-300 dark:text-stone-700 text-base" data-icon="lock" title="Login untuk unduh">lock</span>
+                          )}
                         </td>
                       </tr>
                     ))

@@ -9,11 +9,10 @@ interface KecamatanData {
   kecamatan: string;
   elevasi_mdpl: number;
   ph_tanah_mean: number;
-  tekstur_tanah: string;
   curah_hujan_tahunan: number;
+  tanah_liat: number;
   tanah_pasir: number;
   tanah_debu: number;
-  jenis_tanah: string;
   resiko_bencana: string;
 }
 
@@ -22,6 +21,7 @@ export default function Page() {
   const [authorized, setAuthorized] = useState(false);
   const [dataList, setDataList] = useState<KecamatanData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState("");
 
   useEffect(() => {
     const isAdmin = localStorage.getItem("admin_logged_in") === "true";
@@ -42,7 +42,8 @@ export default function Page() {
         setDataList(json.data);
       }
     } catch (error) {
-      console.error("Gagal mengambil data:", error);
+      console.warn("Gagal mengambil data dari server:", error);
+      setFetchError("Gagal terhubung ke server backend. Pastikan server Python sedang berjalan.");
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +70,12 @@ export default function Page() {
             </p>
           </div>
 
-
+          {fetchError && (
+            <div className="bg-red-50 border border-red-500/20 text-red-800 p-4 rounded-2xl flex items-center shadow-sm">
+              <span className="material-symbols-outlined mr-3 text-red-600">error</span>
+              <span className="font-bold text-xs">{fetchError}</span>
+            </div>
+          )}
 
           {/* Table Section */}
           <section className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 rounded-3xl overflow-hidden shadow-sm">
@@ -93,9 +99,8 @@ export default function Page() {
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Kecamatan</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Elevasi (MDPL)</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">pH Tanah</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Jenis Tanah</th>
-                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Tekstur Lahan</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Curah Hujan (mm)</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Liat %</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Pasir %</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Debu %</th>
                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Resiko Bencana</th>
@@ -104,33 +109,21 @@ export default function Page() {
                 <tbody className="divide-y divide-stone-100 dark:divide-stone-850">
                   {dataList.map((item, index) => (
                     <tr key={index} className="hover:bg-stone-50/50 dark:hover:bg-stone-900/30 transition-colors">
-                      <td className="px-6 py-4 text-xs font-bold text-stone-500 dark:text-stone-400">{item.periode}</td>
-                      <td className="px-6 py-4 text-sm font-semibold">{item.kecamatan}</td>
-                      <td className="px-6 py-4 text-sm font-mono text-center font-bold">{item.elevasi} mdpl</td>
-                      <td className="px-6 py-4 text-sm font-mono text-center font-bold text-[#006B54] dark:text-[#10b981]">{item.ph}</td>
-                      <td className="px-6 py-4 text-xs font-medium text-stone-600 dark:text-stone-400">{item.tanah}</td>
-                      <td className="px-6 py-4 text-sm font-mono text-center">{item.hujan} mm</td>
-                      <td className="px-6 py-4 text-sm font-mono text-right">{item.luasPanen.toLocaleString()} Ha</td>
-                      <td className="px-6 py-4 text-sm font-mono text-right font-bold text-stone-700 dark:text-stone-300">{item.produksi.toLocaleString()} Ton</td>
+                      <td className="px-6 py-4 text-sm font-semibold text-stone-900 dark:text-stone-100">{item.kecamatan}</td>
+                      <td className="px-6 py-4 text-sm font-mono text-center font-bold">{isNaN(Number(item.elevasi_mdpl)) ? "N/A" : Number(item.elevasi_mdpl).toFixed(1)}</td>
+                      <td className="px-6 py-4 text-sm font-mono text-center font-bold text-[#006B54] dark:text-[#10b981]">{isNaN(Number(item.ph_tanah_mean)) ? "N/A" : Number(item.ph_tanah_mean).toFixed(2)}</td>
+                      <td className="px-6 py-4 text-sm font-mono text-center">{isNaN(Number(item.curah_hujan_tahunan)) ? "N/A" : Math.round(Number(item.curah_hujan_tahunan))}</td>
+                      <td className="px-6 py-4 text-sm font-mono text-center">{isNaN(Number(item.tanah_liat)) ? "N/A" : Number(item.tanah_liat).toFixed(1)}</td>
+                      <td className="px-6 py-4 text-sm font-mono text-center">{isNaN(Number(item.tanah_pasir)) ? "N/A" : Number(item.tanah_pasir).toFixed(1)}</td>
+                      <td className="px-6 py-4 text-sm font-mono text-center text-stone-700 dark:text-stone-300">{isNaN(Number(item.tanah_debu)) ? "N/A" : Number(item.tanah_debu).toFixed(1)}</td>
                       <td className="px-6 py-4 text-center">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                          item.status === "Terverifikasi"
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          item.resiko_bencana === "Rendah"
                             ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10"
-                            : "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-500/10"
+                            : "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-500/10"
                         }`}>
-                          {item.status}
+                          {item.resiko_bencana}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="flex justify-center space-x-1">
-                          <button 
-                            onClick={() => handleDelete(index)}
-                            className="p-1 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors cursor-pointer text-stone-400"
-                            title="Hapus"
-                          >
-                            <span className="material-symbols-outlined text-base" data-icon="delete">delete</span>
-                          </button>
-                        </div>
                       </td>
                     </tr>
                   ))}

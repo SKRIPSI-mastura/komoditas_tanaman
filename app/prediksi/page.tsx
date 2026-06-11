@@ -5,48 +5,20 @@ import { Header } from "@/components/Header";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// Real database profiles from Aceh Utara models
-const KEC_PROFILES: Record<string, { elevasi: number; ph: number; jenis_tanah: string; hujan: number; liat: number; pasir: number; debu: number }> = {
-  "Baktiya": { elevasi: 11, ph: 5.5, jenis_tanah: "Aluvial", hujan: 2284, liat: 36, pasir: 28, debu: 37 },
-  "Baktiya Barat": { elevasi: 4, ph: 5.5, jenis_tanah: "Aluvial", hujan: 2284, liat: 36, pasir: 32, debu: 33 },
-  "Banda Baro": { elevasi: 35, ph: 5.3, jenis_tanah: "Aluvial", hujan: 2478, liat: 36, pasir: 34, debu: 29 },
-  "Cot Girek": { elevasi: 124, ph: 5.1, jenis_tanah: "Podsolik", hujan: 2284, liat: 35, pasir: 36, debu: 28 },
-  "Dewantara": { elevasi: 9, ph: 5.4, jenis_tanah: "Aluvial", hujan: 2478, liat: 35, pasir: 36, debu: 29 },
-  "Kuta Makmur": { elevasi: 141, ph: 5.4, jenis_tanah: "Podsolik", hujan: 2478, liat: 35, pasir: 35, debu: 30 },
-  "Langkahan": { elevasi: 71, ph: 5.3, jenis_tanah: "Podsolik", hujan: 2284, liat: 36, pasir: 33, debu: 31 },
-  "Lapang": { elevasi: 4, ph: 5.2, jenis_tanah: "Aluvial", hujan: 2284, liat: 38, pasir: 33, debu: 29 },
-  "Lhoksukon": { elevasi: 12, ph: 5.4, jenis_tanah: "Aluvial", hujan: 2284, liat: 34, pasir: 34, debu: 32 },
-  "Matangkuli": { elevasi: 12, ph: 5.4, jenis_tanah: "Aluvial", hujan: 2284, liat: 33, pasir: 30, debu: 37 },
-  "Meurah Mulia": { elevasi: 18, ph: 5.1, jenis_tanah: "Aluvial", hujan: 2478, liat: 36, pasir: 36, debu: 28 },
-  "Muara Batu": { elevasi: 10, ph: 5.2, jenis_tanah: "Aluvial", hujan: 2478, liat: 34, pasir: 39, debu: 27 },
-  "Nibong": { elevasi: 17, ph: 5.2, jenis_tanah: "Aluvial", hujan: 2284, liat: 40, pasir: 28, debu: 32 },
-  "Nisam": { elevasi: 31, ph: 5.4, jenis_tanah: "Aluvial", hujan: 2478, liat: 32, pasir: 35, debu: 33 },
-  "Nisam Antara": { elevasi: 459, ph: 5.3, jenis_tanah: "Podsolik", hujan: 2478, liat: 39, pasir: 33, debu: 28 },
-  "Paya Bakong": { elevasi: 81, ph: 4.9, jenis_tanah: "Podsolik", hujan: 2284, liat: 34, pasir: 38, debu: 28 },
-  "Samudera": { elevasi: 7, ph: 5.8, jenis_tanah: "Aluvial", hujan: 2284, liat: 33, pasir: 33, debu: 34 },
-  "Sawang": { elevasi: 381, ph: 5.2, jenis_tanah: "Podsolik", hujan: 2478, liat: 35, pasir: 34, debu: 31 },
-  "Seunuddon": { elevasi: 4, ph: 5.6, jenis_tanah: "Aluvial", hujan: 2284, liat: 40, pasir: 26, debu: 34 },
-  "Syamtalira Aron": { elevasi: 5, ph: 5.6, jenis_tanah: "Aluvial", hujan: 2478, liat: 31, pasir: 32, debu: 36 },
-  "Syamtalira Bayu": { elevasi: 20, ph: 5.8, jenis_tanah: "Aluvial", hujan: 2284, liat: 33, pasir: 33, debu: 34 },
-  "Tanah Jambo Aye": { elevasi: 10, ph: 5.5, jenis_tanah: "Aluvial", hujan: 2284, liat: 36, pasir: 32, debu: 32 },
-  "Tanah Luas": { elevasi: 239, ph: 5.3, jenis_tanah: "Podsolik", hujan: 2284, liat: 32, pasir: 33, debu: 34 },
-  "Tanah Pasir": { elevasi: 5, ph: 5.6, jenis_tanah: "Aluvial", hujan: 2284, liat: 34, pasir: 32, debu: 34 },
-};
+// Data Profil Kecamatan di-fetch langsung dari backend (FastAPI)
 
 export default function Page() {
   const router = useRouter();
   const [selectedKec, setSelectedKec] = useState("Lhoksukon");
   const [ph, setPh] = useState(5.4);
-  const [jenisTanah, setJenisTanah] = useState("Aluvial");
   const [elevasi, setElevasi] = useState(12);
-  const [curahHujan, setCurahHujan] = useState(2284);
   const [liat, setLiat] = useState(34);
   const [pasir, setPasir] = useState(34);
   const [debu, setDebu] = useState(32);
   const [resikoBencana, setResikoBencana] = useState("Rendah");
 
   // Dynamic lists and details from backend
-  const [kecamatanList, setKecamatanList] = useState<string[]>(Object.keys(KEC_PROFILES));
+  const [kecamatanList, setKecamatanList] = useState<string[]>([]);
   const [predictedClimate, setPredictedClimate] = useState<any[]>([]);
   const [avgClimate, setAvgClimate] = useState<any>({ suhu: 27.3, kelembapan: 82.1, kecepatan_angin: 2.3 });
   const [errorMsg, setErrorMsg] = useState("");
@@ -63,6 +35,7 @@ export default function Page() {
       router.push("/login");
       return;
     }
+
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan`)
       .then((res) => res.json())
       .then((resData) => {
@@ -85,9 +58,7 @@ export default function Page() {
         if (resData.status === "success" && resData.data) {
           const d = resData.data;
           setPh(Number((d.ph ?? 6.4).toFixed(1)));
-          setJenisTanah(d.jenis_tanah ?? "Lempung Berliat");
           setElevasi(Math.round(d.elevasi ?? 12));
-          setCurahHujan(Math.round(d.hujan_tahunan ?? 2100));
           setLiat(Math.round(d.tanah_liat_persen ?? 28));
           setPasir(Math.round(d.tanah_pasir_persen ?? 32));
           setDebu(Math.round(d.tanah_debu_persen ?? 40));
@@ -95,18 +66,8 @@ export default function Page() {
         }
       })
       .catch((err) => {
-        console.warn(`Failed to fetch profile for ${selectedKec}, using fallback KEC_PROFILES.`, err);
-        const profile = KEC_PROFILES[selectedKec];
-        if (profile) {
-          setPh(profile.ph);
-          setJenisTanah(profile.jenis_tanah);
-          setElevasi(profile.elevasi);
-          setCurahHujan(profile.hujan);
-          setLiat(profile.liat ?? 28);
-          setPasir(profile.pasir ?? 32);
-          setDebu(profile.debu ?? 40);
-          setResikoBencana(profile.elevasi < 15 ? "Tinggi" : "Rendah");
-        }
+        console.error(`Failed to fetch profile for ${selectedKec}`, err);
+        setErrorMsg(`Gagal memuat profil untuk ${selectedKec}. Server tidak merespon.`);
       });
   }, [selectedKec]);
 
@@ -116,7 +77,7 @@ export default function Page() {
     "Normalisasi skala data dengan MinMaxScaler...",
     "Membagi dataset (80% Train, 20% Test)...",
     "Melatih Model Jaringan Saraf LSTM (Epochs 20/20)...",
-    "Melakukan peramalan autoregresif 7 hari ke depan..."
+    "Melakukan peramalan autoregresif beberapa bulan ke depan..."
   ];
 
   const handlePredict = (e: React.FormEvent) => {
@@ -165,35 +126,27 @@ export default function Page() {
                 const pd = profileJson.data;
                 const phDiff = Math.abs(Number(ph) - Number(pd.ph));
                 const elevDiff = Math.abs(Number(elevasi) - Number(pd.elevasi));
-                const rainDiff = Math.abs(Number(curahHujan) - Number(pd.hujan_tahunan));
-                const soilDiff = jenisTanah.toLowerCase() !== (pd.jenis_tanah || "").toLowerCase();
                 
-                if (phDiff > 0.05 || elevDiff > 1 || rainDiff > 10 || soilDiff) {
+                if (phDiff > 0.05 || elevDiff > 1) {
                   hasCustomized = true;
                 }
               }
             }
           } catch (profileErr) {
-            console.warn("Failed to check customized parameters, fallback to check local defaults", profileErr);
-            const localProf = KEC_PROFILES[selectedKec];
-            if (localProf) {
-              if (ph !== localProf.ph || elevasi !== localProf.elevasi || curahHujan !== localProf.hujan || jenisTanah !== localProf.jenis_tanah) {
-                hasCustomized = true;
-              }
-            }
+            console.warn("Failed to check customized parameters from API", profileErr);
+            // Default to custom if we cannot verify against backend
+            hasCustomized = true;
           }
 
           // 3. If customized, POST to /api/recommend to get custom NN recommendations
           if (hasCustomized) {
             isCustomRun = true;
             const postPayload = {
-              jenis_tanah: jenisTanah,
               ph_tanah: Number(ph),
               tanah_liat_persen: Number(liat),
               tanah_pasir_persen: Number(pasir),
               tanah_debu_persen: Number(debu),
               elevasi: Number(elevasi),
-              hujan_tahunan: Number(curahHujan),
               suhu: Number(baselineData.avg_climate_prediction.suhu),
               kelembapan: Number(baselineData.avg_climate_prediction.kelembapan),
               kecepatan_angin: Number(baselineData.avg_climate_prediction.kecepatan_angin),
@@ -226,9 +179,7 @@ export default function Page() {
             inputs: {
               kecamatan: selectedKec,
               ph: Number(ph),
-              jenisTanah: jenisTanah,
               elevasi: Number(elevasi),
-              curahHujan: Number(curahHujan),
               liat: Number(liat),
               pasir: Number(pasir),
               debu: Number(debu),
@@ -261,8 +212,6 @@ export default function Page() {
               }) + `, ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}`,
               ph: Number(ph),
               elevasi: Number(elevasi),
-              curahHujan: Number(curahHujan),
-              tanah: jenisTanah,
               komoditas: finalTopRec?.komoditas || "N/A",
               skor: finalTopRec?.score || 0,
               suitability: finalTopRec?.kelayakan || "Layak"
@@ -294,11 +243,11 @@ export default function Page() {
     }
   }, [isPredicting, predictionStep]);
 
-  // Chart dataset for 7-day forecast
+  // Chart dataset for 4 months forecast
   const forecastData = {
-    suhu: predictedClimate.length > 0 ? predictedClimate.map((c) => c.suhu) : [26.8, 27.2, 27.5, 27.1, 27.6, 27.9, 27.4],
-    kelembapan: predictedClimate.length > 0 ? predictedClimate.map((c) => c.kelembapan) : [80, 82, 83, 81, 84, 85, 82],
-    angin: predictedClimate.length > 0 ? predictedClimate.map((c) => c.kecepatan_angin) : [2.1, 2.3, 2.5, 2.2, 2.4, 2.6, 2.3],
+    suhu: predictedClimate.length > 0 ? predictedClimate.map((c) => c.suhu) : [26.8, 27.2, 27.5, 27.1],
+    kelembapan: predictedClimate.length > 0 ? predictedClimate.map((c) => c.kelembapan) : [80, 82, 83, 81],
+    angin: predictedClimate.length > 0 ? predictedClimate.map((c) => c.kecepatan_angin) : [2.1, 2.3, 2.5, 2.2],
   };
 
   // Convert array to SVG path
@@ -385,8 +334,6 @@ export default function Page() {
                     <div className="relative">
                       <input 
                         type="number"
-                        min="0"
-                        max="1500"
                         value={elevasi}
                         onChange={(e) => setElevasi(Number(e.target.value))}
                         className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-3 px-4 transition-all"
@@ -402,8 +349,6 @@ export default function Page() {
                     <input 
                       type="number"
                       step="0.1"
-                      min="3.0"
-                      max="9.0"
                       value={ph}
                       onChange={(e) => setPh(Number(e.target.value))}
                       className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-3 px-4 transition-all"
@@ -411,43 +356,6 @@ export default function Page() {
                     />
                   </div>
 
-                  {/* Jenis Tanah Selection */}
-                  <div className="space-y-1.5">
-                    <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">Jenis / Tekstur Tanah</label>
-                    <select 
-                      value={jenisTanah}
-                      onChange={(e) => setJenisTanah(e.target.value)}
-                      className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-3 px-4 transition-all"
-                    >
-                      <option value="Aluvial">Aluvial (Alluvial)</option>
-                      <option value="Lempung">Lempung (Clay)</option>
-                      <option value="Lempung Berliat">Lempung Berliat (Clay Loam)</option>
-                      <option value="Lempung Berpasir">Lempung Berpasir (Sandy Clay)</option>
-                      <option value="Latosol">Latosol (Latosol)</option>
-                      <option value="Regosol">Regosol (Regosol)</option>
-                      <option value="Grumosol">Grumosol (Grumosol)</option>
-                      <option value="Pasir Berlempung">Pasir Berlempung (Loamy Sand)</option>
-                      <option value="Mediteran">Mediteran (Mediteran)</option>
-                      <option value="Podsolik">Podsolik (Podzolic)</option>
-                    </select>
-                  </div>
-
-                  {/* Curah Hujan Input */}
-                  <div className="space-y-1.5">
-                    <label className="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-widest">Curah Hujan Tahunan (mm/tahun)</label>
-                    <div className="relative">
-                      <input 
-                        type="number"
-                        min="500"
-                        max="4000"
-                        value={curahHujan}
-                        onChange={(e) => setCurahHujan(Number(e.target.value))}
-                        className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-sm py-3 px-4 transition-all"
-                        required
-                      />
-                      <span className="absolute right-4 top-3.5 text-xs text-stone-400">mm/thn</span>
-                    </div>
-                  </div>
 
                   {/* Predict Button */}
                   <button 
@@ -474,7 +382,7 @@ export default function Page() {
                   </div>
                   <h4 className="text-lg font-black text-stone-900 dark:text-white leading-tight">Menunggu Parameter Masukan</h4>
                   <p className="text-xs text-stone-400 max-w-sm mt-2 leading-relaxed">
-                    Silakan atur variabel elevasi, pH tanah, curah hujan, dan subdistrik di panel kiri, lalu tekan tombol prediksi untuk mengeksekusi model neural network LSTM.
+                    Silakan atur variabel elevasi, pH tanah, curah hujan, dan subdistrik di panel kiri, lalu tekan tombol prediksi untuk mengeksekusi model algoritma LSTM.
                   </p>
                 </div>
               )}
@@ -534,7 +442,7 @@ export default function Page() {
                         &gt;&gt; Training epochs: 20/20 | Train_Loss: 0.014 | Test_Loss: 0.018 | MSE: 0.023
                       </p>
                     )}
-                    {predictionStep >= 4 && <p className="text-emerald-300 font-bold">&gt;&gt; Forecasting 7 periods completed successfully.</p>}
+                    {predictionStep >= 4 && <p className="text-emerald-300 font-bold">&gt;&gt; Prediksi iklim beberapa bulan ke depan berhasil.</p>}
                   </div>
                 </div>
               )}
@@ -545,7 +453,7 @@ export default function Page() {
                   
                   {/* Climate average metrics */}
                   <div>
-                    <h3 className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider mb-3">Hasil Prediksi Rata-Rata Iklim (7 Hari Ke Depan)</h3>
+                    <h3 className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider mb-3">Hasil Prediksi Rata-Rata Iklim (4 Bulan Ke Depan)</h3>
                     
                     <div className="grid grid-cols-3 gap-4">
                       {/* Suhu */}
@@ -583,7 +491,7 @@ export default function Page() {
                   {/* Chart Tabs */}
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <h4 className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Grafik Prediksi Runtun Waktu (7 Hari)</h4>
+                      <h4 className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Grafik Prediksi Runtun Waktu (4 Bulan)</h4>
                       <div className="flex bg-stone-50 dark:bg-stone-950 p-1 rounded-xl border border-stone-100 dark:border-stone-850">
                         <button 
                           onClick={() => setActiveTab("suhu")}
@@ -698,7 +606,7 @@ export default function Page() {
 
                           {/* Circular Points */}
                           {activeTab === "suhu" && forecastData.suhu.map((val, idx) => {
-                            const stepX = 680 / 6;
+                            const stepX = forecastData.suhu.length > 1 ? 680 / (forecastData.suhu.length - 1) : 0;
                             const ratio = (val - 23.0) / (32.0 - 23.0);
                             const y = 180 - ratio * 180 * 0.8 - 180 * 0.1;
                             return (
@@ -706,7 +614,7 @@ export default function Page() {
                             );
                           })}
                           {activeTab === "kelembapan" && forecastData.kelembapan.map((val, idx) => {
-                            const stepX = 680 / 6;
+                            const stepX = forecastData.kelembapan.length > 1 ? 680 / (forecastData.kelembapan.length - 1) : 0;
                             const ratio = (val - 60) / (95 - 60);
                             const y = 180 - ratio * 180 * 0.8 - 180 * 0.1;
                             return (
@@ -714,7 +622,7 @@ export default function Page() {
                             );
                           })}
                           {activeTab === "angin" && forecastData.angin.map((val, idx) => {
-                            const stepX = 680 / 6;
+                            const stepX = forecastData.angin.length > 1 ? 680 / (forecastData.angin.length - 1) : 0;
                             const ratio = (val - 0.5) / (5.0 - 0.5);
                             const y = 180 - ratio * 180 * 0.8 - 180 * 0.1;
                             return (
@@ -733,13 +641,9 @@ export default function Page() {
 
                       {/* X-Axis labels */}
                       <div className="flex justify-between text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-tighter mt-3 border-t border-stone-100 dark:border-stone-850 pt-2">
-                        <span>Hari 1</span>
-                        <span>Hari 2</span>
-                        <span>Hari 3</span>
-                        <span>Hari 4</span>
-                        <span>Hari 5</span>
-                        <span>Hari 6</span>
-                        <span>Hari 7 (Forecast)</span>
+                        {forecastData.suhu.map((_, idx) => (
+                          <span key={idx}>Bulan {idx + 1}</span>
+                        ))}
                       </div>
                     </div>
                   </div>
