@@ -17,10 +17,15 @@ export function Header({ title, subtitle }: HeaderProps) {
     setIsAdmin(localStorage.getItem("admin_logged_in") === "true");
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } catch (e) {
+      console.warn("Failed to call logout API", e);
+    }
     localStorage.removeItem("admin_logged_in");
     setIsAdmin(false);
-    router.push("/dashboard");
+    router.push("/rekomendasi");
   };
 
   return (

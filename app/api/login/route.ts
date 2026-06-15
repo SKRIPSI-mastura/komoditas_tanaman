@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { cookies } from 'next/headers';
 
 // POST /api/login — Autentikasi admin
 export async function POST(req: NextRequest) {
@@ -49,6 +50,20 @@ export async function POST(req: NextRequest) {
       .from('admin')
       .update({ terakhir_login: now })
       .eq('id', admin.id);
+
+    // Set secure session cookie
+    const cookieStore = await cookies();
+    cookieStore.set('admin_session', JSON.stringify({
+      username: admin.username,
+      nama: admin.nama,
+      peran: admin.peran,
+    }), {
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24, // 1 day
+    });
 
     return NextResponse.json({
       status: 'success',

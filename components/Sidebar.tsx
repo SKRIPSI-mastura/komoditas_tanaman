@@ -21,7 +21,12 @@ export function Sidebar() {
     }
   }, [pathname]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } catch (e) {
+      console.warn("Failed to call logout API", e);
+    }
     // Bersihkan semua data sesi admin
     localStorage.removeItem("admin_logged_in");
     localStorage.removeItem("admin_username");
