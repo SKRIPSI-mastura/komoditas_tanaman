@@ -20,14 +20,14 @@ export default function Page() {
   // Dynamic lists and details from backend
   const [kecamatanList, setKecamatanList] = useState<any[]>([]);
   const [predictedClimate, setPredictedClimate] = useState<any[]>([]);
-  const [avgClimate, setAvgClimate] = useState<any>({ suhu: 27.3, kelembapan: 82.1, kecepatan_angin: 2.3 });
+  const [avgClimate, setAvgClimate] = useState<any>({ suhu: 27.3, kelembapan: 82.1, curah_hujan: 280.0 });
   const [errorMsg, setErrorMsg] = useState("");
   
   // Interactive States
   const [isPredicting, setIsPredicting] = useState(false);
   const [predictionStep, setPredictionStep] = useState(0);
   const [hasPredicted, setHasPredicted] = useState(false);
-  const [activeTab, setActiveTab] = useState<"suhu" | "kelembapan" | "angin">("suhu");
+  const [activeTab, setActiveTab] = useState<"suhu" | "kelembapan" | "hujan">("suhu");
 
   // Fetch all kecamatan list on mount
   useEffect(() => {
@@ -147,9 +147,11 @@ export default function Page() {
               tanah_pasir_persen: Number(pasir),
               tanah_debu_persen: Number(debu),
               elevasi: Number(elevasi),
+              hujan_tahunan: Number(baselineData.profil_wilayah.curah_hujan_tahunan ?? 0),
               suhu: Number(baselineData.avg_climate_prediction.suhu),
               kelembapan: Number(baselineData.avg_climate_prediction.kelembapan),
-              kecepatan_angin: Number(baselineData.avg_climate_prediction.kecepatan_angin),
+              curah_hujan: Number(baselineData.avg_climate_prediction.curah_hujan ?? baselineData.avg_climate_prediction.kecepatan_angin ?? 0),
+              resiko_bencana: resikoBencana,
               kecamatan: `${selectedKec} (Kustom)`
             };
 
@@ -171,7 +173,7 @@ export default function Page() {
           }
 
           setPredictedClimate(baselineData.climate_prediction || []);
-          setAvgClimate(baselineData.avg_climate_prediction || { suhu: 27.3, kelembapan: 82.1, kecepatan_angin: 2.3 });
+          setAvgClimate(baselineData.avg_climate_prediction || { suhu: 27.3, kelembapan: 82.1, curah_hujan: 280.0 });
 
           // Save complete structured result into localStorage
           const localStoreData = {
@@ -185,7 +187,8 @@ export default function Page() {
               debu: Number(debu),
               temp_pred: Number(baselineData.avg_climate_prediction.suhu),
               hum_pred: Number(baselineData.avg_climate_prediction.kelembapan),
-              wind_pred: Number(baselineData.avg_climate_prediction.kecepatan_angin)
+              wind_pred: 2.0,
+              hujan_pred: Number(baselineData.avg_climate_prediction.curah_hujan ?? baselineData.avg_climate_prediction.kecepatan_angin ?? 0)
             },
             climate_prediction: baselineData.climate_prediction || [],
             recommendations: finalRecommendations || [],
@@ -283,7 +286,7 @@ export default function Page() {
   const forecastData = {
     suhu: predictedClimate.length > 0 ? predictedClimate.map((c) => c.suhu) : [26.8, 27.2, 27.5, 27.1],
     kelembapan: predictedClimate.length > 0 ? predictedClimate.map((c) => c.kelembapan) : [80, 82, 83, 81],
-    angin: predictedClimate.length > 0 ? predictedClimate.map((c) => c.kecepatan_angin) : [2.1, 2.3, 2.5, 2.2],
+    hujan: predictedClimate.length > 0 ? predictedClimate.map((c) => c.curah_hujan ?? c.kecepatan_angin ?? 0) : [220, 240, 260, 210],
   };
 
   // Convert array to SVG path
@@ -516,14 +519,14 @@ export default function Page() {
                         <p className="text-[10px] text-stone-400 mt-1">Rentang ideal</p>
                       </div>
 
-                      {/* Kecepatan Angin */}
+                      {/* Curah Hujan */}
                       <div className="bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-850 p-4 rounded-2xl">
-                        <div className="flex justify-between items-center text-[#006B54]">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">Kecepatan Angin</span>
-                          <span className="material-symbols-outlined text-lg" data-icon="wind_power">wind_power</span>
+                        <div className="flex justify-between items-center text-[#0ea5e9]">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">Curah Hujan</span>
+                          <span className="material-symbols-outlined text-lg" data-icon="water_drop">water_drop</span>
                         </div>
-                        <p className="text-xl font-bold mt-2 font-mono">{avgClimate.kecepatan_angin.toFixed(1)} m/s</p>
-                        <p className="text-[10px] text-stone-400 mt-1">Kecepatan normal</p>
+                        <p className="text-xl font-bold mt-2 font-mono">{(avgClimate.curah_hujan ?? avgClimate.kecepatan_angin ?? 0).toFixed(1)} mm</p>
+                        <p className="text-[10px] text-stone-400 mt-1">Rata-rata bulanan</p>
                       </div>
                     </div>
                   </div>
@@ -554,14 +557,14 @@ export default function Page() {
                           Kelembapan (%)
                         </button>
                         <button 
-                          onClick={() => setActiveTab("angin")}
+                          onClick={() => setActiveTab("hujan")}
                           className={`px-3 py-1 text-[10px] font-bold rounded-lg transition-colors cursor-pointer ${
-                            activeTab === "angin" 
+                            activeTab === "hujan" 
                               ? "bg-white dark:bg-stone-900 shadow-sm text-[#006B54]" 
                               : "text-stone-400"
                           }`}
                         >
-                          Angin (m/s)
+                          Hujan (mm)
                         </button>
                       </div>
                     </div>
@@ -601,9 +604,9 @@ export default function Page() {
                               className="transition-all duration-500"
                             />
                           )}
-                          {activeTab === "angin" && (
+                          {activeTab === "hujan" && (
                             <path 
-                              d={getSvgGradientPath(forecastData.angin, 0.5, 5.0)} 
+                              d={getSvgGradientPath(forecastData.hujan, 0, 400)} 
                               fill="url(#chartGradient)"
                               className="transition-all duration-500"
                             />
@@ -632,11 +635,11 @@ export default function Page() {
                               className="transition-all duration-500"
                             />
                           )}
-                          {activeTab === "angin" && (
+                          {activeTab === "hujan" && (
                             <path 
-                              d={getSvgPath(forecastData.angin, 0.5, 5.0)} 
+                              d={getSvgPath(forecastData.hujan, 0, 400)} 
                               fill="none" 
-                              stroke="#f59e0b" 
+                              stroke="#0ea5e9" 
                               strokeWidth="3.5" 
                               strokeLinecap="round" 
                               strokeLinejoin="round"
@@ -661,12 +664,12 @@ export default function Page() {
                               <circle key={idx} cx={idx * stepX} cy={y} r="5" fill="white" stroke="#3b82f6" strokeWidth="2" />
                             );
                           })}
-                          {activeTab === "angin" && forecastData.angin.map((val, idx) => {
-                            const stepX = forecastData.angin.length > 1 ? 680 / (forecastData.angin.length - 1) : 0;
-                            const ratio = (val - 0.5) / (5.0 - 0.5);
+                          {activeTab === "hujan" && forecastData.hujan.map((val, idx) => {
+                            const stepX = forecastData.hujan.length > 1 ? 680 / (forecastData.hujan.length - 1) : 0;
+                            const ratio = (val - 0) / (400 - 0);
                             const y = 180 - ratio * 180 * 0.8 - 180 * 0.1;
                             return (
-                              <circle key={idx} cx={idx * stepX} cy={y} r="5" fill="white" stroke="#f59e0b" strokeWidth="2" />
+                              <circle key={idx} cx={idx * stepX} cy={y} r="5" fill="white" stroke="#0ea5e9" strokeWidth="2" />
                             );
                           })}
                         </svg>
@@ -675,7 +678,7 @@ export default function Page() {
                         <div className="absolute top-2 left-0 right-0 flex justify-between px-2 font-mono text-[9px] text-stone-400 font-bold">
                           {activeTab === "suhu" && forecastData.suhu.map((val, idx) => <span key={idx}>{val.toFixed(1)}°C</span>)}
                           {activeTab === "kelembapan" && forecastData.kelembapan.map((val, idx) => <span key={idx}>{val.toFixed(1)}%</span>)}
-                          {activeTab === "angin" && forecastData.angin.map((val, idx) => <span key={idx}>{val.toFixed(1)}m/s</span>)}
+                          {activeTab === "hujan" && forecastData.hujan.map((val, idx) => <span key={idx}>{val.toFixed(0)} mm</span>)}
                         </div>
                       </div>
 

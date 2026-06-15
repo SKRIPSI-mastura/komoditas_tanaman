@@ -272,9 +272,8 @@ function RekomendasiPage() {
       try {
         const parsed = JSON.parse(localData);
         if (parsed.inputs && parsed.inputs.kecamatan === selectedKec) {
-          // Tambahkan estimasi curah hujan dari suhu/kelembapan jika tidak ada dari API
-          // Biasanya curah hujan bisa diekstrapolasi sederhana untuk keperluan display
-          const hujan_pred = (parsed.climate_prediction || []).reduce((acc: number, val: any) => acc + (val.kelembapan * 2.5), 0) / 4 || 280;
+          // Mengambil curah hujan rata-rata dari data climate_prediction (key curah_hujan)
+          const hujan_pred = (parsed.inputs.hujan_pred ?? ((parsed.climate_prediction || []).reduce((acc: number, val: any) => acc + (val.curah_hujan ?? val.kecepatan_angin ?? 0), 0) / (parsed.climate_prediction || []).length)) || 280;
           
           const fetchedInputs: InputData = {
             ...parsed.inputs,
@@ -299,7 +298,8 @@ function RekomendasiPage() {
           }
 
           const apiData = resData.data;
-          const hujan_pred = (apiData.climate_prediction || []).reduce((acc: number, val: any) => acc + (val.kelembapan * 2.5), 0) / 4 || 280;
+          // Mengambil curah hujan dari API response (curah_hujan)
+          const hujan_pred = Number((apiData.avg_climate_prediction.curah_hujan ?? apiData.avg_climate_prediction.kecepatan_angin ?? ((apiData.climate_prediction || []).reduce((acc: number, val: any) => acc + (val.curah_hujan ?? val.kecepatan_angin ?? 0), 0) / (apiData.climate_prediction || []).length)) || 280);
 
           const fetchedInputs: InputData = {
             kecamatan: apiData.kecamatan,
@@ -310,7 +310,7 @@ function RekomendasiPage() {
             debu: Math.round(apiData.profil_wilayah.tanah_debu_persen ?? 40),
             temp_pred: Number(apiData.avg_climate_prediction.suhu ?? 27.0),
             hum_pred: Number(apiData.avg_climate_prediction.kelembapan ?? 80.0),
-            wind_pred: Number(apiData.avg_climate_prediction.kecepatan_angin ?? 2.0),
+            wind_pred: 2.0, // Kecepatan angin default (tidak diprediksi LSTM)
             hujan_pred
           };
 
