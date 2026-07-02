@@ -210,8 +210,8 @@ function LoginForm() {
                 onClick={() => router.push("/rekomendasi")}
                 className="w-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 border border-stone-200 dark:border-stone-700 text-xs cursor-pointer"
               >
-                <span className="material-symbols-outlined text-sm" data-icon="arrow_back">arrow_back</span>
-                <span>Kembali ke Portal Publik (Tanpa Login)</span>
+                <span className="material-symbols-outlined text-sm" data-icon="person">person</span>
+                <span>Masuk sebagai User (Tanpa Login)</span>
               </button>
             </div>
           </form>
@@ -221,9 +221,8 @@ function LoginForm() {
             <div className="flex items-start gap-2">
               <span className="material-symbols-outlined text-stone-400 text-sm shrink-0 mt-0.5" data-icon="info">info</span>
               <p className="text-[10px] text-stone-500 dark:text-stone-400 leading-relaxed">
-                Akses portal publik tersedia tanpa login. Login diperlukan hanya untuk
-                fitur administrasi seperti manajemen data, dashboard, dan pengelolaan model.
-                Hubungi administrator jika lupa kredensial.
+                Akses sebagai User tidak memerlukan login dan hanya dapat melihat halaman hasil rekomendasi tanaman. 
+                Login sebagai Admin diperlukan untuk mengakses seluruh panel administrasi, data, riwayat, dan modul prediksi LSTM.
               </p>
             </div>
           </div>

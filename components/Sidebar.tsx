@@ -217,7 +217,7 @@ export function Sidebar() {
                 <span className="material-symbols-outlined text-stone-500 text-base" data-icon="person">person</span>
               </div>
               <div className="overflow-hidden">
-                <p className="text-xs font-bold text-stone-700 dark:text-stone-300 truncate leading-tight">Tamu Publik</p>
+                <p className="text-xs font-bold text-stone-700 dark:text-stone-300 truncate leading-tight">User Publik</p>
                 <div className="flex items-center space-x-1 mt-0.5">
                   <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
                   <span className="text-[9px] text-stone-500 font-bold uppercase tracking-wider">Pengguna Umum</span>
