@@ -30,8 +30,8 @@ export async function GET() {
     return NextResponse.json({ status: 'success', data: res.data });
   } catch (err: any) {
     console.error('Supabase query failed or timed out for riwayat:', err.message || err);
-    // Return empty list on offline mode instead of crashing
-    return NextResponse.json({ status: 'success', data: [] });
+    // Return error status so that the frontend catches it and displays the mock data fallback
+    return NextResponse.json({ status: 'error', message: 'Offline mode: database unreachable' }, { status: 500 });
   }
 }
 

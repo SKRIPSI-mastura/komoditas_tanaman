@@ -57,11 +57,11 @@ export default function Page() {
       .then((resData) => {
         if (resData.status === "success" && resData.data) {
           const d = resData.data;
-          setPh(Number((d.ph_tanah ?? d.ph ?? 6.4).toFixed(1)));
-          setElevasi(Math.round(d.elevasi_mdpl ?? d.elevasi ?? 12));
-          setLiat(Math.round(d.tanah_liat ?? d.tanah_liat_persen ?? 28));
-          setPasir(Math.round(d.tanah_pasir ?? d.tanah_pasir_persen ?? 32));
-          setDebu(Math.round(d.tanah_debu ?? d.tanah_debu_persen ?? 40));
+          setPh(Number(Number(d.ph_tanah ?? d.ph ?? 6.4).toFixed(1)));
+          setElevasi(Math.round(Number(d.elevasi_mdpl ?? d.elevasi ?? 12)));
+          setLiat(Math.round(Number(d.tanah_liat ?? d.tanah_liat_persen ?? 28)));
+          setPasir(Math.round(Number(d.tanah_pasir ?? d.tanah_pasir_persen ?? 32)));
+          setDebu(Math.round(Number(d.tanah_debu ?? d.tanah_debu_persen ?? 40)));
           setResikoBencana(d.resiko_bencana ?? "Rendah");
         }
       })
