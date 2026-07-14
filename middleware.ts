@@ -9,7 +9,12 @@ export function middleware(request: NextRequest) {
                       pathname.startsWith('/prediksi') ||
                       pathname.startsWith('/kelola-data') ||
                       pathname.startsWith('/riwayat') ||
-                      pathname.startsWith('/admin');
+                      pathname.startsWith('/admin') ||
+                      pathname.startsWith('/dataset-pelatihan') ||
+                      pathname.startsWith('/data-iklim-historis') ||
+                      pathname.startsWith('/kecamatan') ||
+                      pathname.startsWith('/komoditas') ||
+                      pathname.startsWith('/hasil-rekomendasi');
 
   // Ambil session cookie 'admin_session'
   const sessionCookie = request.cookies.get('admin_session');
@@ -74,6 +79,11 @@ export const config = {
     '/kelola-data/:path*',
     '/riwayat/:path*',
     '/admin/:path*',
+    '/dataset-pelatihan/:path*',
+    '/data-iklim-historis/:path*',
+    '/kecamatan/:path*',
+    '/komoditas/:path*',
+    '/hasil-rekomendasi/:path*',
     '/login',
     '/api/:path*',
   ],

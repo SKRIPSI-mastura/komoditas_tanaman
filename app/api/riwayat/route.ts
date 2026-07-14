@@ -3,43 +3,35 @@ import { supabase } from '@/lib/supabase';
 
 // GET /api/riwayat — Ambil semua riwayat rekomendasi (dengan join kecamatan)
 export async function GET() {
-  const timeoutPromise = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error('Supabase request timeout')), 2500)
-  );
-
   try {
-    const res = await Promise.race([
-      supabase
-        .from('hasil_rekomendasi')
-        .select(`
-          *,
-          kecamatan:kecamatan_id (
-            id,
-            nama_kecamatan
-          )
-        `)
-        .order('tanggal_analisis', { ascending: false })
-        .limit(100),
-      timeoutPromise
-    ]) as any;
+    const { data, error } = await supabase
+      .from('hasil_rekomendasi')
+      .select(`
+        *,
+        kecamatan:kecamatan_id (
+          id,
+          nama_kecamatan
+        )
+      `)
+      .order('tanggal_analisis', { ascending: false })
+      .limit(100);
 
-    if (res.error) {
-      throw res.error;
+    if (error) {
+      return NextResponse.json({ status: 'error', message: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ status: 'success', data: res.data });
+    return NextResponse.json({ status: 'success', data });
   } catch (err: any) {
-    console.error('Supabase query failed or timed out for riwayat:', err.message || err);
-    // Return error status so that the frontend catches it and displays the mock data fallback
-    return NextResponse.json({ status: 'error', message: 'Offline mode: database unreachable' }, { status: 500 });
+    console.error('Supabase query failed for riwayat:', err.message || err);
+    return NextResponse.json({ status: 'error', message: 'Failed to load riwayat' }, { status: 500 });
   }
 }
 
 // POST /api/riwayat — Simpan hasil rekomendasi baru ke Supabase
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-
   try {
+    const body = await req.json();
+
     const { data, error } = await supabase
       .from('hasil_rekomendasi')
       .insert([{
@@ -58,19 +50,12 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      throw error;
+      return NextResponse.json({ status: 'error', message: error.message }, { status: 400 });
     }
 
     return NextResponse.json({ status: 'success', data }, { status: 201 });
   } catch (err: any) {
-    console.error('Failed to log recommendation history, returning mock offline success:', err.message || err);
-    // Offline success mock
-    const mockData = {
-      id: Math.floor(Math.random() * 1000) + 1,
-      ...body,
-      tanggal_analisis: body.tanggal_analisis || new Date().toISOString()
-    };
-    return NextResponse.json({ status: 'success', data: mockData }, { status: 201 });
+    console.error('Failed to log recommendation history:', err.message || err);
+    return NextResponse.json({ status: 'error', message: 'Internal Server Error' }, { status: 500 });
   }
 }
-

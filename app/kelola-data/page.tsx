@@ -14,6 +14,7 @@ interface KecamatanData {
   tanah_liat: number;
   tanah_pasir: number;
   tanah_debu: number;
+  tekstur_tanah: string;
   resiko_bencana: string;
 }
 
@@ -57,6 +58,7 @@ export default function Page() {
     tanah_liat: "",
     tanah_pasir: "",
     tanah_debu: "",
+    tekstur_tanah: "Aluvial",
     resiko_bencana: "Rendah"
   });
 
@@ -101,6 +103,7 @@ export default function Page() {
           tanah_liat: Number(item.tanah_liat),
           tanah_pasir: Number(item.tanah_pasir),
           tanah_debu: Number(item.tanah_debu),
+          tekstur_tanah: item.tekstur_tanah || "N/A",
           resiko_bencana: item.resiko_bencana
         }));
         setKecamatanList(mapped);
@@ -153,6 +156,7 @@ export default function Page() {
         tanah_liat: Number(formKec.tanah_liat),
         tanah_pasir: Number(formKec.tanah_pasir),
         tanah_debu: Number(formKec.tanah_debu),
+        tekstur_tanah: formKec.tekstur_tanah,
         resiko_bencana: formKec.resiko_bencana
       };
 
@@ -186,6 +190,7 @@ export default function Page() {
         tanah_liat: Number(formKec.tanah_liat),
         tanah_pasir: Number(formKec.tanah_pasir),
         tanah_debu: Number(formKec.tanah_debu),
+        tekstur_tanah: formKec.tekstur_tanah,
         resiko_bencana: formKec.resiko_bencana
       };
 
@@ -328,6 +333,7 @@ export default function Page() {
         tanah_liat: String(item.tanah_liat),
         tanah_pasir: String(item.tanah_pasir),
         tanah_debu: String(item.tanah_debu),
+        tekstur_tanah: item.tekstur_tanah || "Aluvial",
         resiko_bencana: item.resiko_bencana
       });
     } else {
@@ -370,6 +376,7 @@ export default function Page() {
       tanah_liat: "",
       tanah_pasir: "",
       tanah_debu: "",
+      tekstur_tanah: "Aluvial",
       resiko_bencana: "Rendah"
     });
   };
@@ -507,6 +514,7 @@ export default function Page() {
                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Liat %</th>
                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Pasir %</th>
                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Debu %</th>
+                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Tekstur Lahan</th>
                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Resiko Bencana</th>
                       <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-center">Aksi</th>
                     </tr>
@@ -519,9 +527,10 @@ export default function Page() {
                           <td className="px-6 py-4 text-sm font-mono text-center font-bold">{isNaN(Number(item.elevasi_mdpl)) ? "N/A" : Number(item.elevasi_mdpl).toFixed(1)}</td>
                           <td className="px-6 py-4 text-sm font-mono text-center font-bold text-[#006B54] dark:text-[#10b981]">{isNaN(Number(item.ph_tanah_mean)) ? "N/A" : Number(item.ph_tanah_mean).toFixed(2)}</td>
                           <td className="px-6 py-4 text-sm font-mono text-center">{isNaN(Number(item.curah_hujan_tahunan)) ? "N/A" : Math.round(Number(item.curah_hujan_tahunan))}</td>
-                          <td className="px-6 py-4 text-sm font-mono text-center">{isNaN(Number(item.tanah_liat)) ? "N/A" : Number(item.tanah_liat).toFixed(1)}</td>
-                          <td className="px-6 py-4 text-sm font-mono text-center">{isNaN(Number(item.tanah_pasir)) ? "N/A" : Number(item.tanah_pasir).toFixed(1)}</td>
-                          <td className="px-6 py-4 text-sm font-mono text-center text-stone-700 dark:text-stone-300">{isNaN(Number(item.tanah_debu)) ? "N/A" : Number(item.tanah_debu).toFixed(1)}</td>
+                          <td className="px-6 py-4 text-sm font-mono text-center">{isNaN(Number(item.tanah_liat)) ? "N/A" : Number(item.tanah_liat).toFixed(1)}%</td>
+                          <td className="px-6 py-4 text-sm font-mono text-center">{isNaN(Number(item.tanah_pasir)) ? "N/A" : Number(item.tanah_pasir).toFixed(1)}%</td>
+                          <td className="px-6 py-4 text-sm font-mono text-center text-stone-700 dark:text-stone-300">{isNaN(Number(item.tanah_debu)) ? "N/A" : Number(item.tanah_debu).toFixed(1)}%</td>
+                          <td className="px-6 py-4 text-sm text-center font-medium text-stone-700 dark:text-stone-300">{item.tekstur_tanah}</td>
                           <td className="px-6 py-4 text-center">
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
                               item.resiko_bencana === "Rendah"
@@ -753,6 +762,18 @@ export default function Page() {
                       onChange={(e) => setFormKec({ ...formKec, tanah_debu: e.target.value })}
                       className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-xs py-3 px-4 transition-all"
                     />
+                  </div>
+
+                  <div className="col-span-2 space-y-1.5">
+                    <label className="text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Tekstur Tanah (Jenis Tanah)</label>
+                    <select 
+                      value={formKec.tekstur_tanah}
+                      onChange={(e) => setFormKec({ ...formKec, tekstur_tanah: e.target.value })}
+                      className="w-full bg-stone-50 dark:bg-stone-950 border border-stone-100 dark:border-stone-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-xs py-3 px-4 transition-all"
+                    >
+                      <option value="Aluvial">Aluvial</option>
+                      <option value="Podsolik">Podsolik</option>
+                    </select>
                   </div>
 
                   <div className="col-span-2 space-y-1.5">

@@ -46,9 +46,15 @@ export function Sidebar() {
   const adminMenuItems = [
     { name: "Dashboard", icon: "dashboard", href: "/dashboard" },
     { name: "Prediksi Iklim LSTM", icon: "cloud_sync", href: "/prediksi" },
-    { name: "Kelola Data", icon: "map", href: "/kelola-data" },
+    { name: "Dataset Pelatihan", icon: "database", href: "/dataset-pelatihan" },
+    { name: "Data Iklim Historis", icon: "calendar_month", href: "/data-iklim-historis" },
+    { name: "Daftar Kecamatan", icon: "location_on", href: "/kecamatan" },
+    { name: "Daftar Komoditas", icon: "eco", href: "/komoditas" },
+    { name: "Hasil Rekomendasi", icon: "analytics", href: "/hasil-rekomendasi" },
+    { name: "Kelola Data Master", icon: "edit_document", href: "/kelola-data" },
     { name: "Riwayat Prediksi", icon: "history", href: "/riwayat" },
   ];
+
 
   return (
     <aside className="h-screen w-64 fixed left-0 top-0 bg-white dark:bg-stone-950 flex flex-col py-6 z-50 border-r border-[#006B54]/10 shadow-[4px_0_24px_rgba(0,107,84,0.03)]">
