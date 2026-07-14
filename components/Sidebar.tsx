@@ -46,12 +46,7 @@ export function Sidebar() {
   const adminMenuItems = [
     { name: "Dashboard", icon: "dashboard", href: "/dashboard" },
     { name: "Prediksi Iklim LSTM", icon: "cloud_sync", href: "/prediksi" },
-    { name: "Dataset Pelatihan", icon: "database", href: "/dataset-pelatihan" },
-    { name: "Data Iklim Historis", icon: "calendar_month", href: "/data-iklim-historis" },
-    { name: "Daftar Kecamatan", icon: "location_on", href: "/kecamatan" },
-    { name: "Daftar Komoditas", icon: "eco", href: "/komoditas" },
-    { name: "Hasil Rekomendasi", icon: "analytics", href: "/hasil-rekomendasi" },
-    { name: "Kelola Data Master", icon: "edit_document", href: "/kelola-data" },
+    { name: "Kelola Data", icon: "map", href: "/kelola-data" },
     { name: "Riwayat Prediksi", icon: "history", href: "/riwayat" },
   ];
 
@@ -59,7 +54,11 @@ export function Sidebar() {
   return (
     <aside className="h-screen w-64 fixed left-0 top-0 bg-white dark:bg-stone-950 flex flex-col py-6 z-50 border-r border-[#006B54]/10 shadow-[4px_0_24px_rgba(0,107,84,0.03)]">
       {/* Brand Section */}
-      <div className="px-7 mb-8 group">
+      <Link 
+        href={isAdmin ? "/dashboard" : "/login"} 
+        className="px-7 mb-8 group block cursor-pointer"
+        title={isAdmin ? "Menuju Dashboard Admin" : "Login sebagai Admin"}
+      >
         <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#006B54] to-[#10b981] flex items-center justify-center text-white shadow-lg shadow-[#006B54]/20 group-hover:rotate-6 transition-all duration-500">
                 <span className="material-symbols-outlined text-2xl animate-pulse" data-icon="agriculture">agriculture</span>
@@ -73,7 +72,7 @@ export function Sidebar() {
                 </h2>
             </div>
         </div>
-      </div>
+      </Link>
 
       {/* Navigation Section */}
       <nav className="flex-1 overflow-y-auto px-4 space-y-5 scrollbar-hide">
@@ -230,13 +229,6 @@ export function Sidebar() {
                 </div>
               </div>
             </div>
-            <Link
-              href="/login"
-              className="w-full bg-[#006B54] hover:bg-[#00513f] text-white py-2.5 px-4 rounded-2xl flex items-center justify-center space-x-2 font-bold text-xs transition-all shadow-md active:scale-95 cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-sm" data-icon="lock_open">lock_open</span>
-              <span>Login sebagai Admin</span>
-            </Link>
           </div>
         )}
       </div>

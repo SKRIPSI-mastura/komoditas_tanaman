@@ -482,7 +482,7 @@ export default function Page() {
                     {predictionStep >= 1 && <p className="opacity-60">[SCALE] Vector scaling done. Range: [0, 1]</p>}
                     {predictionStep >= 3 && (
                       <p className="opacity-90 text-white animate-pulse">
-                        &gt;&gt; Training epochs: 20/20 | Train_Loss: 0.014 | Test_Loss: 0.018 | Confidence: 98.2%
+                        &gt;&gt; Training epochs: 20/20 | Train_Loss: 0.0842 | Test_Loss: 0.4343 | Accuracy: 78.9%
                       </p>
                     )}
                     {predictionStep >= 4 && <p className="text-emerald-300 font-bold">&gt;&gt; Prediksi iklim beberapa bulan ke depan berhasil.</p>}

@@ -51,7 +51,7 @@ export function Header({ title, subtitle }: HeaderProps) {
 
       {/* Global Actions */}
       <div className="flex items-center space-x-2">
-        {isAdmin ? (
+        {isAdmin && (
           <div className="flex items-center bg-white/40 rounded-2xl p-1 border border-[#006B54]/5 shadow-sm">
               <button 
                   onClick={handleLogout}
@@ -60,16 +60,6 @@ export function Header({ title, subtitle }: HeaderProps) {
               >
                   <span className="material-symbols-outlined text-xl" data-icon="logout">logout</span>
               </button>
-          </div>
-        ) : (
-          <div className="flex items-center bg-white/40 rounded-2xl p-1 border border-[#006B54]/5 shadow-sm">
-              <Link 
-                  href="/login" 
-                  title="Login Admin" 
-                  className="w-9 h-9 flex items-center justify-center rounded-xl text-stone-500 hover:bg-emerald-50 hover:text-[#006B54] transition-all"
-              >
-                  <span className="material-symbols-outlined text-xl" data-icon="login">login</span>
-              </Link>
           </div>
         )}
       </div>

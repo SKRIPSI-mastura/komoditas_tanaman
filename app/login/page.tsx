@@ -59,8 +59,8 @@ function LoginForm() {
         localStorage.setItem("admin_nama", data.data.nama);
         localStorage.setItem("admin_peran", data.data.peran);
 
-        // Arahkan ke dashboard atau halaman yang sebelumnya dicoba
-        const redirectTo = searchParams.get("redirect") || "/dashboard";
+        // Arahkan ke halaman rekomendasi atau halaman yang sebelumnya dicoba
+        const redirectTo = searchParams.get("redirect") || "/rekomendasi";
         router.push(redirectTo);
       } else {
         // Tampilkan pesan error dari server (USER_NOT_FOUND atau WRONG_PASSWORD)

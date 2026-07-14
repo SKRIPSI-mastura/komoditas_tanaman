@@ -11,7 +11,6 @@ export function middleware(request: NextRequest) {
                       pathname.startsWith('/riwayat') ||
                       pathname.startsWith('/admin') ||
                       pathname.startsWith('/dataset-pelatihan') ||
-                      pathname.startsWith('/data-iklim-historis') ||
                       pathname.startsWith('/kecamatan') ||
                       pathname.startsWith('/komoditas') ||
                       pathname.startsWith('/hasil-rekomendasi');
@@ -80,7 +79,6 @@ export const config = {
     '/riwayat/:path*',
     '/admin/:path*',
     '/dataset-pelatihan/:path*',
-    '/data-iklim-historis/:path*',
     '/kecamatan/:path*',
     '/komoditas/:path*',
     '/hasil-rekomendasi/:path*',

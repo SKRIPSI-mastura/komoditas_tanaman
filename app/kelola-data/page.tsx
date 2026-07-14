@@ -89,6 +89,7 @@ export default function Page() {
     }
   }, [router]);
 
+
   const fetchKecamatan = async () => {
     try {
       const res = await fetch("/api/kecamatan");
@@ -414,6 +415,8 @@ export default function Page() {
     (item.deskripsi && item.deskripsi.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
+
+
   return (
     <div className="bg-stone-50 dark:bg-stone-950 text-stone-800 dark:text-stone-100 min-h-screen">
       <Sidebar />
@@ -634,7 +637,8 @@ export default function Page() {
             {/* Table Footer */}
             <div className="px-6 py-4 border-t border-stone-100 dark:border-stone-800 flex justify-between items-center text-xs text-stone-500">
               <p>
-                Menampilkan {activeTab === "kecamatan" ? filteredKecamatan.length : filteredKomoditas.length} dari{" "}
+                Menampilkan{" "}
+                {activeTab === "kecamatan" ? filteredKecamatan.length : filteredKomoditas.length} dari{" "}
                 {activeTab === "kecamatan" ? kecamatanList.length : komoditasList.length} data
               </p>
               <div className="flex space-x-1">

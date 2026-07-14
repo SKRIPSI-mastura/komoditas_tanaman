@@ -192,7 +192,7 @@ function RekomendasiPage() {
   const [recommendations, setRecommendations] = useState<CropScore[]>([]);
   const [selectedCrop, setSelectedCrop] = useState<CropScore | null>(null);
 
-  const [kecamatanList, setKecamatanList] = useState<string[]>(Object.keys(KEC_PROFILES));
+  const [kecamatanList, setKecamatanList] = useState<any[]>(Object.keys(KEC_PROFILES));
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -202,7 +202,7 @@ function RekomendasiPage() {
   }, []);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/kecamatan`)
+    fetch(`/api/kecamatan`)
       .then((res) => res.json())
       .then((resData) => {
         if (resData.status === "success" && Array.isArray(resData.data)) {
@@ -453,9 +453,13 @@ Risiko gagal panen tergolong ${risikoGagalPanen.toLowerCase()} dan kondisi lingk
                   className="bg-white dark:bg-stone-900 border border-stone-150 dark:border-stone-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006B54]/20 text-xs py-2 px-3 transition-all font-bold text-[#006B54] dark:text-[#10b981]"
                 >
                   <option value="">-- Pilih Kecamatan --</option>
-                  {kecamatanList.map((kec) => (
-                    <option key={kec} value={kec}>{kec}</option>
-                  ))}
+                  {kecamatanList.map((kec) => {
+                    const name = typeof kec === 'string' ? kec : kec.nama_kecamatan;
+                    const id = typeof kec === 'string' ? kec : kec.id;
+                    return (
+                      <option key={id} value={name}>{name}</option>
+                    );
+                  })}
                 </select>
               </div>
 

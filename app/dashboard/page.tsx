@@ -11,9 +11,7 @@ export default function Page() {
   const router = useRouter();
   const [showNotification, setShowNotification] = useState(true);
   const [totalKecamatan, setTotalKecamatan] = useState<number | string>("…");
-  const [totalKomoditas, setTotalKomoditas] = useState<number | string>("…");
-  const [totalDataset, setTotalDataset] = useState<number | string>("…");
-  const [totalRekomendasi, setTotalRekomendasi] = useState<number | string>("…");
+  const [totalEvaluations, setTotalEvaluations] = useState<number | string>("…");
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
 
   const fetchStats = async () => {
@@ -23,20 +21,10 @@ export default function Page() {
         .select('*', { count: 'exact', head: true });
       if (kecCount !== null) setTotalKecamatan(kecCount);
 
-      const { count: komCount } = await supabase
-        .from('komoditas')
-        .select('*', { count: 'exact', head: true });
-      if (komCount !== null) setTotalKomoditas(komCount);
-
-      const { count: dtCount } = await supabase
-        .from('dataset_pelatihan')
-        .select('*', { count: 'exact', head: true });
-      if (dtCount !== null) setTotalDataset(dtCount);
-
       const { count: hrCount } = await supabase
         .from('hasil_rekomendasi')
         .select('*', { count: 'exact', head: true });
-      if (hrCount !== null) setTotalRekomendasi(hrCount);
+      if (hrCount !== null) setTotalEvaluations(hrCount);
     } catch (err) {
       console.error("Failed to fetch dashboard stats:", err);
     }
@@ -101,20 +89,6 @@ export default function Page() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'kecamatan' },
-        () => {
-          fetchStats();
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'komoditas' },
-        () => {
-          fetchStats();
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'dataset_pelatihan' },
         () => {
           fetchStats();
         }
@@ -184,63 +158,61 @@ export default function Page() {
           {/* Statistics Grid */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
-            {/* Total Kecamatan */}
+            {/* Total Evaluasi */}
             <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px] relative overflow-hidden">
               <div className="absolute top-0 right-0 w-20 h-20 bg-stone-50 dark:bg-stone-800/20 rounded-bl-full pointer-events-none"></div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Kecamatan Terdata</span>
-                <span className="material-symbols-outlined text-[#006B54] bg-[#006B54]/5 p-2 rounded-xl text-lg" data-icon="map">map</span>
+                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Total Evaluasi</span>
+                <span className="material-symbols-outlined text-[#006B54] bg-[#006B54]/5 p-2 rounded-xl text-lg" data-icon="database">database</span>
+              </div>
+              <div className="mt-4">
+                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">{totalEvaluations} Kali</div>
+                <p className="text-[#006B54] font-semibold text-xs mt-1 flex items-center space-x-1">
+                  <span className="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+                  <span>Evaluasi aktif pengguna</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Status LSTM Engine */}
+            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Status LSTM Engine</span>
+                <span className="material-symbols-outlined text-emerald-600 bg-emerald-500/5 p-2 rounded-xl text-lg animate-pulse" data-icon="memory">memory</span>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+                  <div className="text-2xl font-extrabold text-stone-900 dark:text-white">Aktif</div>
+                </div>
+                <p className="text-stone-500 dark:text-stone-400 text-xs mt-1">Semua unit model beroperasi normal.</p>
+              </div>
+            </div>
+
+            {/* Kecamatan Terpetakan */}
+            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px] relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-stone-50 dark:bg-stone-800/20 rounded-bl-full pointer-events-none"></div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Kecamatan Terpetakan</span>
+                <span className="material-symbols-outlined text-amber-600 bg-amber-500/5 p-2 rounded-xl text-lg" data-icon="map">map</span>
               </div>
               <div className="mt-4">
                 <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">{totalKecamatan} Wilayah</div>
-                <p className="text-[#006B54] font-semibold text-xs mt-1 flex items-center space-x-1">
+                <p className="text-amber-600 font-semibold text-xs mt-1">
                   <span>Kecamatan di Aceh Utara</span>
                 </p>
               </div>
             </div>
 
-            {/* Total Komoditas */}
-            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-stone-50 dark:bg-stone-800/20 rounded-bl-full pointer-events-none"></div>
+            {/* Akurasi Model */}
+            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px]">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Total Komoditas</span>
-                <span className="material-symbols-outlined text-amber-600 bg-amber-500/5 p-2 rounded-xl text-lg" data-icon="eco">eco</span>
+                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Akurasi Model</span>
+                <span className="material-symbols-outlined text-[#10b981] bg-[#10b981]/5 p-2 rounded-xl text-lg" data-icon="verified">verified</span>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">{totalKomoditas} Tanaman</div>
-                <p className="text-amber-600 font-semibold text-xs mt-1">
-                  <span>Komoditas pangan acuan</span>
-                </p>
-              </div>
-            </div>
-
-            {/* Total Dataset Pelatihan */}
-            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-stone-50 dark:bg-stone-800/20 rounded-bl-full pointer-events-none"></div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Dataset Pelatihan</span>
-                <span className="material-symbols-outlined text-blue-600 bg-blue-500/5 p-2 rounded-xl text-lg" data-icon="database">database</span>
-              </div>
-              <div className="mt-4">
-                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">{totalDataset} Baris</div>
-                <p className="text-blue-600 font-semibold text-xs mt-1">
-                  <span>Data latih terintegrasi</span>
-                </p>
-              </div>
-            </div>
-
-            {/* Total Hasil Rekomendasi */}
-            <div className="bg-white dark:bg-stone-900 border border-stone-100 dark:border-stone-850 p-6 rounded-3xl shadow-sm flex flex-col justify-between min-h-[160px] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-stone-50 dark:bg-stone-800/20 rounded-bl-full pointer-events-none"></div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Hasil Rekomendasi</span>
-                <span className="material-symbols-outlined text-emerald-600 bg-emerald-500/5 p-2 rounded-xl text-lg" data-icon="insights">insights</span>
-              </div>
-              <div className="mt-4">
-                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">{totalRekomendasi} Analisis</div>
-                <p className="text-emerald-600 font-semibold text-xs mt-1">
-                  <span>Prediksi & rekomendasi selesai</span>
-                </p>
+                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">78.9%</div>
+                <p className="text-stone-500 dark:text-stone-400 text-xs mt-1">Akurasi Global (Accuracy) pada evaluasi pengujian</p>
               </div>
             </div>
 
@@ -331,10 +303,10 @@ export default function Page() {
                 <p className="text-xs text-stone-500 dark:text-stone-400">Riwayat eksekusi pencarian komoditas pangan</p>
               </div>
               <Link 
-                href="/hasil-rekomendasi" 
+                href="/riwayat" 
                 className="text-[#006B54] dark:text-[#10b981] text-xs font-bold hover:underline flex items-center space-x-1"
               >
-                <span>Lihat Semua Rekomendasi</span>
+                <span>Lihat Semua Riwayat</span>
                 <span className="material-symbols-outlined text-xs" data-icon="arrow_forward">arrow_forward</span>
               </Link>
             </div>
