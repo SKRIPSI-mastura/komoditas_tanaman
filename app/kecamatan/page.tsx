@@ -84,7 +84,7 @@ export default function Page() {
       <Header title="Daftar Kecamatan" subtitle="Data Geografis & Profil Tanah Aceh Utara" />
 
       {/* Main Content */}
-      <main className="ml-64 pt-20 pb-12 px-8 min-h-screen">
+      <main className="ml-0 md:ml-64 pt-20 pb-12 px-4 md:px-8 min-h-screen">
         <div className="max-w-7xl mx-auto space-y-8">
 
           {/* Page Header */}

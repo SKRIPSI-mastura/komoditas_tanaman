@@ -72,12 +72,12 @@ export default function Page() {
   });
 
   return (
-    <div className="bg-stone-50 dark:bg-stone-955 text-stone-800 dark:text-stone-100 min-h-screen">
+    <div className="bg-stone-50 dark:bg-stone-950 text-stone-800 dark:text-stone-100 min-h-screen">
       <Sidebar />
       <Header title="Daftar Komoditas" subtitle="Acuan Budidaya Tanaman Pangan" />
 
       {/* Main Content */}
-      <main className="ml-64 pt-20 pb-12 px-8 min-h-screen">
+      <main className="ml-0 md:ml-64 pt-20 pb-12 px-4 md:px-8 min-h-screen">
         <div className="max-w-7xl mx-auto space-y-8">
 
           {/* Page Header */}

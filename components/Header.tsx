@@ -29,16 +29,25 @@ export function Header({ title, subtitle }: HeaderProps) {
   };
 
   return (
-    <header className="fixed top-0 right-0 left-64 h-16 z-40 bg-[#fafaee]/60 backdrop-blur-xl flex justify-between items-center px-8 border-b border-[#006B54]/5">
+    <header className="fixed top-0 right-0 left-0 md:left-64 h-16 z-40 bg-[#fafaee]/60 backdrop-blur-xl flex justify-between items-center px-4 md:px-8 border-b border-[#006B54]/5">
       {/* Page Title / Search Area */}
-      <div className="flex items-center space-x-6">
+      <div className="flex items-center space-x-3 md:space-x-6">
+        {/* Tombol Hamburger Menu (Mobile Only) */}
+        <button
+          onClick={() => window.dispatchEvent(new Event("toggle-sidebar"))}
+          className="md:hidden w-9 h-9 flex items-center justify-center rounded-xl text-stone-600 hover:bg-[#006B54]/5 hover:text-[#006B54] transition-all cursor-pointer"
+          title="Buka Menu"
+        >
+          <span className="material-symbols-outlined text-2xl">menu</span>
+        </button>
+
         {title ? (
           <div>
             <h1 className="text-sm font-black text-[#006B54] uppercase tracking-tighter leading-none">{title}</h1>
-            {subtitle && <p className="text-[10px] text-on-surface-variant/50 font-bold uppercase tracking-widest mt-1">{subtitle}</p>}
+            {subtitle && <p className="text-[10px] text-on-surface-variant/50 font-bold uppercase tracking-widest mt-1 hidden sm:block">{subtitle}</p>}
           </div>
         ) : (
-          <div className="bg-white/50 backdrop-blur-md border border-[#006B54]/10 flex items-center px-4 py-2 rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-[#006B54]/20 transition-all w-80">
+          <div className="bg-white/50 backdrop-blur-md border border-[#006B54]/10 flex items-center px-4 py-2 rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-[#006B54]/20 transition-all w-full max-w-[200px] sm:w-80">
             <span className="material-symbols-outlined text-on-surface-variant/40 text-sm mr-2" data-icon="search">search</span>
             <input 
               type="text" 

@@ -426,7 +426,7 @@ Risiko gagal panen tergolong ${risikoGagalPanen.toLowerCase()} dan kondisi lingk
       <Sidebar />
       <Header title="Rekomendasi Tanaman" subtitle="Hasil Evaluasi Saraf Tiruan & Kriteria Kesesuaian Lahan" />
 
-      <main className="ml-64 pt-20 pb-12 px-8 min-h-screen">
+      <main className="ml-0 md:ml-64 pt-20 pb-12 px-4 md:px-8 min-h-screen">
         <div className="max-w-7xl mx-auto space-y-8">
 
           {/* Header Controls */}
