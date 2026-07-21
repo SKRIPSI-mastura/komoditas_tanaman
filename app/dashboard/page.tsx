@@ -211,8 +211,8 @@ export default function Page() {
                 <span className="material-symbols-outlined text-[#10b981] bg-[#10b981]/5 p-2 rounded-xl text-lg" data-icon="verified">verified</span>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">78.9%</div>
-                <p className="text-stone-500 dark:text-stone-400 text-xs mt-1">Akurasi Global (Accuracy) pada evaluasi pengujian</p>
+                <div className="text-3xl font-black text-stone-900 dark:text-white font-mono">98.31%</div>
+                <p className="text-stone-500 dark:text-stone-400 text-xs mt-1">Akurasi Global (Accuracy) pada evaluasi pengujian v2</p>
               </div>
             </div>
 

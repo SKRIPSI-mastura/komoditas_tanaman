@@ -478,11 +478,11 @@ export default function Page() {
                   {/* Loading Console Terminal */}
                   <div className="bg-stone-950 text-emerald-400 p-4 rounded-2xl font-mono text-[10px] space-y-1 shadow-inner h-28 overflow-hidden select-none border border-stone-850">
                     <p className="opacity-40">[SYSTEM] Initialization sequence on CUDA GPU... OK</p>
-                    <p className="opacity-40">[DATA] Row count: 12,402. Feature count: 3</p>
+                    <p className="opacity-40">[DATA] Row count: 58,374. Feature count: 9 (Sequential & Static)</p>
                     {predictionStep >= 1 && <p className="opacity-60">[SCALE] Vector scaling done. Range: [0, 1]</p>}
                     {predictionStep >= 3 && (
                       <p className="opacity-90 text-white animate-pulse">
-                        &gt;&gt; Training epochs: 20/20 | Train_Loss: 0.0842 | Test_Loss: 0.4343 | Accuracy: 78.9%
+                        &gt;&gt; Training epochs: 20/20 | Train_Loss: 0.0210 | Test_Loss: 0.0388 | Accuracy: 98.31%
                       </p>
                     )}
                     {predictionStep >= 4 && <p className="text-emerald-300 font-bold">&gt;&gt; Prediksi iklim beberapa bulan ke depan berhasil.</p>}
